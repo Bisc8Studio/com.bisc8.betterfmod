@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "displayName": "BISC8 Better FMOD",
   "description": "Package focused on making FMOD safer and more optimized, providing various ready-to-use scripts and prefabs for Unity implementation, simplifying the development process.",
-  "unity": "6000.3",
+  "unity": "6000.0",
   "author": {
-    "name": "bisc8"
+    "name": "bisc8",
+    "url": "https://github.com/Bisc8Studio"
+  },
+  "dependencies": {
+    "com.bisc8.fmodcustom": "https://github.com/Bisc8Studio/com.bisc8.customfmod.git"
   }
 }
