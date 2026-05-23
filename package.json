@@ -1,0 +1,10 @@
+{
+  "name": "com.bisc8.betterfmod",
+  "version": "1.0.0",
+  "displayName": "BISC8 Better FMOD",
+  "description": "Package focused on making FMOD safer and more optimized, providing various ready-to-use scripts and prefabs for Unity implementation, simplifying the development process.",
+  "unity": "6000.3",
+  "author": {
+    "name": "bisc8"
+  }
+}
