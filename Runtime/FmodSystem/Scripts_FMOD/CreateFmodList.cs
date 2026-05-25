@@ -1,5 +1,3 @@
-#if FMOD_PRESENT
-
 using UnityEngine;
 using FMODUnity;
 using System.Collections.Generic;
@@ -28,5 +26,3 @@ public enum ListType
     Music,
     Other
 }
-
-#endif

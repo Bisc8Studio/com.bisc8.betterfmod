@@ -13,10 +13,7 @@ public static class FMODInstaler
     static void CheckFMOD()
     {
         if (System.Type.GetType("FMODUnity.RuntimeManager, FMODUnity") != null)
-        {
-            AddDefine();
             return;
-        }
 
         bool install = EditorUtility.DisplayDialog(
             "FMOD Required",
@@ -49,12 +46,11 @@ public static class FMODInstaler
         if (json.Contains("com.bisc8.customfmod"))
         {
             Debug.Log("FMOD already installed.");
-            AddDefine();
             return;
         }
 
         string dependency =
-            "\"com.bisc8.customfmod\": \"https://github.com/Bisc8Studio/com.bisc8.customfmod.git\",";
+            "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/fmod-for-unity.git",";
 
         json = json.Replace(
             "\"dependencies\": {",
@@ -66,27 +62,5 @@ public static class FMODInstaler
         Debug.Log("Installing FMOD...");
 
         AssetDatabase.Refresh();
-
-        AddDefine();
-    }
-
-    static void AddDefine()
-    {
-        BuildTargetGroup target = BuildTargetGroup.Standalone;
-
-        string defines =
-            PlayerSettings.GetScriptingDefineSymbolsForGroup(target);
-
-        if (!defines.Contains("FMOD_PRESENT"))
-        {
-            defines += ";FMOD_PRESENT";
-
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(
-                target,
-                defines
-            );
-
-            Debug.Log("Added FMOD_PRESENT define.");
-        }
     }
 }
