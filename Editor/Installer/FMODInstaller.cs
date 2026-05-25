@@ -13,13 +13,11 @@ public static class FMODInstaller
 
     static void CheckSetup()
     {
-        // evita spam de popup
         if (SessionState.GetBool("BISC8_FMOD_POPUP_SHOWN", false))
             return;
 
         SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
 
-        // já está configurado?
         if (EditorPrefs.GetBool(HasSetupKey, false))
             return;
 
@@ -36,14 +34,19 @@ public static class FMODInstaller
         );
 
         if (create)
-        {
             CreateAssets();
-        }
     }
 
     static void CreateAssets()
     {
+        if (typeof(FMODUnity.RuntimeManager) == null)
+        {
+            Debug.LogError("[BISC8 FMOD] FMOD not installed.");
+            return;
+        }
+
         string folder = "Assets/BISC8/BetterFMOD";
+        string path = folder + "/FMODSystem.asset";
 
         if (!AssetDatabase.IsValidFolder("Assets/BISC8"))
             AssetDatabase.CreateFolder("Assets", "BISC8");
@@ -51,16 +54,22 @@ public static class FMODInstaller
         if (!AssetDatabase.IsValidFolder(folder))
             AssetDatabase.CreateFolder("Assets/BISC8", "BetterFMOD");
 
-        string path = folder + "/FMODSystem.asset";
-
-        if (!AssetDatabase.LoadAssetAtPath<Object>(path))
+        var existing = AssetDatabase.LoadAssetAtPath<FMODSystem>(path);
+        if (existing != null)
         {
-            var asset = ScriptableObject.CreateInstance<FMODSystem>();
-            AssetDatabase.CreateAsset(asset, path);
-            AssetDatabase.SaveAssets();
+            Debug.Log("[BISC8 FMOD] Already exists.");
+            EditorPrefs.SetBool(HasSetupKey, true);
+            return;
         }
 
+        var asset = ScriptableObject.CreateInstance<FMODSystem>();
+        AssetDatabase.CreateAsset(asset, path);
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
         EditorPrefs.SetBool(HasSetupKey, true);
+        EditorPrefs.SetString("BISC8_FMOD_PATH", path);
 
         Debug.Log("[BISC8 FMOD] Setup complete.");
     }
