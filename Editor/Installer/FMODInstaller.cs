@@ -3,9 +3,9 @@ using UnityEngine;
 using System.IO;
 
 [InitializeOnLoad]
-public static class FMODInstaler
+public static class FMODInstaller
 {
-    static FMODInstaler()
+    static FMODInstaller()
     {
         EditorApplication.delayCall += CheckFMOD;
     }
@@ -50,7 +50,7 @@ public static class FMODInstaler
         }
 
         string dependency =
-            "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/fmod-for-unity.git",";
+            "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/fmod-for-unity.git";
 
         json = json.Replace(
             "\"dependencies\": {",
