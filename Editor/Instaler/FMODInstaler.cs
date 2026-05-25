@@ -43,7 +43,7 @@ public static class FMODInstaler
 
         string json = File.ReadAllText(manifestPath);
 
-        if (json.Contains("com.fmod.fmodforunity"))
+        if (json.Contains("com.bisc8.customfmod"))
         {
             Debug.Log("FMOD already installed.");
             return;
