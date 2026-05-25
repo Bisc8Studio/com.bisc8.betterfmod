@@ -1,12 +1,9 @@
 {
-  "name": "BISC8.BetterFMOD.Editor",
+  "name": "BISC8.BetterFMOD.Runtime",
   "references": [
-    "BISC8.BetterFMOD.Runtime",
-    "FMODUnityEditor"
+    "FMODUnity"
   ],
-  "includePlatforms": [
-    "Editor"
-  ],
+  "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,

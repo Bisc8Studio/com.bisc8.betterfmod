@@ -1,3 +1,5 @@
+#if FMOD_PRESENT
+
 using UnityEditor;
 using UnityEngine;
 
@@ -56,3 +58,4 @@ public class CreateFmodListEditor : Editor
         Selection.activeObject = asset;
     }
 }
+#endif
