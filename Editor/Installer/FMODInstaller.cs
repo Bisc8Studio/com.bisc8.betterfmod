@@ -1,66 +1,67 @@
 using UnityEditor;
 using UnityEngine;
-using System.IO;
 
 [InitializeOnLoad]
 public static class FMODInstaller
 {
+    private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
+
     static FMODInstaller()
     {
-        EditorApplication.delayCall += CheckFMOD;
+        EditorApplication.delayCall += CheckSetup;
     }
 
-    static void CheckFMOD()
+    static void CheckSetup()
     {
-        if (System.Type.GetType("FMODUnity.RuntimeManager, FMODUnity") != null)
+        // evita spam de popup
+        if (SessionState.GetBool("BISC8_FMOD_POPUP_SHOWN", false))
             return;
 
-        bool install = EditorUtility.DisplayDialog(
-            "FMOD Required",
-            "BISC8 Better FMOD requires FMOD for Unity.\n\nInstall automatically?",
-            "Install",
-            "Cancel"
+        SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
+
+        // já está configurado?
+        if (EditorPrefs.GetBool(HasSetupKey, false))
+            return;
+
+        ShowSetupDialog();
+    }
+
+    static void ShowSetupDialog()
+    {
+        bool create = EditorUtility.DisplayDialog(
+            "BISC8 Better FMOD",
+            "BISC8 FMOD recommends creating the assets at this time.\n\nCreate FMODSystem assets now?",
+            "Create Assets",
+            "Not now"
         );
 
-        if (install)
+        if (create)
         {
-            InstallFMOD();
+            CreateAssets();
         }
     }
 
-    static void InstallFMOD()
+    static void CreateAssets()
     {
-        string manifestPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "Packages/manifest.json"
-        );
+        string folder = "Assets/BISC8/BetterFMOD";
 
-        if (!File.Exists(manifestPath))
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8"))
+            AssetDatabase.CreateFolder("Assets", "BISC8");
+
+        if (!AssetDatabase.IsValidFolder(folder))
+            AssetDatabase.CreateFolder("Assets/BISC8", "BetterFMOD");
+
+        string path = folder + "/FMODSystem.asset";
+
+        if (!AssetDatabase.LoadAssetAtPath<Object>(path))
         {
-            Debug.LogError("manifest.json not found.");
-            return;
+            var asset = ScriptableObject.CreateInstance<FMODSystem>();
+            AssetDatabase.CreateAsset(asset, path);
+            AssetDatabase.SaveAssets();
         }
 
-        string json = File.ReadAllText(manifestPath);
+        EditorPrefs.SetBool(HasSetupKey, true);
 
-        if (json.Contains("com.bisc8.customfmod"))
-        {
-            Debug.Log("BISC8 FMOD already installed.");
-            return;
-        }
-
-        string dependency =
-            "\"com.bisc8.customfmod\": \"https://github.com/Bisc8Studio/com.bisc8.customfmod.git\",";
-
-        json = json.Replace(
-            "\"dependencies\": {",
-            "\"dependencies\": {\n    " + dependency
-        );
-
-        File.WriteAllText(manifestPath, json);
-
-        Debug.Log("Installing BISC8 FMOD...");
-
-        AssetDatabase.Refresh();
+        Debug.Log("[BISC8 FMOD] Setup complete.");
     }
 }
