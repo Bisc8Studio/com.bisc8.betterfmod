@@ -45,12 +45,12 @@ public static class FMODInstaller
 
         if (json.Contains("com.bisc8.customfmod"))
         {
-            Debug.Log("FMOD already installed.");
+            Debug.Log("BISC8 FMOD already installed.");
             return;
         }
 
         string dependency =
-        "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/com.bisc8.customfmod.git\",";
+            "\"com.bisc8.customfmod\": \"https://github.com/Bisc8Studio/com.bisc8.customfmod.git\",";
 
         json = json.Replace(
             "\"dependencies\": {",
