@@ -2,7 +2,7 @@
   "name": "BISC8.BetterFMOD.Editor",
   "references": [
     "BISC8.BetterFMOD.Runtime",
-    "FMODUnity"
+    "FMODUnityEditor"
   ],
   "includePlatforms": [
     "Editor"
