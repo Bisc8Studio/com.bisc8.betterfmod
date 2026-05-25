@@ -1,3 +1,5 @@
+#if FMOD_PRESENT
+
 using FMOD.Studio;
 using FMODUnity;
 using System;
@@ -96,3 +98,5 @@ public class FmodSlider : MonoBehaviour
 #endif
     }
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if FMOD_PRESENT
+
 using UnityEngine;
 using System.Collections;
 
@@ -128,3 +130,5 @@ public class FmodEmitterCustom : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radius);
     }
 }
+
+#endif
