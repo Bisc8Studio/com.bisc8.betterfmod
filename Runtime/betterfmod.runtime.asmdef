@@ -1,15 +1,18 @@
 {
   "name": "BISC8.BetterFMOD.Runtime",
-  "references": [
-    "FMODUnity"
-  ],
+  "autoReferenced": true,
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
-  "autoReferenced": true,
+  "noEngineReferences": false,
   "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+  "versionDefines": [
+    {
+      "name": "com.unity.fmod",
+      "expression": "",
+      "define": "FMOD_PRESENT"
+    }
+  ]
 }
