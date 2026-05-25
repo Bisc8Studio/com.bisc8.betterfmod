@@ -50,7 +50,7 @@ public static class FMODInstaller
         }
 
         string dependency =
-        "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/fmod-for-unity.git\",";
+        "\"com.fmod.fmodforunity\": \"https://github.com/Bisc8Studio/com.bisc8.customfmod.git\",";
 
         json = json.Replace(
             "\"dependencies\": {",
@@ -59,7 +59,7 @@ public static class FMODInstaller
 
         File.WriteAllText(manifestPath, json);
 
-        Debug.Log("Installing FMOD...");
+        Debug.Log("Installing BISC8 FMOD...");
 
         AssetDatabase.Refresh();
     }
