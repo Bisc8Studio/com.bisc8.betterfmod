@@ -8,6 +8,9 @@
   "precompiledReferences": [],
   "noEngineReferences": false,
   "defineConstraints": [],
+  "references": [
+    "FMODUnity"
+  ],
   "versionDefines": [
     {
       "name": "com.bisc8.betterfmod",
