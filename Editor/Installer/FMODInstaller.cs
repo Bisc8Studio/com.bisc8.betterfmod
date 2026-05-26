@@ -28,49 +28,30 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD recommends creating the assets at this time.\n\nCreate FMODSystem assets now?",
-            "Create Assets",
+            "BISC8 FMOD recommends creating the default folder structure now.\n\nCreate folders?",
+            "Create",
             "Not now"
         );
 
         if (create)
-            CreateAssets();
+            CreateFolders();
     }
 
-    static void CreateAssets()
+    static void CreateFolders()
     {
-        if (typeof(FMODUnity.RuntimeManager) == null)
-        {
-            Debug.LogError("[BISC8 FMOD] FMOD not installed.");
-            return;
-        }
-
-        string folder = "Assets/BISC8/BetterFMOD";
-        string path = folder + "/FMODSystem.asset";
-
         if (!AssetDatabase.IsValidFolder("Assets/BISC8"))
             AssetDatabase.CreateFolder("Assets", "BISC8");
 
-        if (!AssetDatabase.IsValidFolder(folder))
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD"))
             AssetDatabase.CreateFolder("Assets/BISC8", "BetterFMOD");
 
-        var existing = AssetDatabase.LoadAssetAtPath<FMODSystem>(path);
-        if (existing != null)
-        {
-            Debug.Log("[BISC8 FMOD] Already exists.");
-            EditorPrefs.SetBool(HasSetupKey, true);
-            return;
-        }
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Lists"))
+            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "Lists");
 
-        var asset = ScriptableObject.CreateInstance<FMODSystem>();
-        AssetDatabase.CreateAsset(asset, path);
-
-        AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
         EditorPrefs.SetBool(HasSetupKey, true);
-        EditorPrefs.SetString("BISC8_FMOD_PATH", path);
 
-        Debug.Log("[BISC8 FMOD] Setup complete.");
+        Debug.Log("[BISC8 FMOD] Setup complete. Folders created at Assets/BISC8/BetterFMOD/");
     }
 }

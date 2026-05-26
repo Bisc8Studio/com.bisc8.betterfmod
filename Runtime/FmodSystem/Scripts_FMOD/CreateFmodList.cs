@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using UnityEngine;
 using FMODUnity;
 using System.Collections.Generic;
@@ -7,9 +6,7 @@ using System;
 public class CreateFmodList : ScriptableObject
 {
     public ListType type;
-
     public string typeName;
-
     public List<FMODListEntry> events;
 }
 
@@ -27,5 +24,3 @@ public enum ListType
     Music,
     Other
 }
-
-#endif

@@ -1,5 +1,3 @@
-#if FMOD_PRESENT
-
 using UnityEngine;
 
 public class FmodAninEvent : MonoBehaviour
@@ -44,5 +42,3 @@ public class FmodAninEvent : MonoBehaviour
         FmodCommands.Instance.RemoveEmitter(emitterObj);
     }
 }
-
-#endif
