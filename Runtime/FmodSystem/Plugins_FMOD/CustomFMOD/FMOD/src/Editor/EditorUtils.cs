@@ -1344,7 +1344,7 @@ namespace FMODUnity
             }
             else
             {
-                return $"Assets/BISC8/FMODData/Cache/Editor/{cacheAssetName}.asset";
+                return $"Assets/Plugins/FMOD/Cache/Editor/{cacheAssetName}.asset";
             }
         }
 
@@ -1434,15 +1434,12 @@ namespace FMODUnity
             switch (layout)
             {
                 case Platform.FileLayout.Release_1_10:
-                    return $"Assets/BISC8/FMODData/{CPUAndLibPath(libInfo)}";
-
+                    return $"Assets/Plugins/{CPUAndLibPath(libInfo)}";
                 case Platform.FileLayout.Release_2_0:
-                    return $"Assets/BISC8/FMODData/lib/{libInfo.platform}/{CPUAndLibPath(libInfo)}";
-
+                    return $"Assets/Plugins/FMOD/lib/{libInfo.platform}/{CPUAndLibPath(libInfo)}";
                 case Platform.FileLayout.Release_2_1:
                 case Platform.FileLayout.Release_2_2:
                     return $"{PlatformsFolder}/{libInfo.platform}/lib/{CPUAndLibPath(libInfo)}";
-
                 default:
                     throw new ArgumentException("Unrecognised file layout: " + layout);
             }

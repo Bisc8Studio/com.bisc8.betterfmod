@@ -311,7 +311,7 @@ namespace FMODUnity
         private static string pluginBasePath;
 
         public const string BaseFolderGUID = "06ae579381df01a4a87bb149dec89954";
-        public const string PluginBasePathDefault = "Packages/com.bisc8.fmodcustom/Runtime/FmodSystem/Plugins_FMOD";
+        public const string PluginBasePathDefault = "Assets/BISC8/BetterFMOD";
 
         public static string PluginBasePath
         {
@@ -637,7 +637,7 @@ namespace FMODUnity
             }
             else
             {
-                return $"Assets/Plugins/FMOD/{subPath}.asset";
+                return $"Assets/BISC8/BetterFMOD/{subPath}.asset";
             }
         }
 #endif

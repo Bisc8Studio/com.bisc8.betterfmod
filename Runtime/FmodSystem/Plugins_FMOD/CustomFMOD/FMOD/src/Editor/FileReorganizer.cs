@@ -925,51 +925,52 @@ namespace FMODUnity
         private struct TaskGenerator
         {
             private const string AssetsFolder = "Assets";
-            private const string FMODRoot = "Assets/Plugins/FMOD";
+            private const string FMODRoot = "Assets/BISC8/BetterFMOD";
             private const string FMODSource = FMODRoot + "/src";
 
             private static readonly string[] BaseFolders = {
-                FMODSource,
-                FMODRoot,
-                "Assets/Plugins",
-                "Assets",
-            };
+        FMODSource,
+        FMODRoot,
+        "Assets/BISC8",
+        "Assets",
+        };
 
             private static readonly MoveRecord[] looseAssets = {
-                // Release 1.10 layout
-                new MoveRecord() { source = FMODRoot + "/fmodplugins.cpp", destination = "obsolete" },
-                new MoveRecord() { source = "Assets/Editor/FMODMigrationUtil.cs", destination = "obsolete" },
-                new MoveRecord() { source = "Assets/GoogleVR", destination = "addons" },
-                new MoveRecord() { source = "Assets/ResonanceAudio", destination = "addons" },
-                new MoveRecord() { source = "Assets/Resources/FMODStudioSettings.asset", destination = "Resources" },
-                new MoveRecord() { source = "Assets/FMODStudioCache.asset", destination = "Resources" },
+        // Release 1.10 layout
+        new MoveRecord() { source = FMODRoot + "/fmodplugins.cpp", destination = "obsolete" },
+        new MoveRecord() { source = "Assets/Editor/FMODMigrationUtil.cs", destination = "obsolete" },
+        new MoveRecord() { source = "Assets/GoogleVR", destination = "addons" },
+        new MoveRecord() { source = "Assets/ResonanceAudio", destination = "addons" },
+        new MoveRecord() { source = "Assets/Resources/FMODStudioSettings.asset", destination = "Resources" },
+        new MoveRecord() { source = "Assets/FMODStudioCache.asset", destination = "Resources" },
 
-                // Release 2.0 layout
-                new MoveRecord() { source = FMODRoot + "/src/Runtime/fmodplugins.cpp", destination = "obsolete" },
+        // Release 2.0 layout
+        new MoveRecord() { source = FMODRoot + "/src/Runtime/fmodplugins.cpp", destination = "obsolete" },
 
-                // Release 2.1 layout
-                new MoveRecord() { source = FMODRoot + "/src/Runtime/fmod_static_plugin_support.h", destination = "obsolete" },
-                new MoveRecord() { source = FMODRoot + "/src/Runtime/CodeGeneration.cs", destination = "src/Editor" },
+        // Release 2.1 layout
+        new MoveRecord() { source = FMODRoot + "/src/Runtime/fmod_static_plugin_support.h", destination = "obsolete" },
+        new MoveRecord() { source = FMODRoot + "/src/Runtime/CodeGeneration.cs", destination = "src/Editor" },
 
-                // Release 2.2 layout
-                new MoveRecord() { source = FMODRoot + "/src/fmodplugins.cpp", destination = "obsolete" },
-                new MoveRecord() { source = FMODRoot + "/src/fmod_static_plugin_support.h", destination = "obsolete" },
-                new MoveRecord() { source = FMODSource + "/CodeGeneration.cs", destination = "src/Editor" },
+        // Release 2.2 layout
+        new MoveRecord() { source = FMODRoot + "/src/fmodplugins.cpp", destination = "obsolete" },
+        new MoveRecord() { source = FMODRoot + "/src/fmod_static_plugin_support.h", destination = "obsolete" },
+        new MoveRecord() { source = FMODSource + "/CodeGeneration.cs", destination = "src/Editor" },
 
-                // Release 2.3 layout
-                new MoveRecord() { source = FMODRoot + "/platforms/html5/lib/libfmodstudiounityplugin.bc", destination = "obsolete" },
-                new MoveRecord() { source = FMODRoot + "/platforms/html5/lib/libfmodstudiounitypluginL.bc", destination = "obsolete" },
-            };
+        // Release 2.3 layout
+        new MoveRecord() { source = FMODRoot + "/platforms/html5/lib/libfmodstudiounityplugin.bc", destination = "obsolete" },
+        new MoveRecord() { source = FMODRoot + "/platforms/html5/lib/libfmodstudiounitypluginL.bc", destination = "obsolete" },
+        };
 
             private static readonly string[] fmodFoldersToCleanUp = {
-                "Assets/Plugins/FMOD/Runtime",
-                "Assets/Plugins/FMOD/lib",
-            };
-            private static readonly string[] publicFoldersToCleanUp = {
-                "Assets/Plugins/Editor",
-            };
+        "Assets/BISC8/BetterFMOD/Runtime",
+        "Assets/BISC8/BetterFMOD/lib",
+        };
 
-            private List<Task> tasks;
+            private static readonly string[] publicFoldersToCleanUp = {
+        "Assets/Plugins/Editor",
+        };
+
+        private List<Task> tasks;
 
             public static void Generate(List<Task> tasks)
             {
@@ -1082,16 +1083,16 @@ namespace FMODUnity
 
             private static readonly MoveRecord[] codeFolders = {
                 // Release 2.0 layout
-                new MoveRecord() { source = FMODSource + "/Runtime", destination = "src" },
-                new MoveRecord() { source = FMODSource + "/Runtime/Timeline", destination = "src" },
-                new MoveRecord() { source = FMODSource + "/Runtime/wrapper", destination = "src" },
-                new MoveRecord() { source = FMODSource + "/Editor/Timeline", destination = "src/Editor" },
+            new MoveRecord() { source = FMODSource + "/Runtime", destination = "src" },
+            new MoveRecord() { source = FMODSource + "/Runtime/Timeline", destination = "src" },
+            new MoveRecord() { source = FMODSource + "/Runtime/wrapper", destination = "src" },
+            new MoveRecord() { source = FMODSource + "/Editor/Timeline", destination = "src/Editor" },
 
-                // Release 1.10 layout
-                new MoveRecord() { source = FMODRoot + "/Timeline", destination = "src" },
-                new MoveRecord() { source = FMODRoot + "/Wrapper", destination = "src" },
-                new MoveRecord() { source = "Assets/Plugins/Editor/FMOD", destination = "src/Editor" },
-                new MoveRecord() { source = "Assets/Plugins/Editor/FMOD/Timeline", destination = "src/Editor" },
+            // Release 1.10 layout
+            new MoveRecord() { source = FMODRoot + "/Timeline", destination = "src" },
+            new MoveRecord() { source = FMODRoot + "/Wrapper", destination = "src" },
+            new MoveRecord() { source = FMODRoot + "/Editor", destination = "src/Editor" },
+            new MoveRecord() { source = FMODRoot + "/Editor/Timeline", destination = "src/Editor" },
             };
 
             private void AddMoveTask(string source, string destination)

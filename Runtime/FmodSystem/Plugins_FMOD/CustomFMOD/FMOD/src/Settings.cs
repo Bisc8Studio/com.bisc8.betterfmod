@@ -634,10 +634,17 @@ namespace FMODUnity
                 sourceBankPathUnformatted = RuntimeUtils.GetCommonPlatformPath(sourceBankPathUnformatted);
 
                 // Remove the FMODStudioCache if in the old location
-                string oldCache = "Assets/Plugins/FMOD/Resources/FMODStudioCache.asset";
-                if (File.Exists(oldCache))
+                string oldCache1 = "Assets/Plugins/FMOD/Resources/FMODStudioCache.asset";
+                string oldCache2 = "Assets/BISC8/BetterFMOD/Resources/FMODStudioCache.asset";
+
+                if (File.Exists(oldCache1))
                 {
-                    AssetDatabase.DeleteAsset(oldCache);
+                    AssetDatabase.DeleteAsset(oldCache1);
+                }
+
+                if (File.Exists(oldCache2))
+                {
+                    AssetDatabase.DeleteAsset(oldCache2);
                 }
 
                 editorSettings.AddMissingPlatforms();
@@ -725,8 +732,10 @@ namespace FMODUnity
     {
 #if UNITY_EDITOR
         private const string RegisterStaticPluginsAssetPathRelative =
-            "/Plugins/FMOD/Cache/fmod_register_static_plugins.cpp";
-        private const string RegisterStaticPluginsAssetPathFull = "Assets" + RegisterStaticPluginsAssetPathRelative;
+        "/BISC8/BetterFMOD/Cache/fmod_register_static_plugins.cpp";
+
+        private const string RegisterStaticPluginsAssetPathFull =
+            "Assets" + RegisterStaticPluginsAssetPathRelative;
 
         public static void CleanTemporaryChanges()
         {
@@ -737,7 +746,9 @@ namespace FMODUnity
         private static IEnumerable<string> AdditionalIl2CppFiles()
         {
             yield return Application.dataPath + RegisterStaticPluginsAssetPathRelative;
-            yield return Application.dataPath + "/Plugins/FMOD/src/Runtime/fmod_static_plugin_support.h";
+
+            yield return Application.dataPath +
+                "/BISC8/BetterFMOD/src/Runtime/fmod_static_plugin_support.h";
         }
 
         public static void CleanIl2CppArgs()

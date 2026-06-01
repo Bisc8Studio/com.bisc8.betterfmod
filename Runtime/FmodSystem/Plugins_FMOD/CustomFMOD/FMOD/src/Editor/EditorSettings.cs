@@ -57,6 +57,7 @@ namespace FMODUnity
             PlatformForBuildTarget.Clear();
             binaryCompatibilitiesBeforeBuild = null;
         }
+
         public void CreateSettingsAsset(string assetName)
         {
             string resourcesPath = $"{FMODFolderFull}/Resources";
@@ -64,15 +65,10 @@ namespace FMODUnity
             bool inPackagesFolder = resourcesPath.StartsWith("Packages/");
             if (inPackagesFolder)
             {
-                resourcesPath = "Assets/BISC8/FMODData/Resources";
+                resourcesPath = "Assets/BISC8/BetterFMOD/Resources";
             }
-
             EditorUtils.EnsureFolderExists(resourcesPath);
-
-            AssetDatabase.CreateAsset(
-                RuntimeSettings,
-                $"{resourcesPath}/{assetName}.asset"
-            );
+            AssetDatabase.CreateAsset(RuntimeSettings, $"{resourcesPath}/{assetName}.asset");
 
             AddPlatformsToAsset();
         }
