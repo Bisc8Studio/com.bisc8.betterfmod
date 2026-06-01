@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using System.IO;
 
 [InitializeOnLoad]
 public static class FMODInstaller
@@ -29,7 +30,7 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD needs to set up its project folders.\n\nThis will create the folder structure in Assets/BISC8/BetterFMOD/.",
+            "BISC8 FMOD needs to install FMOD assets into your project.\n\nThis will create the folder structure in Assets/BISC8/BetterFMOD/.",
             "Setup",
             "Not now"
         );
@@ -41,6 +42,7 @@ public static class FMODInstaller
     static void RunSetup()
     {
         CreateFolders();
+        CopyFMOD();
         CreateFMODFolders();
         CopyPrefabs();
 
@@ -48,7 +50,7 @@ public static class FMODInstaller
 
         EditorPrefs.SetBool(HasSetupKey, true);
 
-        Debug.Log("[BISC8 FMOD] Setup complete. Assets created in Assets/BISC8/BetterFMOD/");
+        Debug.Log("[BISC8 FMOD] Setup complete. FMOD installed in Assets/BISC8/BetterFMOD/FMOD/");
     }
 
     static void CreateFolders()
@@ -76,6 +78,42 @@ public static class FMODInstaller
 
         if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD/Cache/Editor"))
             AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/FMOD/Cache", "Editor");
+    }
+
+    static void CopyFMOD()
+    {
+        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~";
+        string dest = "Assets/BISC8/BetterFMOD/FMOD";
+
+        if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>($"{dest}/FMODUnity.asmdef") != null)
+        {
+            Debug.Log("[BISC8 FMOD] FMOD folder already installed, skipping copy.");
+            return;
+        }
+
+        CopyDirectory(source, dest);
+    }
+
+    static void CopyDirectory(string source, string dest)
+    {
+        Directory.CreateDirectory(dest);
+
+        foreach (string directory in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+        {
+            string relativePath = directory.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            Directory.CreateDirectory(Path.Combine(dest, relativePath));
+        }
+
+        foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
+        {
+            string relativePath = file.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string target = Path.Combine(dest, relativePath);
+
+            if (File.Exists(target))
+                continue;
+
+            File.Copy(file, target);
+        }
     }
 
     static void CopyPrefabs()
