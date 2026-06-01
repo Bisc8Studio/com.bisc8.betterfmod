@@ -1114,7 +1114,7 @@ namespace FMODUnity
                             string filename = Path.GetFileName(sourcePath);
 
                             AddMoveTask(
-                                sourcePath, $"{RuntimeUtils.PluginBasePathDefault}/{folder.destination}/{filename}");
+                                sourcePath, $"{RuntimeUtils.PluginInstallPath}/{folder.destination}/{filename}");
 
                         }
 
@@ -1128,7 +1128,7 @@ namespace FMODUnity
                 foreach (MoveRecord asset in looseAssets)
                 {
                     string filename = Path.GetFileName(asset.source);
-                    string destinationPath = $"{RuntimeUtils.PluginBasePathDefault}/{asset.destination}/{filename}";
+                    string destinationPath = $"{RuntimeUtils.PluginInstallPath}/{asset.destination}/{filename}";
 
                     if (AssetExists(asset.source) && !AssetExists(destinationPath))
                     {
@@ -1177,7 +1177,7 @@ namespace FMODUnity
             {
                 foreach (string path in FindFileAssets(FMODRoot).Where(p => p.EndsWith(".cs")))
                 {
-                    string destinationPath = $"{RuntimeUtils.PluginBasePathDefault}/src/{Path.GetFileName(path)}";
+                    string destinationPath = $"{RuntimeUtils.PluginInstallPath}/src/{Path.GetFileName(path)}";
 
                     if (!AssetExists(destinationPath))
                     {

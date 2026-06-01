@@ -29,7 +29,7 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD needs to copy its assets to your project.\n\nThis will create the folder structure and copy FMOD assets to Assets/BISC8/BetterFMOD/.",
+            "BISC8 FMOD needs to set up its project folders.\n\nThis will create the folder structure in Assets/BISC8/BetterFMOD/.",
             "Setup",
             "Not now"
         );
@@ -41,7 +41,6 @@ public static class FMODInstaller
     static void RunSetup()
     {
         CreateFolders();
-        CopyFMOD();
         CreateFMODFolders();
         CopyPrefabs();
 
@@ -49,7 +48,7 @@ public static class FMODInstaller
 
         EditorPrefs.SetBool(HasSetupKey, true);
 
-        Debug.Log("[BISC8 FMOD] Setup complete. Assets copied to Assets/BISC8/BetterFMOD/");
+        Debug.Log("[BISC8 FMOD] Setup complete. Assets created in Assets/BISC8/BetterFMOD/");
     }
 
     static void CreateFolders()
@@ -77,21 +76,6 @@ public static class FMODInstaller
 
         if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD/Cache/Editor"))
             AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/FMOD/Cache", "Editor");
-    }
-
-    static void CopyFMOD()
-    {
-        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
-        string dest = "Assets/BISC8/BetterFMOD/FMOD";
-
-        if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>($"{dest}/FMODUnity.asmdef") != null)
-        {
-            Debug.Log("[BISC8 FMOD] FMOD folder already exists, skipping copy.");
-            return;
-        }
-
-        if (!AssetDatabase.CopyAsset(source, dest))
-            FileUtil.CopyFileOrDirectory(source, dest);
     }
 
     static void CopyPrefabs()

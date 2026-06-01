@@ -311,7 +311,8 @@ namespace FMODUnity
         private static string pluginBasePath;
 
         public const string BaseFolderGUID = "06ae579381df01a4a87bb149dec89954";
-        public const string PluginBasePathDefault = "Assets/BISC8/BetterFMOD/FMOD";
+        public const string PluginBasePathDefault = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+        public const string PluginInstallPath = "Assets/BISC8/BetterFMOD/FMOD";
 
         public static string PluginBasePath
         {
@@ -319,21 +320,14 @@ namespace FMODUnity
             {
                 if (pluginBasePath == null)
                 {
-                    string guidPath = AssetDatabase.GUIDToAssetPath(BaseFolderGUID);
+                    pluginBasePath = AssetDatabase.GUIDToAssetPath(BaseFolderGUID);
 
-                    if (string.IsNullOrEmpty(guidPath) || !guidPath.StartsWith("Assets/"))
+                    if (string.IsNullOrEmpty(pluginBasePath))
                     {
                         pluginBasePath = PluginBasePathDefault;
 
-                        if (string.IsNullOrEmpty(guidPath))
-                        {
-                            DebugLogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
-                                BaseFolderGUID, pluginBasePath);
-                        }
-                    }
-                    else
-                    {
-                        pluginBasePath = guidPath;
+                        DebugLogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
+                            BaseFolderGUID, pluginBasePath);
                     }
                 }
 
@@ -638,14 +632,7 @@ namespace FMODUnity
 #if UNITY_EDITOR
         public static string WritableAssetPath(string subPath)
         {
-            if (RuntimeUtils.PluginBasePath.StartsWith("Assets/"))
-            {
-                return $"{RuntimeUtils.PluginBasePath}/{subPath}.asset";
-            }
-            else
-            {
-                return $"{PluginBasePathDefault}/{subPath}.asset";
-            }
+            return $"{PluginInstallPath}/{subPath}.asset";
         }
 #endif
     }

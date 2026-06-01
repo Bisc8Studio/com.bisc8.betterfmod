@@ -397,7 +397,7 @@ namespace FMODUnity
             foreach (string path in GetObsoleteFiles())
             {
                 yield return $"{RuntimeUtils.PluginBasePath}/{path}";
-                yield return $"{RuntimeUtils.PluginBasePathDefault}/{path}";
+                yield return $"{RuntimeUtils.PluginInstallPath}/{path}";
             }
         }
 

@@ -1143,12 +1143,12 @@ namespace FMODUnity
         {
             if (string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(RuntimeUtils.BaseFolderGUID)))
             {
-                string folderPath = RuntimeUtils.PluginBasePathDefault;
+                string folderPath = RuntimeUtils.PluginInstallPath;
 
                 if (!Directory.Exists(folderPath))
                 {
                     Debug.LogErrorFormat("FMOD: Couldn't find base folder by GUID ({0}) or path ({1})",
-                        RuntimeUtils.BaseFolderGUID, RuntimeUtils.PluginBasePathDefault);
+                        RuntimeUtils.BaseFolderGUID, RuntimeUtils.PluginInstallPath);
                     return;
                 }
 
@@ -1312,7 +1312,7 @@ namespace FMODUnity
                 return;
             }
 
-            string obsoleteFolder = $"{RuntimeUtils.PluginBasePathDefault}/obsolete";
+            string obsoleteFolder = $"{RuntimeUtils.PluginInstallPath}/obsolete";
 
             if (AssetDatabase.IsValidFolder(obsoleteFolder))
             {
@@ -1338,14 +1338,7 @@ namespace FMODUnity
 
         public static string WritableAssetPath(string cacheAssetName)
         {
-            if (RuntimeUtils.PluginBasePath.StartsWith("Assets/"))
-            {
-                return $"{RuntimeUtils.PluginBasePath}/Cache/Editor/{cacheAssetName}.asset";
-            }
-            else
-            {
-                return $"{RuntimeUtils.PluginBasePathDefault}/Cache/Editor/{cacheAssetName}.asset";
-            }
+            return $"{RuntimeUtils.PluginInstallPath}/Cache/Editor/{cacheAssetName}.asset";
         }
 
 #if FMOD_SERIALIZE_GUID_ONLY
@@ -1370,12 +1363,8 @@ namespace FMODUnity
 
     public class StagingSystem
     {
-        private static string WritableFMODFolder =>
-            RuntimeUtils.PluginBasePath.StartsWith("Assets/")
-                ? RuntimeUtils.PluginBasePath
-                : RuntimeUtils.PluginBasePathDefault;
-        private static string PlatformsFolder => $"{WritableFMODFolder}/platforms";
-        private static string StagingFolder => $"{WritableFMODFolder}/staging";
+        private static string PlatformsFolder => $"{RuntimeUtils.PluginInstallPath}/platforms";
+        private static string StagingFolder => $"{RuntimeUtils.PluginInstallPath}/staging";
         private const string AnyCPU = "AnyCPU";
 
         private static readonly LibInfo[] LibrariesToUpdate = {

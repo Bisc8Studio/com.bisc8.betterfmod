@@ -732,7 +732,7 @@ namespace FMODUnity
     {
 #if UNITY_EDITOR
         private const string RegisterStaticPluginsAssetPathRelative =
-        "/BISC8/BetterFMOD/Cache/fmod_register_static_plugins.cpp";
+        "/BISC8/BetterFMOD/FMOD/Cache/fmod_register_static_plugins.cpp";
 
         private const string RegisterStaticPluginsAssetPathFull =
             "Assets" + RegisterStaticPluginsAssetPathRelative;
@@ -748,7 +748,7 @@ namespace FMODUnity
             yield return Application.dataPath + RegisterStaticPluginsAssetPathRelative;
 
             yield return Application.dataPath +
-                "/BISC8/BetterFMOD/src/Runtime/fmod_static_plugin_support.h";
+                "/BISC8/BetterFMOD/FMOD/src/Runtime/fmod_static_plugin_support.h";
         }
 
         public static void CleanIl2CppArgs()
