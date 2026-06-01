@@ -45,6 +45,7 @@ public static class FMODInstaller
         CopyFMOD();
         CreateFMODFolders();
         CopyPrefabs();
+        DeletePackageFMOD();
 
         AssetDatabase.Refresh();
 
@@ -82,7 +83,7 @@ public static class FMODInstaller
 
     static void CopyFMOD()
     {
-        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~";
+        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
         string dest = "Assets/BISC8/BetterFMOD/FMOD";
 
         if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>($"{dest}/FMODUnity.asmdef") != null)
@@ -92,6 +93,28 @@ public static class FMODInstaller
         }
 
         CopyDirectory(source, dest);
+    }
+
+    static void DeletePackageFMOD()
+    {
+        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+        string sourceMeta = $"{source}.meta";
+        string installedMarker = "Assets/BISC8/BetterFMOD/FMOD/FMODUnity.asmdef";
+
+        if (!File.Exists(installedMarker))
+        {
+            Debug.LogWarning("[BISC8 FMOD] FMOD was not removed from Packages because the Assets installation was not found.");
+            return;
+        }
+
+        if (Directory.Exists(source))
+            FileUtil.DeleteFileOrDirectory(source);
+
+        if (File.Exists(sourceMeta))
+            FileUtil.DeleteFileOrDirectory(sourceMeta);
+
+        if (Directory.Exists(source))
+            Debug.LogWarning("[BISC8 FMOD] Could not remove FMOD from Packages. Remove it manually to avoid duplicate FMOD installations.");
     }
 
     static void CopyDirectory(string source, string dest)
