@@ -5,6 +5,7 @@ using UnityEngine;
 public static class FMODInstaller
 {
     private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
+    private const string PackagePath = "Packages/com.bisc8.betterfmod";
 
     static FMODInstaller()
     {
@@ -28,13 +29,25 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD recommends creating the default folder structure now.\n\nCreate folders?",
-            "Create",
+            "BISC8 FMOD needs to copy its assets to your project.\n\nThis will create the folder structure and copy prefabs to Assets/BISC8/BetterFMOD/.",
+            "Setup",
             "Not now"
         );
 
         if (create)
-            CreateFolders();
+            RunSetup();
+    }
+
+    static void RunSetup()
+    {
+        CreateFolders();
+        CopyPrefabs();
+
+        AssetDatabase.Refresh();
+
+        EditorPrefs.SetBool(HasSetupKey, true);
+
+        Debug.Log("[BISC8 FMOD] Setup complete. Assets copied to Assets/BISC8/BetterFMOD/");
     }
 
     static void CreateFolders()
@@ -47,11 +60,19 @@ public static class FMODInstaller
 
         if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Lists"))
             AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "Lists");
+    }
 
-        AssetDatabase.Refresh();
+    static void CopyPrefabs()
+    {
+        string source = $"{PackagePath}/Runtime/FmodSystem/Prefabs_FMOD";
+        string dest = "Assets/BISC8/BetterFMOD/Prefabs";
 
-        EditorPrefs.SetBool(HasSetupKey, true);
+        if (AssetDatabase.IsValidFolder(dest))
+        {
+            Debug.Log("[BISC8 FMOD] Prefabs folder already exists, skipping copy.");
+            return;
+        }
 
-        Debug.Log("[BISC8 FMOD] Setup complete. Folders created at Assets/BISC8/BetterFMOD/");
+        FileUtil.CopyFileOrDirectory(source, dest);
     }
 }
