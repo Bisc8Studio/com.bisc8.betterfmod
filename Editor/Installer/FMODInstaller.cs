@@ -1,5 +1,7 @@
 using UnityEditor;
+using UnityEditor.PackageManager;
 using UnityEngine;
+using System;
 using System.IO;
 
 [InitializeOnLoad]
@@ -7,6 +9,9 @@ public static class FMODInstaller
 {
     private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
     private const string PackagePath = "Packages/com.bisc8.betterfmod";
+    private const string PackageFMODRelativePath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+    private const string InstalledFMODPath = "Assets/BISC8/BetterFMOD/FMOD";
+    private const string InstalledFMODMarker = InstalledFMODPath + "/FMODUnity.asmdef";
 
     static FMODInstaller()
     {
@@ -20,10 +25,16 @@ public static class FMODInstaller
 
         SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
 
-        if (EditorPrefs.GetBool(HasSetupKey, false))
+        if (EditorPrefs.GetBool(HasSetupKey, false) && IsFMODInstalledOnlyInAssets())
             return;
 
         ShowSetupDialog();
+    }
+
+    [MenuItem("BISC8 FMOD/Install FMOD In Assets")]
+    public static void InstallFMODInAssets()
+    {
+        RunSetup();
     }
 
     static void ShowSetupDialog()
@@ -49,9 +60,13 @@ public static class FMODInstaller
 
         AssetDatabase.Refresh();
 
-        EditorPrefs.SetBool(HasSetupKey, true);
+        bool installedOnlyInAssets = IsFMODInstalledOnlyInAssets();
+        EditorPrefs.SetBool(HasSetupKey, installedOnlyInAssets);
 
-        Debug.Log("[BISC8 FMOD] Setup complete. FMOD installed in Assets/BISC8/BetterFMOD/FMOD/");
+        if (installedOnlyInAssets)
+            Debug.Log("[BISC8 FMOD] Setup complete. FMOD installed only in Assets/BISC8/BetterFMOD/FMOD/");
+        else
+            Debug.LogWarning("[BISC8 FMOD] Setup copied FMOD to Assets, but the package copy still exists. Remove the package FMOD folder to avoid duplicates.");
     }
 
     static void CreateFolders()
@@ -68,27 +83,25 @@ public static class FMODInstaller
 
     static void CreateFMODFolders()
     {
-        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD"))
-            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "FMOD");
-
-        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD/Resources"))
-            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/FMOD", "Resources");
-
-        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD/Cache"))
-            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/FMOD", "Cache");
-
-        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/FMOD/Cache/Editor"))
-            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/FMOD/Cache", "Editor");
+        Directory.CreateDirectory(InstalledFMODPath);
+        Directory.CreateDirectory(InstalledFMODPath + "/Resources");
+        Directory.CreateDirectory(InstalledFMODPath + "/Cache/Editor");
     }
 
     static void CopyFMOD()
     {
-        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
-        string dest = "Assets/BISC8/BetterFMOD/FMOD";
+        string source = GetPackageFMODFullPath();
+        string dest = InstalledFMODPath;
 
-        if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>($"{dest}/FMODUnity.asmdef") != null)
+        if (File.Exists(InstalledFMODMarker))
         {
             Debug.Log("[BISC8 FMOD] FMOD folder already installed, skipping copy.");
+            return;
+        }
+
+        if (!Directory.Exists(source))
+        {
+            Debug.LogError($"[BISC8 FMOD] Package FMOD folder not found: {source}");
             return;
         }
 
@@ -97,24 +110,53 @@ public static class FMODInstaller
 
     static void DeletePackageFMOD()
     {
-        string source = $"{PackagePath}/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+        string source = GetPackageFMODFullPath();
         string sourceMeta = $"{source}.meta";
-        string installedMarker = "Assets/BISC8/BetterFMOD/FMOD/FMODUnity.asmdef";
 
-        if (!File.Exists(installedMarker))
+        if (!File.Exists(InstalledFMODMarker))
         {
             Debug.LogWarning("[BISC8 FMOD] FMOD was not removed from Packages because the Assets installation was not found.");
             return;
         }
 
-        if (Directory.Exists(source))
-            FileUtil.DeleteFileOrDirectory(source);
+        try
+        {
+            if (Directory.Exists(source))
+                Directory.Delete(source, true);
 
-        if (File.Exists(sourceMeta))
-            FileUtil.DeleteFileOrDirectory(sourceMeta);
+            if (File.Exists(sourceMeta))
+                File.Delete(sourceMeta);
+        }
+        catch (IOException exception)
+        {
+            Debug.LogWarning($"[BISC8 FMOD] Could not remove package FMOD folder: {exception.Message}");
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            Debug.LogWarning($"[BISC8 FMOD] Could not remove package FMOD folder: {exception.Message}");
+        }
 
         if (Directory.Exists(source))
             Debug.LogWarning("[BISC8 FMOD] Could not remove FMOD from Packages. Remove it manually to avoid duplicate FMOD installations.");
+    }
+
+    static bool IsFMODInstalledOnlyInAssets()
+    {
+        return File.Exists(InstalledFMODMarker) && !Directory.Exists(GetPackageFMODFullPath());
+    }
+
+    static string GetPackageFMODFullPath()
+    {
+        return Path.Combine(GetPackageRootFullPath(), PackageFMODRelativePath);
+    }
+
+    static string GetPackageRootFullPath()
+    {
+        PackageInfo packageInfo = PackageInfo.FindForAssetPath(PackagePath);
+        if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
+            return packageInfo.resolvedPath;
+
+        return Path.GetFullPath(PackagePath);
     }
 
     static void CopyDirectory(string source, string dest)
