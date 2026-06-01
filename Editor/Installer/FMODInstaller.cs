@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using System;
 using System.IO;
@@ -152,7 +151,8 @@ public static class FMODInstaller
 
     static string GetPackageRootFullPath()
     {
-        PackageInfo packageInfo = PackageInfo.FindForAssetPath(PackagePath);
+        UnityEditor.PackageManager.PackageInfo packageInfo =
+            UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
         if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
             return packageInfo.resolvedPath;
 
