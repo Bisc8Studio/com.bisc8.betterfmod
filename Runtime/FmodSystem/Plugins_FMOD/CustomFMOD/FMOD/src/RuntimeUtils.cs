@@ -308,8 +308,6 @@ namespace FMODUnity
     public static class RuntimeUtils
     {
 #if UNITY_EDITOR
-        private static string pluginBasePath;
-
         public const string BaseFolderGUID = "06ae579381df01a4a87bb149dec89954";
         public const string PluginInstallPath = "Assets/BISC8/BetterFMOD/FMOD";
         public const string PluginBasePathDefault = PluginInstallPath;
@@ -318,20 +316,7 @@ namespace FMODUnity
         {
             get
             {
-                if (pluginBasePath == null)
-                {
-                    pluginBasePath = AssetDatabase.GUIDToAssetPath(BaseFolderGUID);
-
-                    if (string.IsNullOrEmpty(pluginBasePath))
-                    {
-                        pluginBasePath = PluginBasePathDefault;
-
-                        DebugLogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
-                            BaseFolderGUID, pluginBasePath);
-                    }
-                }
-
-                return pluginBasePath;
+                return PluginInstallPath;
             }
         }
 #endif

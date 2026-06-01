@@ -92,12 +92,6 @@ public static class FMODInstaller
         string source = GetPackageFMODFullPath();
         string dest = InstalledFMODPath;
 
-        if (File.Exists(InstalledFMODMarker))
-        {
-            Debug.Log("[BISC8 FMOD] FMOD folder already installed, skipping copy.");
-            return;
-        }
-
         if (!Directory.Exists(source))
         {
             Debug.LogError($"[BISC8 FMOD] Package FMOD folder not found: {source}");
@@ -105,6 +99,7 @@ public static class FMODInstaller
         }
 
         CopyDirectory(source, dest);
+        Debug.Log("[BISC8 FMOD] FMOD folder synchronized to Assets/BISC8/BetterFMOD/FMOD.");
     }
 
     static void DeletePackageFMOD()
@@ -174,10 +169,7 @@ public static class FMODInstaller
             string relativePath = file.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
             string target = Path.Combine(dest, relativePath);
 
-            if (File.Exists(target))
-                continue;
-
-            File.Copy(file, target);
+            File.Copy(file, target, true);
         }
     }
 
