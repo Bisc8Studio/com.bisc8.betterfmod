@@ -925,7 +925,7 @@ namespace FMODUnity
         private struct TaskGenerator
         {
             private const string AssetsFolder = "Assets";
-            private const string FMODRoot = "Assets/BISC8/BetterFMOD";
+            private const string FMODRoot = "Assets/BISC8/BetterFMOD/FMOD";
             private const string FMODSource = FMODRoot + "/src";
 
             private static readonly string[] BaseFolders = {
@@ -962,8 +962,8 @@ namespace FMODUnity
         };
 
             private static readonly string[] fmodFoldersToCleanUp = {
-        "Assets/BISC8/BetterFMOD/Runtime",
-        "Assets/BISC8/BetterFMOD/lib",
+        "Assets/BISC8/BetterFMOD/FMOD/Runtime",
+        "Assets/BISC8/BetterFMOD/FMOD/lib",
         };
 
             private static readonly string[] publicFoldersToCleanUp = {
@@ -1114,7 +1114,7 @@ namespace FMODUnity
                             string filename = Path.GetFileName(sourcePath);
 
                             AddMoveTask(
-                                sourcePath, $"{RuntimeUtils.PluginBasePath}/{folder.destination}/{filename}");
+                                sourcePath, $"{RuntimeUtils.PluginBasePathDefault}/{folder.destination}/{filename}");
 
                         }
 
@@ -1128,7 +1128,7 @@ namespace FMODUnity
                 foreach (MoveRecord asset in looseAssets)
                 {
                     string filename = Path.GetFileName(asset.source);
-                    string destinationPath = $"{RuntimeUtils.PluginBasePath}/{asset.destination}/{filename}";
+                    string destinationPath = $"{RuntimeUtils.PluginBasePathDefault}/{asset.destination}/{filename}";
 
                     if (AssetExists(asset.source) && !AssetExists(destinationPath))
                     {
@@ -1177,7 +1177,7 @@ namespace FMODUnity
             {
                 foreach (string path in FindFileAssets(FMODRoot).Where(p => p.EndsWith(".cs")))
                 {
-                    string destinationPath = $"{RuntimeUtils.PluginBasePath}/src/{Path.GetFileName(path)}";
+                    string destinationPath = $"{RuntimeUtils.PluginBasePathDefault}/src/{Path.GetFileName(path)}";
 
                     if (!AssetExists(destinationPath))
                     {

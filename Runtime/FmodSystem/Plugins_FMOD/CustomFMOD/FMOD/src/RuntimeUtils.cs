@@ -311,7 +311,7 @@ namespace FMODUnity
         private static string pluginBasePath;
 
         public const string BaseFolderGUID = "06ae579381df01a4a87bb149dec89954";
-        public const string PluginBasePathDefault = "Assets/BISC8/BetterFMOD";
+        public const string PluginBasePathDefault = "Assets/BISC8/BetterFMOD/FMOD";
 
         public static string PluginBasePath
         {
@@ -319,14 +319,21 @@ namespace FMODUnity
             {
                 if (pluginBasePath == null)
                 {
-                    pluginBasePath = AssetDatabase.GUIDToAssetPath(BaseFolderGUID);
+                    string guidPath = AssetDatabase.GUIDToAssetPath(BaseFolderGUID);
 
-                    if (string.IsNullOrEmpty(pluginBasePath))
+                    if (string.IsNullOrEmpty(guidPath) || !guidPath.StartsWith("Assets/"))
                     {
                         pluginBasePath = PluginBasePathDefault;
 
-                        DebugLogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
-                            BaseFolderGUID, pluginBasePath);
+                        if (string.IsNullOrEmpty(guidPath))
+                        {
+                            DebugLogWarningFormat("FMOD: Couldn't find base folder with GUID {0}; defaulting to {1}",
+                                BaseFolderGUID, pluginBasePath);
+                        }
+                    }
+                    else
+                    {
+                        pluginBasePath = guidPath;
                     }
                 }
 
@@ -637,7 +644,7 @@ namespace FMODUnity
             }
             else
             {
-                return $"Assets/BISC8/BetterFMOD/{subPath}.asset";
+                return $"{PluginBasePathDefault}/{subPath}.asset";
             }
         }
 #endif

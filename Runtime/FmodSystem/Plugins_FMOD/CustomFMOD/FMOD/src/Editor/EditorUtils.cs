@@ -1312,7 +1312,7 @@ namespace FMODUnity
                 return;
             }
 
-            string obsoleteFolder = $"{RuntimeUtils.PluginBasePath}/obsolete";
+            string obsoleteFolder = $"{RuntimeUtils.PluginBasePathDefault}/obsolete";
 
             if (AssetDatabase.IsValidFolder(obsoleteFolder))
             {
