@@ -4,7 +4,6 @@ using UnityEngine;
 public static class FMODPrefabMenu
 {
     private const string PackagePrefabsPath = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Prefabs_FMOD";
-    private const string InstalledPrefabsPath = "Assets/BISC8/BetterFMOD/Prefabs";
 
     [MenuItem("GameObject/BISC8 FMOD/Fmod Emitter Mng", false, 10)]
     private static void CreateFmodEmitter(MenuCommand command)
@@ -52,6 +51,6 @@ public static class FMODPrefabMenu
         if (prefab != null)
             return prefab;
 
-        return AssetDatabase.LoadAssetAtPath<GameObject>($"{InstalledPrefabsPath}/{prefabFileName}");
+        return null;
     }
 }
