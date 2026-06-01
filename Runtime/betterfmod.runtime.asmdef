@@ -7,7 +7,9 @@
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
-  "defineConstraints": [],
+  "defineConstraints": [
+    "BISC8_BETTERFMOD_INSTALLED"
+  ],
   "references": [
     "FMODUnity"
   ],

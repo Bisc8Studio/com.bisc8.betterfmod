@@ -5,14 +5,14 @@
     "Editor"
   ],
   "references": [
-    "BISC8.BetterFMOD.Runtime",
-    "FMODUnity",
-    "FMODUnityEditor"
+    "BISC8.BetterFMOD.Runtime"
   ],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
-  "defineConstraints": [],
+  "defineConstraints": [
+    "BISC8_BETTERFMOD_INSTALLED"
+  ],
   "versionDefines": []
 }

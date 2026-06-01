@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 using System;
 using System.IO;
@@ -11,6 +12,7 @@ public static class FMODInstaller
     private const string PackageFMODRelativePath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~";
     private const string InstalledFMODPath = "Assets/BISC8/BetterFMOD/FMOD";
     private const string InstalledFMODMarker = InstalledFMODPath + "/FMODUnity.asmdef";
+    private const string InstalledDefine = "BISC8_BETTERFMOD_INSTALLED";
 
     static FMODInstaller()
     {
@@ -56,6 +58,7 @@ public static class FMODInstaller
         CreateFMODFolders();
 
         AssetDatabase.Refresh();
+        EnableInstalledDefine();
 
         bool installedOnlyInAssets = IsFMODInstalledOnlyInAssets();
         EditorPrefs.SetBool(HasSetupKey, installedOnlyInAssets);
@@ -138,6 +141,23 @@ public static class FMODInstaller
 
             File.Copy(file, target, true);
         }
+    }
+
+    static void EnableInstalledDefine()
+    {
+        BuildTargetGroup buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
+        string defines = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
+
+        if (defines.Contains(InstalledDefine))
+            return;
+
+        defines = string.IsNullOrWhiteSpace(defines)
+            ? InstalledDefine
+            : $"{defines};{InstalledDefine}";
+
+        PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, defines);
+        Debug.Log($"[BISC8 FMOD] Enabled scripting define: {InstalledDefine}");
     }
 
 }
