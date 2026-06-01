@@ -50,8 +50,6 @@ public class CreateFmodListEditor : Editor
         AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-
-        EditorUtility.FocusProjectWindow();
-        Selection.activeObject = asset;
+        EditorGUIUtility.PingObject(asset);
     }
 }

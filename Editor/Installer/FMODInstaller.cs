@@ -30,7 +30,7 @@ public static class FMODInstaller
         ShowSetupDialog();
     }
 
-    [MenuItem("BISC8 FMOD/Install FMOD In Assets")]
+    [MenuItem("FMOD/BISC8/Install FMOD In Assets")]
     public static void InstallFMODInAssets()
     {
         RunSetup();
