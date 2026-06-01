@@ -1344,7 +1344,7 @@ namespace FMODUnity
             }
             else
             {
-                return $"Assets/Plugins/FMOD/Cache/Editor/{cacheAssetName}.asset";
+                return $"{RuntimeUtils.PluginBasePathDefault}/Cache/Editor/{cacheAssetName}.asset";
             }
         }
 
@@ -1370,8 +1370,12 @@ namespace FMODUnity
 
     public class StagingSystem
     {
-        private static string PlatformsFolder => $"{RuntimeUtils.PluginBasePath}/platforms";
-        private static string StagingFolder => $"{RuntimeUtils.PluginBasePath}/staging";
+        private static string WritableFMODFolder =>
+            RuntimeUtils.PluginBasePath.StartsWith("Assets/")
+                ? RuntimeUtils.PluginBasePath
+                : RuntimeUtils.PluginBasePathDefault;
+        private static string PlatformsFolder => $"{WritableFMODFolder}/platforms";
+        private static string StagingFolder => $"{WritableFMODFolder}/staging";
         private const string AnyCPU = "AnyCPU";
 
         private static readonly LibInfo[] LibrariesToUpdate = {

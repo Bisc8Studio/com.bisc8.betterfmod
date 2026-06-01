@@ -99,14 +99,14 @@ namespace FMODUnity
 
         private const string IgnoreFileText =
 @"# Never ignore DLLs in the FMOD subfolder.
-!/[Aa]ssets/Plugins/FMOD/**/lib/*
+!/[Aa]ssets/BISC8/BetterFMOD/**/lib/*
 
 # Don't ignore images and gizmos used by FMOD in the Unity Editor.
 !/[Aa]ssets/Gizmos/FMOD/*
 !/[Aa]ssets/Editor Default Resources/FMOD/*
 
 # Ignore the Cache folder since it is updated locally.
-/[Aa]ssets/Plugins/FMOD/Cache/*
+/[Aa]ssets/BISC8/BetterFMOD/Cache/*
 
 # Ignore bank files in the StreamingAssets folder.
 /[Aa]ssets/StreamingAssets/**/*.bank
@@ -117,8 +117,8 @@ namespace FMODUnity
 fmod_editor.log";
 
         private const string GitAttributesText =
-@"Assets/Plugins/FMOD/**/*.bundle text eol=lf
-Assets/Plugins/FMOD/**/Info.plist text eol=lf";
+@"Assets/BISC8/BetterFMOD/**/*.bundle text eol=lf
+Assets/BISC8/BetterFMOD/**/Info.plist text eol=lf";
 
         private enum PAGES : int
         {

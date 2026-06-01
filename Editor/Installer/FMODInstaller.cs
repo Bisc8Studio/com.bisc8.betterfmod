@@ -60,6 +60,15 @@ public static class FMODInstaller
 
         if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Lists"))
             AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "Lists");
+
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Resources"))
+            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "Resources");
+
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Cache"))
+            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD", "Cache");
+
+        if (!AssetDatabase.IsValidFolder("Assets/BISC8/BetterFMOD/Cache/Editor"))
+            AssetDatabase.CreateFolder("Assets/BISC8/BetterFMOD/Cache", "Editor");
     }
 
     static void CopyPrefabs()

@@ -22,10 +22,14 @@ namespace FMODUnity
         // This is used to find the platform that implements the current Unity build target.
         private Dictionary<BuildTarget, Platform> PlatformForBuildTarget = new Dictionary<BuildTarget, Platform>();
 
-        private static string FMODFolderFull => RuntimeUtils.PluginBasePath;
+        private static string FMODFolderFull => WritableFMODFolder;
+        private static string WritableFMODFolder =>
+            RuntimeUtils.PluginBasePath.StartsWith("Assets/")
+                ? RuntimeUtils.PluginBasePath
+                : RuntimeUtils.PluginBasePathDefault;
 
         private const string CacheFolderName = "Cache";
-        private static string CacheFolderRelative => $"{RuntimeUtils.PluginBasePath}/{CacheFolderName}";
+        private static string CacheFolderRelative => $"{WritableFMODFolder}/{CacheFolderName}";
         private static string CacheFolderFull => $"{FMODFolderFull}/{CacheFolderName}";
 
         private const string RegisterStaticPluginsFile = "RegisterStaticPlugins.cs";

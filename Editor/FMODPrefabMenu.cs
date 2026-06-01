@@ -6,19 +6,19 @@ public static class FMODPrefabMenu
     private const string PackagePrefabsPath = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Prefabs_FMOD";
     private const string InstalledPrefabsPath = "Assets/BISC8/BetterFMOD/Prefabs";
 
-    [MenuItem("GameObject/BISC8FMOD/Fmod Emitter Mng", false, 10)]
+    [MenuItem("GameObject/BISC8 FMOD/Fmod Emitter Mng", false, 10)]
     private static void CreateFmodEmitter(MenuCommand command)
     {
         CreatePrefab("FmodEmitter_Mng.prefab", command);
     }
 
-    [MenuItem("GameObject/BISC8FMOD/Fmod Slider Mng", false, 11)]
+    [MenuItem("GameObject/BISC8 FMOD/Fmod Slider Mng", false, 11)]
     private static void CreateFmodSlider(MenuCommand command)
     {
         CreatePrefab("FmodSlider_Mng.prefab", command);
     }
 
-    [MenuItem("GameObject/BISC8FMOD/Fmod System OUT", false, 12)]
+    [MenuItem("GameObject/BISC8 FMOD/Fmod System OUT", false, 12)]
     private static void CreateFmodSystemOut(MenuCommand command)
     {
         CreatePrefab("Fmod_System OUT.prefab", command);
