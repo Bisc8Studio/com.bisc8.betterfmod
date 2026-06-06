@@ -1,5 +1,4 @@
 using UnityEditor;
-using UnityEditor.Build;
 using UnityEngine;
 using System;
 using System.IO;
@@ -11,8 +10,9 @@ public static class FMODInstaller
     private const string PackagePath = "Packages/com.bisc8.betterfmod";
     private const string PackageFMODRelativePath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~";
     private const string InstalledFMODPath = "Assets/BISC8/BetterFMOD/FMOD";
-    private const string InstalledFMODMarker = InstalledFMODPath + "/FMODUnity.asmdef";
     private const string InstalledDefine = "BISC8_BETTERFMOD_INSTALLED";
+
+    private static bool _checked;
 
     static FMODInstaller()
     {
@@ -21,12 +21,15 @@ public static class FMODInstaller
 
     static void CheckSetup()
     {
-        if (SessionState.GetBool("BISC8_FMOD_POPUP_SHOWN", false))
+        if (_checked)
             return;
 
-        SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
+        _checked = true;
 
-        if (EditorPrefs.GetBool(HasSetupKey, false) && IsFMODInstalledOnlyInAssets())
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            return;
+
+        if (EditorPrefs.GetBool(HasSetupKey, false))
             return;
 
         ShowSetupDialog();
@@ -42,7 +45,7 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD needs to install FMOD assets into your project.\n\nThis will create the folder structure in Assets/BISC8/BetterFMOD/.",
+            "Install FMOD assets into Assets/BISC8/BetterFMOD?",
             "Setup",
             "Not now"
         );
@@ -53,20 +56,24 @@ public static class FMODInstaller
 
     static void RunSetup()
     {
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            return;
+
         CreateFolders();
-        CopyFMOD();
+
+        if (!CopyFMOD())
+        {
+            EditorPrefs.DeleteKey(HasSetupKey);
+            return;
+        }
+
         CreateFMODFolders();
 
         AssetDatabase.Refresh();
+
         EnableInstalledDefine();
 
-        bool installedOnlyInAssets = IsFMODInstalledOnlyInAssets();
-        EditorPrefs.SetBool(HasSetupKey, installedOnlyInAssets);
-
-        if (installedOnlyInAssets)
-            Debug.Log("[BISC8 FMOD] Setup complete. FMOD installed only in Assets/BISC8/BetterFMOD/FMOD/");
-        else
-            Debug.LogWarning("[BISC8 FMOD] Setup copied FMOD to Assets, but the active package FMOD folder still exists. It should be named FMOD~ in the package.");
+        EditorPrefs.SetBool(HasSetupKey, true);
     }
 
     static void CreateFolders()
@@ -88,36 +95,31 @@ public static class FMODInstaller
         Directory.CreateDirectory(InstalledFMODPath + "/Cache/Editor");
     }
 
-    static void CopyFMOD()
+    static bool CopyFMOD()
     {
         string source = GetPackageFMODFullPath();
         string dest = InstalledFMODPath;
 
         if (!Directory.Exists(source))
         {
-            Debug.LogError($"[BISC8 FMOD] Package FMOD folder not found: {source}");
-            return;
+            Debug.LogError($"[BISC8 FMOD] Missing source: {source}");
+            return false;
         }
 
         CopyDirectory(source, dest);
-        Debug.Log("[BISC8 FMOD] FMOD folder synchronized to Assets/BISC8/BetterFMOD/FMOD.");
-    }
-
-    static bool IsFMODInstalledOnlyInAssets()
-    {
-        string activePackageFMODPath = Path.Combine(GetPackageRootFullPath(), "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD");
-        return File.Exists(InstalledFMODMarker) && !Directory.Exists(activePackageFMODPath);
+        return true;
     }
 
     static string GetPackageFMODFullPath()
     {
-        return Path.Combine(GetPackageRootFullPath(), PackageFMODRelativePath);
+        string root = GetPackageRootFullPath();
+        return Path.Combine(root, PackageFMODRelativePath);
     }
 
     static string GetPackageRootFullPath()
     {
-        UnityEditor.PackageManager.PackageInfo packageInfo =
-            UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
+        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
+
         if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
             return packageInfo.resolvedPath;
 
@@ -137,17 +139,16 @@ public static class FMODInstaller
         foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
         {
             string relativePath = file.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            string target = Path.Combine(dest, relativePath);
-
-            File.Copy(file, target, true);
+            File.Copy(file, Path.Combine(dest, relativePath), true);
         }
     }
 
     static void EnableInstalledDefine()
     {
-        BuildTargetGroup buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-        NamedBuildTarget namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
-        string defines = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
+        var group = EditorUserBuildSettings.selectedBuildTargetGroup;
+        var named = NamedBuildTarget.FromBuildTargetGroup(group);
+
+        string defines = PlayerSettings.GetScriptingDefineSymbols(named);
 
         if (defines.Contains(InstalledDefine))
             return;
@@ -156,8 +157,6 @@ public static class FMODInstaller
             ? InstalledDefine
             : $"{defines};{InstalledDefine}";
 
-        PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, defines);
-        Debug.Log($"[BISC8 FMOD] Enabled scripting define: {InstalledDefine}");
+        PlayerSettings.SetScriptingDefineSymbols(named, defines);
     }
-
 }
