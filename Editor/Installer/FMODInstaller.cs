@@ -132,31 +132,33 @@ public static class FMODInstaller
 
         foreach (string directory in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
         {
-            string relativePath = directory.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string relativePath = directory.Substring(source.Length)
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
             Directory.CreateDirectory(Path.Combine(dest, relativePath));
         }
 
         foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
         {
-            string relativePath = file.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string relativePath = file.Substring(source.Length)
+                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
             File.Copy(file, Path.Combine(dest, relativePath), true);
         }
     }
 
     static void EnableInstalledDefine()
     {
-        var group = EditorUserBuildSettings.selectedBuildTargetGroup;
-        var named = NamedBuildTarget.FromBuildTargetGroup(group);
+        BuildTargetGroup group = EditorUserBuildSettings.selectedBuildTargetGroup;
+        string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
 
-        string defines = PlayerSettings.GetScriptingDefineSymbols(named);
+        if (!defines.Contains(InstalledDefine))
+        {
+            defines = string.IsNullOrWhiteSpace(defines)
+                ? InstalledDefine
+                : $"{defines};{InstalledDefine}";
 
-        if (defines.Contains(InstalledDefine))
-            return;
-
-        defines = string.IsNullOrWhiteSpace(defines)
-            ? InstalledDefine
-            : $"{defines};{InstalledDefine}";
-
-        PlayerSettings.SetScriptingDefineSymbols(named, defines);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
+        }
     }
 }
