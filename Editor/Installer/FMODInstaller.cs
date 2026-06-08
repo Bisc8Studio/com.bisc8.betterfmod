@@ -1,4 +1,5 @@
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 using System;
 using System.IO;
@@ -7,12 +8,14 @@ using System.IO;
 public static class FMODInstaller
 {
     private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
+
     private const string PackagePath = "Packages/com.bisc8.betterfmod";
     private const string PackageFMODRelativePath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~";
-    private const string InstalledFMODPath = "Assets/BISC8/BetterFMOD/FMOD";
-    private const string InstalledDefine = "BISC8_BETTERFMOD_INSTALLED";
 
-    private static bool _checked;
+    private const string InstalledFMODPath = "Assets/BISC8/BetterFMOD/FMOD";
+    private const string InstalledMarkerFile = "Assets/BISC8/BetterFMOD/.installed";
+
+    private const string InstalledDefine = "BISC8_BETTERFMOD_INSTALLED";
 
     static FMODInstaller()
     {
@@ -21,16 +24,14 @@ public static class FMODInstaller
 
     static void CheckSetup()
     {
-        if (_checked)
-            return;
-
-        _checked = true;
-
-        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
-            return;
-
         if (EditorPrefs.GetBool(HasSetupKey, false))
             return;
+
+        if (File.Exists(InstalledMarkerFile))
+        {
+            EditorPrefs.SetBool(HasSetupKey, true);
+            return;
+        }
 
         ShowSetupDialog();
     }
@@ -45,7 +46,7 @@ public static class FMODInstaller
     {
         bool create = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Install FMOD assets into Assets/BISC8/BetterFMOD?",
+            "BISC8 FMOD needs to install FMOD assets into your project.\n\nThis will create the folder structure in Assets/BISC8/BetterFMOD/FMOD.",
             "Setup",
             "Not now"
         );
@@ -56,24 +57,24 @@ public static class FMODInstaller
 
     static void RunSetup()
     {
-        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
-            return;
-
         CreateFolders();
-
-        if (!CopyFMOD())
-        {
-            EditorPrefs.DeleteKey(HasSetupKey);
-            return;
-        }
-
         CreateFMODFolders();
+        CopyFMOD();
 
         AssetDatabase.Refresh();
 
         EnableInstalledDefine();
+        MarkInstalled();
 
         EditorPrefs.SetBool(HasSetupKey, true);
+
+        Debug.Log("[BISC8 FMOD] Setup complete.");
+    }
+
+    static void MarkInstalled()
+    {
+        Directory.CreateDirectory("Assets/BISC8/BetterFMOD");
+        File.WriteAllText(InstalledMarkerFile, "installed");
     }
 
     static void CreateFolders()
@@ -91,29 +92,27 @@ public static class FMODInstaller
     static void CreateFMODFolders()
     {
         Directory.CreateDirectory(InstalledFMODPath);
-        Directory.CreateDirectory(InstalledFMODPath + "/Resources");
-        Directory.CreateDirectory(InstalledFMODPath + "/Cache/Editor");
+        Directory.CreateDirectory(Path.Combine(InstalledFMODPath, "Resources"));
+        Directory.CreateDirectory(Path.Combine(InstalledFMODPath, "Cache/Editor"));
     }
 
-    static bool CopyFMOD()
+    static void CopyFMOD()
     {
         string source = GetPackageFMODFullPath();
         string dest = InstalledFMODPath;
 
         if (!Directory.Exists(source))
         {
-            Debug.LogError($"[BISC8 FMOD] Missing source: {source}");
-            return false;
+            Debug.LogError("[BISC8 FMOD] Package FMOD folder not found: " + source);
+            return;
         }
 
         CopyDirectory(source, dest);
-        return true;
     }
 
     static string GetPackageFMODFullPath()
     {
-        string root = GetPackageRootFullPath();
-        return Path.Combine(root, PackageFMODRelativePath);
+        return Path.Combine(GetPackageRootFullPath(), PackageFMODRelativePath);
     }
 
     static string GetPackageRootFullPath()
@@ -130,35 +129,35 @@ public static class FMODInstaller
     {
         Directory.CreateDirectory(dest);
 
-        foreach (string directory in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
+        foreach (string dir in Directory.GetDirectories(source, "*", SearchOption.AllDirectories))
         {
-            string relativePath = directory.Substring(source.Length)
-                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-
-            Directory.CreateDirectory(Path.Combine(dest, relativePath));
+            string relative = dir.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            Directory.CreateDirectory(Path.Combine(dest, relative));
         }
 
         foreach (string file in Directory.GetFiles(source, "*", SearchOption.AllDirectories))
         {
-            string relativePath = file.Substring(source.Length)
-                .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string relative = file.Substring(source.Length).TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            string target = Path.Combine(dest, relative);
 
-            File.Copy(file, Path.Combine(dest, relativePath), true);
+            File.Copy(file, target, true);
         }
     }
 
     static void EnableInstalledDefine()
     {
         BuildTargetGroup group = EditorUserBuildSettings.selectedBuildTargetGroup;
-        string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+        NamedBuildTarget named = NamedBuildTarget.FromBuildTargetGroup(group);
 
-        if (!defines.Contains(InstalledDefine))
-        {
-            defines = string.IsNullOrWhiteSpace(defines)
-                ? InstalledDefine
-                : $"{defines};{InstalledDefine}";
+        string defines = PlayerSettings.GetScriptingDefineSymbols(named);
 
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, defines);
-        }
+        if (defines.Contains(InstalledDefine))
+            return;
+
+        defines = string.IsNullOrWhiteSpace(defines)
+            ? InstalledDefine
+            : defines + ";" + InstalledDefine;
+
+        PlayerSettings.SetScriptingDefineSymbols(named, defines);
     }
 }
