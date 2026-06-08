@@ -870,6 +870,11 @@ Assets/BISC8/BetterFMOD/FMOD/**/Info.plist text eol=lf";
             if (completed)
             {
                 Settings.Instance.HideSetupWizard = true;
+
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(Settings.Instance);
+                AssetDatabase.SaveAssets();
+#endif
             }
         }
 
