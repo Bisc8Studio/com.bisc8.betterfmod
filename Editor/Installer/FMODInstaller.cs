@@ -1,76 +1,191 @@
+using System;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
+
+[FilePath(StatePath, FilePathAttribute.Location.ProjectFolder)]
+internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerState>
+{
+    internal const string StatePath = "UserSettings/BISC8BetterFMODInstaller.asset";
+
+    [SerializeField]
+    private bool setupComplete;
+
+    internal bool SetupComplete => setupComplete;
+
+    internal void MarkSetupComplete()
+    {
+        setupComplete = true;
+        Save(true);
+    }
+}
 
 [InitializeOnLoad]
 public static class FMODInstaller
 {
-    private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
+    private const string PackagePath = "Packages/com.bisc8.betterfmod";
+    private const string PackageFMODPath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+    private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
+    private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
+    private const string InstalledMarkerPath = InstalledRootPath + "/.installed";
+    private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
+    private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
 
     static FMODInstaller()
     {
         EditorApplication.delayCall += CheckSetup;
     }
 
-    static void CheckSetup()
+    private static void CheckSetup()
     {
-        if (SessionState.GetBool("BISC8_FMOD_POPUP_SHOWN", false))
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            EditorApplication.delayCall += CheckSetup;
+            return;
+        }
+
+        if (IsSetupComplete())
             return;
 
-        SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
-
-        if (EditorPrefs.GetBool(HasSetupKey, false))
+        if (SessionState.GetBool(PopupShownKey, false))
             return;
 
+        SessionState.SetBool(PopupShownKey, true);
         ShowSetupDialog();
     }
 
-    static void ShowSetupDialog()
+    [MenuItem("Tools/BISC8 Better FMOD/Run Setup")]
+    public static void RunSetupFromMenu()
     {
-        bool create = EditorUtility.DisplayDialog(
+        RunSetup();
+    }
+
+    private static void ShowSetupDialog()
+    {
+        bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "BISC8 FMOD recommends creating the assets at this time.\n\nCreate FMODSystem assets now?",
-            "Create Assets",
+            "Install and configure FMOD in Assets/BISC8/BetterFMOD?",
+            "Setup",
             "Not now"
         );
 
-        if (create)
-            CreateAssets();
+        if (install)
+            RunSetup();
     }
 
-    static void CreateAssets()
+    private static void RunSetup()
     {
-        if (typeof(FMODUnity.RuntimeManager) == null)
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
         {
-            Debug.LogError("[BISC8 FMOD] FMOD not installed.");
+            Debug.LogWarning("[BISC8 FMOD] Wait for Unity to finish compiling before running setup.");
             return;
         }
 
-        string folder = "Assets/BISC8/BetterFMOD";
-        string path = folder + "/FMODSystem.asset";
+        string hiddenSourcePath = GetHiddenFMODSourcePath();
+        string activeSourcePath = GetActiveFMODSourcePath();
 
-        if (!AssetDatabase.IsValidFolder("Assets/BISC8"))
-            AssetDatabase.CreateFolder("Assets", "BISC8");
-
-        if (!AssetDatabase.IsValidFolder(folder))
-            AssetDatabase.CreateFolder("Assets/BISC8", "BetterFMOD");
-
-        var existing = AssetDatabase.LoadAssetAtPath<FMODSystem>(path);
-        if (existing != null)
+        if (hiddenSourcePath == null && activeSourcePath == null)
         {
-            Debug.Log("[BISC8 FMOD] Already exists.");
-            EditorPrefs.SetBool(HasSetupKey, true);
+            Debug.LogError("[BISC8 FMOD] FMOD source folder was not found in the package.");
             return;
         }
 
-        var asset = ScriptableObject.CreateInstance<FMODSystem>();
-        AssetDatabase.CreateAsset(asset, path);
+        try
+        {
+            Directory.CreateDirectory(InstalledRootPath);
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
+            // Hidden package content must be copied into Assets. If it is already
+            // active in the package, copying it would create duplicate assemblies.
+            if (hiddenSourcePath != null)
+                CopyDirectory(hiddenSourcePath, InstalledFMODPath);
 
-        EditorPrefs.SetBool(HasSetupKey, true);
-        EditorPrefs.SetString("BISC8_FMOD_PATH", path);
+            File.WriteAllText(InstalledMarkerPath, "installed");
 
-        Debug.Log("[BISC8 FMOD] Setup complete.");
+            AssetDatabase.Refresh();
+            MarkSetupComplete();
+
+            Debug.Log("[BISC8 FMOD] Setup complete.");
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError("[BISC8 FMOD] Setup failed: " + exception.Message);
+        }
+    }
+
+    private static bool IsSetupComplete()
+    {
+        bool installationPresent =
+            Directory.Exists(InstalledFMODPath) ||
+            GetActiveFMODSourcePath() != null;
+
+        if (!installationPresent)
+            return false;
+
+        if (FMODInstallerState.instance.SetupComplete)
+            return true;
+
+        if (!File.Exists(InstalledMarkerPath))
+            return false;
+
+        MarkSetupComplete();
+        return true;
+    }
+
+    private static void MarkSetupComplete()
+    {
+        FMODInstallerState.instance.MarkSetupComplete();
+        EditorPrefs.SetBool(LegacySetupKey, true);
+    }
+
+    private static string GetHiddenFMODSourcePath()
+    {
+        string packageRoot = GetPackageRootPath();
+        string hiddenSource = Path.Combine(packageRoot, PackageFMODPath + "~");
+
+        return Directory.Exists(hiddenSource) ? hiddenSource : null;
+    }
+
+    private static string GetActiveFMODSourcePath()
+    {
+        string packageRoot = GetPackageRootPath();
+        string currentSource = Path.Combine(packageRoot, PackageFMODPath);
+
+        return Directory.Exists(currentSource) ? currentSource : null;
+    }
+
+    private static string GetPackageRootPath()
+    {
+        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
+
+        if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
+            return packageInfo.resolvedPath;
+
+        return Path.GetFullPath(PackagePath);
+    }
+
+    private static void CopyDirectory(string sourcePath, string destinationPath)
+    {
+        Directory.CreateDirectory(destinationPath);
+
+        foreach (string directory in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+        {
+            string relativePath = GetRelativePath(sourcePath, directory);
+            Directory.CreateDirectory(Path.Combine(destinationPath, relativePath));
+        }
+
+        foreach (string file in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
+        {
+            string relativePath = GetRelativePath(sourcePath, file);
+            string destinationFile = Path.Combine(destinationPath, relativePath);
+
+            Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
+            File.Copy(file, destinationFile, true);
+        }
+    }
+
+    private static string GetRelativePath(string rootPath, string path)
+    {
+        return path.Substring(rootPath.Length)
+            .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
     }
 }
