@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotChats">
+    <option name="panelChat">
+      <chat>
+        <option name="activeSessionId" value="04644757-e2cb-4853-9ec5-0a1ebe377c41" />
+        <option name="sessions">
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="77cd9885-0a67-41f0-8e51-131a9a23f9e4" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="claude-sonnet-4.6" />
+            <option name="status" value="Completed" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="7ca5c5b2-70df-4638-a0ae-df6f620619ca" />
+            <option name="modeId" value="file:///c%3A/snapshot/cls-source/dist/assets/agents/Plan.agent.md" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="claude-sonnet-4.6" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="04644757-e2cb-4853-9ec5-0a1ebe377c41" />
+            <option name="modeId" value="Ask" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+        </option>
+        <option name="type" value="PANEL" />
+      </chat>
+    </option>
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_C:/Git Projects/FmodProject" value="3EEqgCO39w2Lzp9i6ZJvFdl0eqm" />
+    </persistenceIdMap>
+  </component>
+  <component name="CopilotUserSelectedModel">
+    <selectedModels>
+      <entry key="agent-panel" value="Claude Sonnet 4.6" />
+      <entry key="chat-panel" value="Claude Sonnet 4.6" />
+    </selectedModels>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="506" />
+  </component>
+  <component name="Git.Settings">
+    <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="available/main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;thor-xz&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Bisc8Studio/com.bisc8.betterfmod.git&quot;,
+    &quot;accountId&quot;: &quot;5df22eeb-3886-47f0-9b54-ef6c08b5493e&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodEmitterCustomEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodListEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodSliderEditor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/Editor/BoltIntegration.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/Editor/FileReorganizer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/RuntimeUtils.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/StudioEventEmitter.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/fmod.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/fmod_dsp.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/CreateFmodList.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodAninEvent.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodCommands.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodEmitterCustom.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodSlider.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.275958792528645" />
+      <entry key="MS500" value="3.553590496121433" />
+      <entry key="S2" value="10.647781271479257" />
+      <entry key="S5" value="17.619355141363094" />
+      <entry key="S10" value="24.223921923618565" />
+      <entry key="S30" value="42.065017880838916" />
+      <entry key="S60" value="61.55892643514861" />
+      <entry key="M2" value="82.39718882165197" />
+      <entry key="M5" value="119.56529611177675" />
+      <entry key="M10" value="196.15399681492255" />
+      <entry key="M15" value="268.6765065179746" />
+      <entry key="M30" value="435.3143206092919" />
+      <entry key="H1" value="752.986423047284" />
+      <entry key="H2" value="1328.3491596304214" />
+      <entry key="H4" value="1979.6085039953284" />
+      <entry key="D1" value="2931.755351694032" />
+      <entry key="W1" value="3152.2257913776225" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="1.2002470224761117E-204" />
+      <entry key="MS500" value="1.6438194978867658E-41" />
+      <entry key="S2" value="6.367420508036555E-11" />
+      <entry key="S5" value="8.348057134684087E-5" />
+      <entry key="S10" value="0.009136770290799736" />
+      <entry key="S30" value="0.2090567696856977" />
+      <entry key="S60" value="0.4572272626229734" />
+      <entry key="M2" value="0.6761858195961915" />
+      <entry key="M5" value="0.8551187388318245" />
+      <entry key="M10" value="0.9247263235934251" />
+      <entry key="M15" value="0.949174146918709" />
+      <entry key="M30" value="0.9785654680192383" />
+      <entry key="H1" value="1.096606957166708" />
+      <entry key="H2" value="1.5616063395205262" />
+      <entry key="H4" value="2.2993528065468123" />
+      <entry key="D1" value="3.609251020493978" />
+      <entry key="W1" value="3.9407739698761457" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.239217652555842" />
+      <entry key="MS500" value="3.5292222189859968" />
+      <entry key="S2" value="10.626528764920469" />
+      <entry key="S5" value="17.595422148670004" />
+      <entry key="S10" value="24.202954765793127" />
+      <entry key="S30" value="42.211209275470544" />
+      <entry key="S60" value="61.95169040958361" />
+      <entry key="M2" value="83.0260275823102" />
+      <entry key="M5" value="120.39623121123297" />
+      <entry key="M10" value="197.0652826932172" />
+      <entry key="M15" value="269.61624580699197" />
+      <entry key="M30" value="436.2877521654018" />
+      <entry key="H1" value="754.0800484378001" />
+      <entry key="H2" value="1329.9087894782238" />
+      <entry key="H4" value="1981.9065428734068" />
+      <entry key="D1" value="2935.36429474513" />
+      <entry key="W1" value="3156.1665182377637" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3EEqgCO39w2Lzp9i6ZJvFdl0eqm" />
+  <component name="ProjectSessionTemplates">
+    <option name="panelTemplate">
+      <template>
+        <option name="modeId" value="file:///c%3A/snapshot/cls-source/dist/assets/agents/Plan.agent.md" />
+        <option name="model">
+          <model>
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="claude-sonnet-4.6" />
+          </model>
+        </option>
+        <option name="targetType" value="LOCAL" />
+      </template>
+    </option>
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git.auto.fetch.suggestion.counter": "3",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
+      <created>1779754189469</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779754189469</updated>
+      <workItem from="1779754190847" duration="26000" />
+      <workItem from="1779754242513" duration="21000" />
+      <workItem from="1779754283318" duration="5165000" />
+      <workItem from="1780320844213" duration="4955000" />
+      <workItem from="1780330382212" duration="13829000" />
+      <workItem from="1781227333429" duration="146000" />
+    </task>
+    <task id="LOCAL-00001" summary="Testa ai">
+      <option name="closed" value="true" />
+      <created>1779759044540</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1779759044540</updated>
+    </task>
+    <task id="LOCAL-00002" summary="references: FMODUnity">
+      <option name="closed" value="true" />
+      <created>1779759918091</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1779759918091</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Botao direito na hierarquia">
+      <option name="closed" value="true" />
+      <created>1780321591491</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1780321591491</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Esqueci do meta">
+      <option name="closed" value="true" />
+      <created>1780324049993</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1780324049993</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Ajuste caminho pasta fmod">
+      <option name="closed" value="true" />
+      <created>1780325409526</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1780325409526</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Ajuste de pasta da instalaçao do fmod">
+      <option name="closed" value="true" />
+      <created>1780326084293</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1780326084293</updated>
+    </task>
+    <task id="LOCAL-00007" summary="instalaço fmod sem copiar pasta">
+      <option name="closed" value="true" />
+      <created>1780330783488</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780330783488</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Nao sei foi muita coisa">
+      <option name="closed" value="true" />
+      <created>1780332564931</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1780332564931</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Pf funciona">
+      <option name="closed" value="true" />
+      <created>1780333479975</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1780333479975</updated>
+    </task>
+    <task id="LOCAL-00010" summary="faltou">
+      <option name="closed" value="true" />
+      <created>1780334438834</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1780334438834</updated>
+    </task>
+    <task id="LOCAL-00011" summary="erro no console">
+      <option name="closed" value="true" />
+      <created>1780335659910</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1780335659910</updated>
+    </task>
+    <task id="LOCAL-00012" summary="ajuste erros">
+      <option name="closed" value="true" />
+      <created>1780339968911</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1780339968911</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Ajuste nome pasata com ~ para ser ignorado em packages">
+      <option name="closed" value="true" />
+      <created>1780341690323</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1780341690323</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Ajuste aba fmod">
+      <option name="closed" value="true" />
+      <created>1780343076716</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1780343076716</updated>
+    </task>
+    <task id="LOCAL-00015" summary="erro de novo">
+      <option name="closed" value="true" />
+      <created>1780343849582</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1780343849582</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Testa ai" />
+    <MESSAGE value="references: FMODUnity" />
+    <MESSAGE value="Botao direito na hierarquia" />
+    <MESSAGE value="Esqueci do meta" />
+    <MESSAGE value="Ajuste caminho pasta fmod" />
+    <MESSAGE value="Ajuste de pasta da instalaçao do fmod" />
+    <MESSAGE value="instalaço fmod sem copiar pasta" />
+    <MESSAGE value="Nao sei foi muita coisa" />
+    <MESSAGE value="Pf funciona" />
+    <MESSAGE value="faltou" />
+    <MESSAGE value="erro no console" />
+    <MESSAGE value="ajuste erros" />
+    <MESSAGE value="Ajuste nome pasata com ~ para ser ignorado em packages" />
+    <MESSAGE value="Ajuste aba fmod" />
+    <MESSAGE value="erro de novo" />
+    <option name="LAST_COMMIT_MESSAGE" value="erro de novo" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

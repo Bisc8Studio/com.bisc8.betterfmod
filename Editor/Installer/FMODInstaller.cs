@@ -1,30 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
-[FilePath(StatePath, FilePathAttribute.Location.ProjectFolder)]
-internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerState>
-{
-    internal const string StatePath = "UserSettings/BISC8BetterFMODInstaller.asset";
-
-    [SerializeField]
-    private bool setupComplete;
-
-    internal bool SetupComplete => setupComplete;
-
-    internal void MarkSetupComplete()
-    {
-        setupComplete = true;
-        Save(true);
-    }
-}
-
 [InitializeOnLoad]
 public static class FMODInstaller
 {
-    private const string LegacyHasSetupKey = "BISC8_FMOD_SETUP_DONE";
-    private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN";
-    private const string SetupFolder = "Assets/BISC8/BetterFMOD";
-    private const string SetupAssetPath = SetupFolder + "/FMODSystem.asset";
+    private const string HasSetupKey = "BISC8_FMOD_SETUP_DONE";
 
     static FMODInstaller()
     {
@@ -33,30 +13,15 @@ public static class FMODInstaller
 
     static void CheckSetup()
     {
-        if (IsSetupComplete())
+        if (SessionState.GetBool("BISC8_FMOD_POPUP_SHOWN", false))
             return;
 
-        if (SessionState.GetBool(PopupShownKey, false))
+        SessionState.SetBool("BISC8_FMOD_POPUP_SHOWN", true);
+
+        if (EditorPrefs.GetBool(HasSetupKey, false))
             return;
 
-        SessionState.SetBool(PopupShownKey, true);
         ShowSetupDialog();
-    }
-
-    static bool IsSetupComplete()
-    {
-        if (FMODInstallerState.instance.SetupComplete)
-            return true;
-
-        // Migrate installations completed by older package versions.
-        if (EditorPrefs.GetBool(LegacyHasSetupKey, false) ||
-            AssetDatabase.LoadAssetAtPath<FMODSystem>(SetupAssetPath) != null)
-        {
-            MarkSetupComplete();
-            return true;
-        }
-
-        return false;
     }
 
     static void ShowSetupDialog()
@@ -72,49 +37,40 @@ public static class FMODInstaller
             CreateAssets();
     }
 
-    [MenuItem("Tools/BISC8 Better FMOD/Run Setup")]
-    static void RunSetupManually()
-    {
-        CreateAssets();
-    }
-
     static void CreateAssets()
     {
+        if (typeof(FMODUnity.RuntimeManager) == null)
+        {
+            Debug.LogError("[BISC8 FMOD] FMOD not installed.");
+            return;
+        }
+
+        string folder = "Assets/BISC8/BetterFMOD";
+        string path = folder + "/FMODSystem.asset";
+
         if (!AssetDatabase.IsValidFolder("Assets/BISC8"))
             AssetDatabase.CreateFolder("Assets", "BISC8");
 
-        if (!AssetDatabase.IsValidFolder(SetupFolder))
+        if (!AssetDatabase.IsValidFolder(folder))
             AssetDatabase.CreateFolder("Assets/BISC8", "BetterFMOD");
 
-        var existing = AssetDatabase.LoadAssetAtPath<FMODSystem>(SetupAssetPath);
+        var existing = AssetDatabase.LoadAssetAtPath<FMODSystem>(path);
         if (existing != null)
         {
             Debug.Log("[BISC8 FMOD] Already exists.");
-            MarkSetupComplete();
+            EditorPrefs.SetBool(HasSetupKey, true);
             return;
         }
 
         var asset = ScriptableObject.CreateInstance<FMODSystem>();
-        AssetDatabase.CreateAsset(asset, SetupAssetPath);
+        AssetDatabase.CreateAsset(asset, path);
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        if (AssetDatabase.LoadAssetAtPath<FMODSystem>(SetupAssetPath) == null)
-        {
-            Debug.LogError("[BISC8 FMOD] Setup failed to create FMODSystem.asset.");
-            return;
-        }
-
-        MarkSetupComplete();
-        EditorPrefs.SetString("BISC8_FMOD_PATH", SetupAssetPath);
+        EditorPrefs.SetBool(HasSetupKey, true);
+        EditorPrefs.SetString("BISC8_FMOD_PATH", path);
 
         Debug.Log("[BISC8 FMOD] Setup complete.");
-    }
-
-    static void MarkSetupComplete()
-    {
-        FMODInstallerState.instance.MarkSetupComplete();
-        EditorPrefs.SetBool(LegacyHasSetupKey, true);
     }
 }
