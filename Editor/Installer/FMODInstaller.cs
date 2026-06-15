@@ -27,7 +27,7 @@ public static class FMODInstaller
     private const string PackageFMODPath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
-    private const string InstalledMarkerPath = InstalledRootPath + "/.installed";
+    private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
 
@@ -95,8 +95,8 @@ public static class FMODInstaller
     {
         bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Install and configure FMOD in Assets/BISC8/BetterFMOD?",
-            "Setup",
+            "Move FMOD from Packages to Assets/BISC8/BetterFMOD/FMOD?",
+            "Move FMOD",
             "Not now"
         );
 
@@ -112,6 +112,13 @@ public static class FMODInstaller
             return;
         }
 
+        if (File.Exists(InstalledMarkerPath))
+        {
+            MarkSetupComplete();
+            Debug.Log("[BISC8 FMOD] FMOD is already installed in Assets/BISC8/BetterFMOD/FMOD.");
+            return;
+        }
+
         string hiddenSourcePath = GetHiddenFMODSourcePath();
         string activeSourcePath = GetActiveFMODSourcePath();
 
@@ -123,18 +130,16 @@ public static class FMODInstaller
 
         try
         {
-            if (hiddenSourcePath != null)
-            {
-                Directory.CreateDirectory(InstalledRootPath);
-                CopyDirectory(hiddenSourcePath, InstalledFMODPath);
-                File.WriteAllText(InstalledMarkerPath, "installed");
-            }
+            string sourcePath = hiddenSourcePath ?? activeSourcePath;
+            MoveFMODToAssets(sourcePath);
 
-            AssetDatabase.Refresh();
+            if (!File.Exists(InstalledMarkerPath))
+                throw new IOException("FMODUnity.asmdef was not installed in Assets.");
+
             MarkSetupComplete();
-            OpenFMODSetupWizard();
+            AssetDatabase.Refresh();
 
-            Debug.Log("[BISC8 FMOD] Setup complete.");
+            Debug.Log("[BISC8 FMOD] Setup complete. FMOD was moved to Assets/BISC8/BetterFMOD/FMOD.");
         }
         catch (Exception exception)
         {
@@ -144,18 +149,11 @@ public static class FMODInstaller
 
     private static bool IsSetupComplete()
     {
-        bool installationPresent =
-            Directory.Exists(InstalledFMODPath) ||
-            GetActiveFMODSourcePath() != null;
-
-        if (!installationPresent)
+        if (!File.Exists(InstalledMarkerPath))
             return false;
 
         if (FMODInstallerState.instance.SetupComplete)
             return true;
-
-        if (!File.Exists(InstalledMarkerPath))
-            return false;
 
         MarkSetupComplete();
         return true;
@@ -172,23 +170,6 @@ public static class FMODInstaller
         string path = parent + "/" + name;
         if (!AssetDatabase.IsValidFolder(path))
             AssetDatabase.CreateFolder(parent, name);
-    }
-
-    private static void OpenFMODSetupWizard()
-    {
-        Type wizardType = Type.GetType("FMODUnity.SetupWizardWindow, FMODUnityEditor");
-        var showAssistant = wizardType?.GetMethod(
-            "ShowAssistant",
-            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static
-        );
-
-        if (showAssistant == null)
-        {
-            Debug.LogWarning("[BISC8 FMOD] FMOD Setup Wizard is not available yet. Wait for Unity to finish importing and run setup again.");
-            return;
-        }
-
-        showAssistant.Invoke(null, null);
     }
 
     private static string GetHiddenFMODSourcePath()
@@ -215,6 +196,50 @@ public static class FMODInstaller
             return packageInfo.resolvedPath;
 
         return Path.GetFullPath(PackagePath);
+    }
+
+    private static void MoveFMODToAssets(string sourcePath)
+    {
+        Directory.CreateDirectory(InstalledRootPath);
+
+        if (!Directory.Exists(InstalledFMODPath))
+        {
+            try
+            {
+                Directory.Move(sourcePath, InstalledFMODPath);
+                MoveRootMeta(sourcePath);
+                return;
+            }
+            catch (IOException)
+            {
+                // Directory.Move cannot cross volumes. Fall back to move-by-copy.
+            }
+        }
+
+        CopyDirectory(sourcePath, InstalledFMODPath);
+        DeleteDirectory(sourcePath);
+        MoveRootMeta(sourcePath);
+    }
+
+    private static void MoveRootMeta(string sourcePath)
+    {
+        string sourceMetaPath = sourcePath + ".meta";
+        if (!File.Exists(sourceMetaPath))
+            return;
+
+        string destinationMetaPath = InstalledFMODPath + ".meta";
+        if (File.Exists(destinationMetaPath))
+            File.Delete(destinationMetaPath);
+
+        File.Move(sourceMetaPath, destinationMetaPath);
+    }
+
+    private static void DeleteDirectory(string path)
+    {
+        foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            File.SetAttributes(file, FileAttributes.Normal);
+
+        Directory.Delete(path, true);
     }
 
     private static void CopyDirectory(string sourcePath, string destinationPath)
