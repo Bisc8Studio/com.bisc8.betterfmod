@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 
 [FilePath(StatePath, FilePathAttribute.Location.ProjectFolder)]
@@ -28,6 +29,7 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
+    private const string FMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
 
@@ -114,6 +116,7 @@ public static class FMODInstaller
 
         if (File.Exists(InstalledMarkerPath))
         {
+            EnsureFMODDefine();
             MarkSetupComplete();
             Debug.Log("[BISC8 FMOD] FMOD is already installed in Assets/BISC8/BetterFMOD/FMOD.");
             return;
@@ -136,6 +139,7 @@ public static class FMODInstaller
             if (!File.Exists(InstalledMarkerPath))
                 throw new IOException("FMODUnity.asmdef was not installed in Assets.");
 
+            EnsureFMODDefine();
             MarkSetupComplete();
             AssetDatabase.Refresh();
 
@@ -151,6 +155,8 @@ public static class FMODInstaller
     {
         if (!File.Exists(InstalledMarkerPath))
             return false;
+
+        EnsureFMODDefine();
 
         if (FMODInstallerState.instance.SetupComplete)
             return true;
@@ -170,6 +176,29 @@ public static class FMODInstaller
         string path = parent + "/" + name;
         if (!AssetDatabase.IsValidFolder(path))
             AssetDatabase.CreateFolder(parent, name);
+    }
+
+    private static void EnsureFMODDefine()
+    {
+        BuildTargetGroup targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        if (targetGroup == BuildTargetGroup.Unknown)
+            return;
+
+        NamedBuildTarget namedTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
+        string defines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
+        string[] symbols = defines.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string symbol in symbols)
+        {
+            if (symbol.Trim() == FMODDefine)
+                return;
+        }
+
+        string updatedDefines = string.IsNullOrWhiteSpace(defines)
+            ? FMODDefine
+            : defines.TrimEnd(';') + ";" + FMODDefine;
+
+        PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
     }
 
     private static string GetHiddenFMODSourcePath()

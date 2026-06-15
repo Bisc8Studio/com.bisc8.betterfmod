@@ -10,6 +10,8 @@
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
-  "defineConstraints": [],
+  "defineConstraints": [
+    "FMOD_PRESENT"
+  ],
   "versionDefines": []
 }
