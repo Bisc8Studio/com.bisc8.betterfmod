@@ -1,5 +1,3 @@
-#if FMOD_PRESENT
-
 using UnityEditor;
 using UnityEngine;
 
@@ -36,13 +34,13 @@ public class CreateFmodListEditor : Editor
     {
         CreateFmodList asset = ScriptableObject.CreateInstance<CreateFmodList>();
 
-        string folder = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Lists_FMOD";
+        const string rootFolder = "Assets/BISC8";
+        const string betterFmodFolder = rootFolder + "/BetterFMOD";
+        const string folder = betterFmodFolder + "/Lists";
 
-        if (!AssetDatabase.IsValidFolder(folder))
-        {
-            Debug.LogError("Folder not found: " + folder);
-            return;
-        }
+        EnsureFolder("Assets", "BISC8");
+        EnsureFolder(rootFolder, "BetterFMOD");
+        EnsureFolder(betterFmodFolder, "Lists");
 
         string path = AssetDatabase.GenerateUniqueAssetPath(
             folder + "/NewFmodList.asset"
@@ -57,5 +55,11 @@ public class CreateFmodListEditor : Editor
 
         Selection.activeObject = asset;
     }
+
+    private static void EnsureFolder(string parent, string name)
+    {
+        string path = parent + "/" + name;
+        if (!AssetDatabase.IsValidFolder(path))
+            AssetDatabase.CreateFolder(parent, name);
+    }
 }
-#endif

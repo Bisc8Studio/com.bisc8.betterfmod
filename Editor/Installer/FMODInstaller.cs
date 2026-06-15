@@ -60,6 +60,12 @@ public static class FMODInstaller
         RunSetup();
     }
 
+    [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 1)]
+    public static void RunSetupFromFMODMenu()
+    {
+        RunSetup();
+    }
+
     private static void ShowSetupDialog()
     {
         bool install = EditorUtility.DisplayDialog(
@@ -92,17 +98,16 @@ public static class FMODInstaller
 
         try
         {
-            Directory.CreateDirectory(InstalledRootPath);
-
-            // Hidden package content must be copied into Assets. If it is already
-            // active in the package, copying it would create duplicate assemblies.
             if (hiddenSourcePath != null)
+            {
+                Directory.CreateDirectory(InstalledRootPath);
                 CopyDirectory(hiddenSourcePath, InstalledFMODPath);
-
-            File.WriteAllText(InstalledMarkerPath, "installed");
+                File.WriteAllText(InstalledMarkerPath, "installed");
+            }
 
             AssetDatabase.Refresh();
             MarkSetupComplete();
+            OpenFMODSetupWizard();
 
             Debug.Log("[BISC8 FMOD] Setup complete.");
         }
@@ -135,6 +140,23 @@ public static class FMODInstaller
     {
         FMODInstallerState.instance.MarkSetupComplete();
         EditorPrefs.SetBool(LegacySetupKey, true);
+    }
+
+    private static void OpenFMODSetupWizard()
+    {
+        Type wizardType = Type.GetType("FMODUnity.SetupWizardWindow, FMODUnityEditor");
+        var showAssistant = wizardType?.GetMethod(
+            "ShowAssistant",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static
+        );
+
+        if (showAssistant == null)
+        {
+            Debug.LogWarning("[BISC8 FMOD] FMOD Setup Wizard is not available yet. Wait for Unity to finish importing and run setup again.");
+            return;
+        }
+
+        showAssistant.Invoke(null, null);
     }
 
     private static string GetHiddenFMODSourcePath()

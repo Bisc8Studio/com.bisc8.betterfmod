@@ -3,16 +3,13 @@
   "autoReferenced": true,
   "includePlatforms": [],
   "excludePlatforms": [],
+  "references": [
+    "FMODUnity"
+  ],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
   "defineConstraints": [],
-  "versionDefines": [
-    {
-      "name": "com.unity.fmod",
-      "expression": "",
-      "define": "FMOD_PRESENT"
-    }
-  ]
+  "versionDefines": []
 }

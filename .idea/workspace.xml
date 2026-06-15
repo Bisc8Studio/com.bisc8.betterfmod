@@ -65,7 +65,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="497" />
+    <option name="cachedIndexableFilesCount" value="498" />
   </component>
   <component name="Git.Settings">
     <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
@@ -112,61 +112,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.8907835340714212" />
-      <entry key="MS500" value="4.591739169621718" />
-      <entry key="S2" value="9.147863159806265" />
-      <entry key="S5" value="15.895144564063333" />
-      <entry key="S10" value="26.114498378218286" />
-      <entry key="S30" value="50.05701563369947" />
-      <entry key="S60" value="68.33412877392288" />
-      <entry key="M2" value="103.72082929025471" />
-      <entry key="M5" value="228.16226224397073" />
-      <entry key="M10" value="382.70010532592977" />
-      <entry key="M15" value="495.31588960928667" />
-      <entry key="M30" value="721.1774435011406" />
-      <entry key="H1" value="1074.9727723539986" />
-      <entry key="H2" value="1673.0145681363722" />
-      <entry key="H4" value="2349.4329343508907" />
-      <entry key="D1" value="3348.1491899565945" />
-      <entry key="W1" value="3580.9928019978547" />
+      <entry key="MS100" value="1.5820245201162098" />
+      <entry key="MS500" value="3.9219335427618667" />
+      <entry key="S2" value="9.222330054943221" />
+      <entry key="S5" value="12.136198927961368" />
+      <entry key="S10" value="13.637959668705085" />
+      <entry key="S30" value="18.1390909119064" />
+      <entry key="S60" value="27.795226484935515" />
+      <entry key="M2" value="56.31974558221746" />
+      <entry key="M5" value="174.6456154155102" />
+      <entry key="M10" value="352.29340486038154" />
+      <entry key="M15" value="487.85199746127773" />
+      <entry key="M30" value="757.9975404059466" />
+      <entry key="H1" value="1144.613721556749" />
+      <entry key="H2" value="1764.5539808316105" />
+      <entry key="H4" value="2462.936198980637" />
+      <entry key="D1" value="3500.211950496519" />
+      <entry key="W1" value="3743.1699331329282" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="9.11723972164424E-96" />
-      <entry key="S5" value="9.637077456706726E-39" />
-      <entry key="S10" value="9.816861747374539E-20" />
-      <entry key="S30" value="4.613078995067798E-7" />
-      <entry key="S60" value="6.791965102286522E-4" />
-      <entry key="M2" value="0.02606139885402625" />
-      <entry key="M5" value="0.2324872225571471" />
-      <entry key="M10" value="0.48216929806376596" />
-      <entry key="M15" value="0.6148985314624461" />
-      <entry key="M30" value="0.7876234967826877" />
-      <entry key="H1" value="0.9838194078104605" />
-      <entry key="H2" value="1.479121186420626" />
-      <entry key="H4" value="2.2378022726317117" />
-      <entry key="D1" value="3.5929659720070544" />
-      <entry key="W1" value="3.9382289170645435" />
+      <entry key="S2" value="1.1546816755091898E-160" />
+      <entry key="S5" value="1.0592169197393045E-64" />
+      <entry key="S10" value="1.0291826464429351E-32" />
+      <entry key="S30" value="2.175191437022451E-11" />
+      <entry key="S60" value="4.6638947640598086E-6" />
+      <entry key="M2" value="0.002159605233384033" />
+      <entry key="M5" value="0.0858518678685674" />
+      <entry key="M10" value="0.2930048998802739" />
+      <entry key="M15" value="0.4411507368367523" />
+      <entry key="M30" value="0.667129953205248" />
+      <entry key="H1" value="0.9054433301906105" />
+      <entry key="H2" value="1.418981397284118" />
+      <entry key="H4" value="2.191836640321571" />
+      <entry key="D1" value="3.5805591246100232" />
+      <entry key="W1" value="3.936283311210242" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.8042050596351646" />
-      <entry key="MS500" value="4.531491143744315" />
-      <entry key="S2" value="9.120058657984725" />
-      <entry key="S5" value="15.876390246249743" />
-      <entry key="S10" value="26.09842664752219" />
-      <entry key="S30" value="50.04590830821769" />
-      <entry key="S60" value="68.3271358973494" />
-      <entry key="M2" value="103.73982411546751" />
-      <entry key="M5" value="228.38459563709904" />
-      <entry key="M10" value="383.17283925912636" />
-      <entry key="M15" value="495.92285452986675" />
-      <entry key="M30" value="721.9599011838657" />
-      <entry key="H1" value="1075.9533645878057" />
-      <entry key="H2" value="1674.4915315768583" />
-      <entry key="H4" value="2351.6693125722327" />
-      <entry key="D1" value="3351.741824782506" />
-      <entry key="W1" value="3584.93098031745" />
+      <entry key="MS100" value="1.5279970809876036" />
+      <entry key="MS500" value="3.8831749039053327" />
+      <entry key="S2" value="9.197566380555365" />
+      <entry key="S5" value="12.12343647042725" />
+      <entry key="S10" value="13.630834350326706" />
+      <entry key="S30" value="18.135787549974676" />
+      <entry key="S60" value="27.79252412683944" />
+      <entry key="M2" value="56.31871710332182" />
+      <entry key="M5" value="174.72547260982597" />
+      <entry key="M10" value="352.57911728924404" />
+      <entry key="M15" value="488.28628852016743" />
+      <entry key="M30" value="758.6596364382518" />
+      <entry key="H1" value="1145.5158448214881" />
+      <entry key="H2" value="1765.9707117293453" />
+      <entry key="H4" value="2465.126549165494" />
+      <entry key="D1" value="3503.7921641432013" />
+      <entry key="W1" value="3747.106163655977" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -192,29 +192,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "fix/infinity-startup",
-    "git.auto.fetch.suggestion.counter": "3",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "application.passwordSafe",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix/infinity-startup&quot;,
+    &quot;git.auto.fetch.suggestion.counter&quot;: &quot;3&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;application.passwordSafe&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
@@ -229,6 +229,7 @@
       <workItem from="1780330382212" duration="13829000" />
       <workItem from="1781227333429" duration="146000" />
       <workItem from="1781227495222" duration="743000" />
+      <workItem from="1781228429639" duration="1168000" />
     </task>
     <task id="LOCAL-00001" summary="Testa ai">
       <option name="closed" value="true" />

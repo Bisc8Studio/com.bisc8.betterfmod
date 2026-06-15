@@ -1,5 +1,3 @@
-#if FMOD_PRESENT
-
 using FMOD.Studio;
 using FMODUnity;
 using System.Collections;
@@ -197,5 +195,3 @@ public class FmodCommands : MonoBehaviour
         emitterObj.enabled = false;
     }
 }
-
-#endif
