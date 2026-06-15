@@ -10,9 +10,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -65,7 +63,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="498" />
+    <option name="cachedIndexableFilesCount" value="500" />
   </component>
   <component name="Git.Settings">
     <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
@@ -82,12 +80,12 @@
     &quot;assignee&quot;: &quot;thor-xz&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Bisc8Studio/com.bisc8.betterfmod.git&quot;,
-    &quot;accountId&quot;: &quot;5df22eeb-3886-47f0-9b54-ef6c08b5493e&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Bisc8Studio/com.bisc8.betterfmod.git",
+    "accountId": "7d25fc9d-80b2-44aa-a438-1bf05d9b8ba7"
   }
-}</component>
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodEmitterCustomEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodListEditor.cs" root0="FORCE_HIGHLIGHTING" />
@@ -112,61 +110,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.5820245201162098" />
-      <entry key="MS500" value="3.9219335427618667" />
-      <entry key="S2" value="9.222330054943221" />
-      <entry key="S5" value="12.136198927961368" />
-      <entry key="S10" value="13.637959668705085" />
-      <entry key="S30" value="18.1390909119064" />
-      <entry key="S60" value="27.795226484935515" />
-      <entry key="M2" value="56.31974558221746" />
-      <entry key="M5" value="174.6456154155102" />
-      <entry key="M10" value="352.29340486038154" />
-      <entry key="M15" value="487.85199746127773" />
-      <entry key="M30" value="757.9975404059466" />
-      <entry key="H1" value="1144.613721556749" />
-      <entry key="H2" value="1764.5539808316105" />
-      <entry key="H4" value="2462.936198980637" />
-      <entry key="D1" value="3500.211950496519" />
-      <entry key="W1" value="3743.1699331329282" />
+      <entry key="MS100" value="1.0352804185805553" />
+      <entry key="MS500" value="1.8429563742475024" />
+      <entry key="S2" value="4.1590992946401135" />
+      <entry key="S5" value="6.487175363374398" />
+      <entry key="S10" value="7.92904307685261" />
+      <entry key="S30" value="11.195455605067085" />
+      <entry key="S60" value="25.152452213199446" />
+      <entry key="M2" value="54.7736990661468" />
+      <entry key="M5" value="96.88199690499064" />
+      <entry key="M10" value="141.36980984348781" />
+      <entry key="M15" value="207.57381868857175" />
+      <entry key="M30" value="488.99162867357387" />
+      <entry key="H1" value="1051.3248599196315" />
+      <entry key="H2" value="1907.159214243906" />
+      <entry key="H4" value="2890.994000891981" />
+      <entry key="D1" value="4464.142207929409" />
+      <entry key="W1" value="4852.7295202334935" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.1546816755091898E-160" />
-      <entry key="S5" value="1.0592169197393045E-64" />
-      <entry key="S10" value="1.0291826464429351E-32" />
-      <entry key="S30" value="2.175191437022451E-11" />
-      <entry key="S60" value="4.6638947640598086E-6" />
-      <entry key="M2" value="0.002159605233384033" />
-      <entry key="M5" value="0.0858518678685674" />
-      <entry key="M10" value="0.2930048998802739" />
-      <entry key="M15" value="0.4411507368367523" />
-      <entry key="M30" value="0.667129953205248" />
-      <entry key="H1" value="0.9054433301906105" />
-      <entry key="H2" value="1.418981397284118" />
-      <entry key="H4" value="2.191836640321571" />
-      <entry key="D1" value="3.5805591246100232" />
-      <entry key="W1" value="3.936283311210242" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="1.8730401677569708E-188" />
+      <entry key="S30" value="2.6557204858150226E-63" />
+      <entry key="S60" value="5.153368302202866E-32" />
+      <entry key="M2" value="2.2701031479213856E-16" />
+      <entry key="M5" value="5.526093596449428E-7" />
+      <entry key="M10" value="7.433770120732257E-4" />
+      <entry key="M15" value="0.008206220298834301" />
+      <entry key="M30" value="0.0909889223990759" />
+      <entry key="H1" value="0.3343877157429206" />
+      <entry key="H2" value="0.8623254868208291" />
+      <entry key="H4" value="1.7086591743872592" />
+      <entry key="D1" value="3.434989333826309" />
+      <entry key="W1" value="3.91301293649244" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.5279970809876036" />
-      <entry key="MS500" value="3.8831749039053327" />
-      <entry key="S2" value="9.197566380555365" />
-      <entry key="S5" value="12.12343647042725" />
-      <entry key="S10" value="13.630834350326706" />
-      <entry key="S30" value="18.135787549974676" />
-      <entry key="S60" value="27.79252412683944" />
-      <entry key="M2" value="56.31871710332182" />
-      <entry key="M5" value="174.72547260982597" />
-      <entry key="M10" value="352.57911728924404" />
-      <entry key="M15" value="488.28628852016743" />
-      <entry key="M30" value="758.6596364382518" />
-      <entry key="H1" value="1145.5158448214881" />
-      <entry key="H2" value="1765.9707117293453" />
-      <entry key="H4" value="2465.126549165494" />
-      <entry key="D1" value="3503.7921641432013" />
-      <entry key="W1" value="3747.106163655977" />
+      <entry key="MS100" value="1.0134917070483351" />
+      <entry key="MS500" value="1.8327926100341225" />
+      <entry key="S2" value="4.153104343654134" />
+      <entry key="S5" value="6.4834677629441115" />
+      <entry key="S10" value="7.926783973242091" />
+      <entry key="S30" value="11.194372390431454" />
+      <entry key="S60" value="25.151175743897305" />
+      <entry key="M2" value="54.7722795585265" />
+      <entry key="M5" value="96.88098504668412" />
+      <entry key="M10" value="141.3697977142275" />
+      <entry key="M15" value="207.58119951809937" />
+      <entry key="M30" value="489.0812452510901" />
+      <entry key="H1" value="1051.657457557427" />
+      <entry key="H2" value="1908.0197957439784" />
+      <entry key="H4" value="2892.7012818660505" />
+      <entry key="D1" value="4467.576824076547" />
+      <entry key="W1" value="4856.642474589444" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -230,6 +228,7 @@
       <workItem from="1781227333429" duration="146000" />
       <workItem from="1781227495222" duration="743000" />
       <workItem from="1781228429639" duration="1168000" />
+      <workItem from="1781537537261" duration="6986000" />
     </task>
     <task id="LOCAL-00001" summary="Testa ai">
       <option name="closed" value="true" />
@@ -359,7 +358,47 @@
       <option name="project" value="LOCAL" />
       <updated>1781227787172</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="ia do thor fazendo bagunca">
+      <option name="closed" value="true" />
+      <created>1781540879234</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1781540879234</updated>
+    </task>
+    <task id="LOCAL-00018" summary="ia do thor diz ter voltado tudo pro normal">
+      <option name="closed" value="true" />
+      <created>1781541675330</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1781541675330</updated>
+    </task>
+    <task id="LOCAL-00019" summary="COISA P KRL">
+      <option name="closed" value="true" />
+      <created>1781543362190</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1781543362190</updated>
+    </task>
+    <task id="LOCAL-00020" summary="MAIS COISA">
+      <option name="closed" value="true" />
+      <created>1781543747908</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1781543747908</updated>
+    </task>
+    <task id="LOCAL-00021" summary="tentando arrumar a verificacao de fmod">
+      <option name="closed" value="true" />
+      <created>1781545720995</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1781545720995</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -385,7 +424,12 @@
     <MESSAGE value="Ajuste aba fmod" />
     <MESSAGE value="erro de novo" />
     <MESSAGE value="initial startup fix" />
-    <option name="LAST_COMMIT_MESSAGE" value="initial startup fix" />
+    <MESSAGE value="ia do thor fazendo bagunca" />
+    <MESSAGE value="ia do thor diz ter voltado tudo pro normal" />
+    <MESSAGE value="COISA P KRL" />
+    <MESSAGE value="MAIS COISA" />
+    <MESSAGE value="tentando arrumar a verificacao de fmod" />
+    <option name="LAST_COMMIT_MESSAGE" value="tentando arrumar a verificacao de fmod" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
