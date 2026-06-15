@@ -54,16 +54,41 @@ public static class FMODInstaller
         ShowSetupDialog();
     }
 
-    [MenuItem("Tools/BISC8 Better FMOD/Run Setup")]
-    public static void RunSetupFromMenu()
+    [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
+    public static void RunSetupFromFMODMenu()
     {
         RunSetup();
     }
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 1)]
-    public static void RunSetupFromFMODMenu()
+    [MenuItem("Assets/BISC8 FMOD/Create FMOD List", false, 10)]
+    public static void CreateFMODList()
     {
-        RunSetup();
+        Type listType = Type.GetType("CreateFmodList, BISC8.BetterFMOD.Runtime");
+        if (listType == null || !typeof(ScriptableObject).IsAssignableFrom(listType))
+        {
+            Debug.LogError("[BISC8 FMOD] CreateFmodList is not available. Check the Unity Console for compilation errors.");
+            return;
+        }
+
+        const string rootFolder = "Assets/BISC8";
+        const string betterFmodFolder = rootFolder + "/BetterFMOD";
+        const string listFolder = betterFmodFolder + "/Lists";
+
+        EnsureAssetFolder("Assets", "BISC8");
+        EnsureAssetFolder(rootFolder, "BetterFMOD");
+        EnsureAssetFolder(betterFmodFolder, "Lists");
+
+        string assetPath = AssetDatabase.GenerateUniqueAssetPath(
+            listFolder + "/NewFmodList.asset"
+        );
+
+        ScriptableObject list = ScriptableObject.CreateInstance(listType);
+        AssetDatabase.CreateAsset(list, assetPath);
+        AssetDatabase.SaveAssets();
+
+        EditorUtility.FocusProjectWindow();
+        Selection.activeObject = list;
+        EditorGUIUtility.PingObject(list);
     }
 
     private static void ShowSetupDialog()
@@ -140,6 +165,13 @@ public static class FMODInstaller
     {
         FMODInstallerState.instance.MarkSetupComplete();
         EditorPrefs.SetBool(LegacySetupKey, true);
+    }
+
+    private static void EnsureAssetFolder(string parent, string name)
+    {
+        string path = parent + "/" + name;
+        if (!AssetDatabase.IsValidFolder(path))
+            AssetDatabase.CreateFolder(parent, name);
     }
 
     private static void OpenFMODSetupWizard()
