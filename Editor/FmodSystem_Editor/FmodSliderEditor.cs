@@ -1,3 +1,4 @@
+#if FMOD_PRESENT
 using UnityEditor;
 using UnityEngine;
 
@@ -21,3 +22,4 @@ public class FmodSliderEditor : PropertyDrawer
         return EditorGUI.GetPropertyHeight(property, true);
     }
 }
+#endif
