@@ -11,9 +11,11 @@ public class FmodCommands : MonoBehaviour
 
     [SerializeField] private List<CreateFmodList> eventLists;
 
-    private Dictionary<string, EventReference> eventDict = new Dictionary<string, EventReference>();
+    private Dictionary<string, EventReference> eventDict =
+        new Dictionary<string, EventReference>();
 
-    private Dictionary<string, EventInstance> instances = new Dictionary<string, EventInstance>();
+    private Dictionary<string, EventInstance> instances =
+        new Dictionary<string, EventInstance>();
 
     void Awake()
     {
@@ -36,7 +38,7 @@ public class FmodCommands : MonoBehaviour
             {
                 if (eventDict.ContainsKey(entry.id))
                 {
-                    Debug.LogWarning("ID duplicado: " + entry.id);
+                    Debug.LogWarning("Duplicate ID: " + entry.id);
                     continue;
                 }
 
@@ -55,7 +57,7 @@ public class FmodCommands : MonoBehaviour
         if (HasEvent(id))
             return eventDict[id];
 
-        Debug.LogError("Evento n�o encontrado: " + id);
+        Debug.LogError("Event not found: " + id);
 
         return default;
     }
@@ -122,6 +124,15 @@ public class FmodCommands : MonoBehaviour
         if (instances.TryGetValue(id, out var instance))
         {
             instance.setPaused(pause);
+        }
+    }
+
+    public void TogglePause(string id)
+    {
+        if (instances.TryGetValue(id, out var instance))
+        {
+            instance.getPaused(out bool paused);
+            instance.setPaused(!paused);
         }
     }
 
