@@ -10,14 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 7775055757975628029}
   - component: {fileID: 6779502583474881280}
-  - component: {fileID: 1736083254850875187}
   m_Layer: 0
   m_Name: FmodEmitter_Mng
   m_TagString: BISC8 Fmod
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7775055757975628029
 Transform:
   m_ObjectHideFlags: 0
@@ -53,15 +52,3 @@ MonoBehaviour:
   stopEvent: 0
   radius: 5
   gizmoColor: {r: 1, g: 0, b: 0.772892, a: 1}
---- !u!114 &1736083254850875187
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8738879044282013418}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca507cc60505d6a4990f0dcfaecda17d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FmodAninEvent
