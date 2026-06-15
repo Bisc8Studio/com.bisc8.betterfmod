@@ -3,21 +3,13 @@
   "autoReferenced": true,
   "includePlatforms": [],
   "excludePlatforms": [],
+  "references": [
+    "FMODUnity"
+  ],
   "allowUnsafeCode": false,
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
-  "defineConstraints": [
-    "BISC8_BETTERFMOD_INSTALLED"
-  ],
-  "references": [
-    "FMODUnity"
-  ],
-  "versionDefines": [
-    {
-      "name": "com.bisc8.betterfmod",
-      "expression": "",
-      "define": "FMOD_PRESENT"
-    }
-  ]
+  "defineConstraints": [],
+  "versionDefines": []
 }
