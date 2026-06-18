@@ -26,7 +26,6 @@ public class FmodCommands : MonoBehaviour
         }
 
         Instance = this;
-
         DontDestroyOnLoad(gameObject);
 
         foreach (var list in eventLists)
@@ -58,7 +57,6 @@ public class FmodCommands : MonoBehaviour
             return eventDict[id];
 
         Debug.LogError("Event not found: " + id);
-
         return default;
     }
 
@@ -72,6 +70,21 @@ public class FmodCommands : MonoBehaviour
         RuntimeManager.PlayOneShot(reference);
     }
 
+    public void PlayOneShot3D(string id, Transform target)
+    {
+        var reference = GetEvent(id);
+
+        if (reference.IsNull)
+            return;
+
+        var instance = RuntimeManager.CreateInstance(reference);
+
+        instance.set3DAttributes(RuntimeUtils.To3DAttributes(target));
+
+        instance.start();
+        instance.release();
+    }
+
     public void PlayLoop(string id, bool fade = false, float fadeTime = 1f)
     {
         if (instances.ContainsKey(id))
@@ -82,41 +95,42 @@ public class FmodCommands : MonoBehaviour
         if (reference.IsNull)
             return;
 
-        EventInstance instance =
-            RuntimeManager.CreateInstance(reference);
+        EventInstance instance = RuntimeManager.CreateInstance(reference);
 
         if (fade)
-        {
             instance.setVolume(0);
-        }
 
         instance.start();
 
         instances[id] = instance;
 
         if (fade)
-        {
             StartCoroutine(FadeIn(instance, fadeTime));
-        }
     }
 
-    IEnumerator FadeIn(EventInstance instance, float fadeTime)
+    public void PlayLoop3D(string id, Transform target, bool fade = false, float fadeTime = 1f)
     {
-        float timer = 0;
+        if (instances.ContainsKey(id))
+            return;
 
-        while (timer < fadeTime)
-        {
-            timer += Time.deltaTime;
+        var reference = GetEvent(id);
 
-            float volume =
-                Mathf.Lerp(0, 1, timer / fadeTime);
+        if (reference.IsNull)
+            return;
 
-            instance.setVolume(volume);
+        EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-            yield return null;
-        }
+        instance.set3DAttributes(RuntimeUtils.To3DAttributes(target));
 
-        instance.setVolume(1);
+        if (fade)
+            instance.setVolume(0);
+
+        instance.start();
+
+        instances[id] = instance;
+
+        if (fade)
+            StartCoroutine(FadeIn(instance, fadeTime));
     }
 
     public void Pause(string id, bool pause)
@@ -142,25 +156,18 @@ public class FmodCommands : MonoBehaviour
         {
             if (fade)
             {
-                StartCoroutine(
-                    FadeOutAndStop(id, instance, fadeTime)
-                );
+                StartCoroutine(FadeOutAndStop(id, instance, fadeTime));
             }
             else
             {
                 instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-
                 instance.release();
-
                 instances.Remove(id);
             }
         }
     }
 
-    IEnumerator FadeOutAndStop(
-        string id,
-        EventInstance instance,
-        float fadeTime)
+    IEnumerator FadeOutAndStop(string id, EventInstance instance, float fadeTime)
     {
         instance.getVolume(out float startVolume);
 
@@ -170,8 +177,7 @@ public class FmodCommands : MonoBehaviour
         {
             timer += Time.deltaTime;
 
-            float volume =
-                Mathf.Lerp(startVolume, 0, timer / fadeTime);
+            float volume = Mathf.Lerp(startVolume, 0, timer / fadeTime);
 
             instance.setVolume(volume);
 
@@ -179,10 +185,26 @@ public class FmodCommands : MonoBehaviour
         }
 
         instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-
         instance.release();
-
         instances.Remove(id);
+    }
+
+    IEnumerator FadeIn(EventInstance instance, float fadeTime)
+    {
+        float timer = 0;
+
+        while (timer < fadeTime)
+        {
+            timer += Time.deltaTime;
+
+            float volume = Mathf.Lerp(0, 1, timer / fadeTime);
+
+            instance.setVolume(volume);
+
+            yield return null;
+        }
+
+        instance.setVolume(1);
     }
 
     public PLAYBACK_STATE GetState(string id)
@@ -190,7 +212,6 @@ public class FmodCommands : MonoBehaviour
         if (instances.TryGetValue(id, out var instance))
         {
             instance.getPlaybackState(out PLAYBACK_STATE state);
-
             return state;
         }
 
