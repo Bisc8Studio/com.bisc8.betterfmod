@@ -34,13 +34,50 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     public void AddEmitter(FmodEmitterCustom emitterObj)
+{
+    if (emitterObj != null)
     {
-        FmodCommands.Instance.AddEmitter(emitterObj);
+        emitterObj.enabled = true;
+        return;
     }
 
-    public void RemoveEmitter(FmodEmitterCustom emitterObj)
+    GameObject emitter = GameObject.FindGameObjectWithTag("FmodEmitter");
+
+    if (emitter == null)
     {
-        FmodCommands.Instance.RemoveEmitter(emitterObj);
+        Debug.Log("Emitter not found");
+        return;
+    }
+
+    FmodEmitterCustom comp = emitter.GetComponent<FmodEmitterCustom>();
+
+    if (comp != null)
+    {
+        comp.enabled = true;
+    }
+}
+
+public void RemoveEmitter(FmodEmitterCustom emitterObj)
+{
+    if (emitterObj != null)
+    {
+        emitterObj.enabled = false;
+        return;
+    }
+
+    GameObject emitter = GameObject.FindGameObjectWithTag("FmodEmitter");
+
+    if (emitter == null)
+    {
+        Debug.Log("Emitter not found");
+        return;
+    }
+
+    FmodEmitterCustom comp = emitter.GetComponent<FmodEmitterCustom>();
+
+    if (comp != null)
+    {
+        comp.enabled = false;
     }
 }
 #endif
