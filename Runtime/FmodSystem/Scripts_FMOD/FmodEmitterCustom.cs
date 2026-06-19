@@ -26,27 +26,23 @@ public class FmodEmitterCustom : MonoBehaviour
         OnDestroy
     }
 
-    // Mode
     public EmitterMode mode;
 
-    // Basic Config
     public string eventId;
     public bool is3D = false;
     public bool oneShot = false;
 
-    // Triggers
     public PlayEvent playEvent;
     public StopEvent stopEvent;
 
-    // Advanced Settings
     public float radius = 5f;
     public Color gizmoColor = Color.cyan;
 
-    private FmodCommands fmodCommands;
+    private FmodCommands fmod;
 
     void Awake()
     {
-        fmodCommands = FmodCommands.Instance;
+        fmod = FmodCommands.Instance;
     }
 
     void OnEnable()
@@ -58,7 +54,6 @@ public class FmodEmitterCustom : MonoBehaviour
     IEnumerator PlayNextFrame()
     {
         yield return null;
-
         Play();
     }
 
@@ -87,40 +82,40 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     public void Play()
-{
-    if (fmodCommands == null)
-        return;
-
-    if (oneShot)
     {
+        if (fmod == null)
+            return;
+
+        if (oneShot)
+        {
+            if (is3D)
+                fmod.PlayOneShot3D(eventId, transform);
+            else
+                fmod.PlayOneShot(eventId);
+
+            return;
+        }
+
         if (is3D)
-            fmodCommands.PlayOneShot3D(eventId, transform);
+            fmod.PlayLoop3D(eventId, transform, radius); // 🔥 radius agora REAL
         else
-            fmodCommands.PlayOneShot(eventId);
-
-        return;
+            fmod.PlayLoop(eventId);
     }
-
-    if (is3D)
-        fmodCommands.PlayLoop3D(eventId, transform);
-    else
-        fmodCommands.PlayLoop(eventId);
-}
 
     public void Stop(bool fade = true)
     {
-        if (fmodCommands == null)
+        if (fmod == null)
             return;
 
-        fmodCommands.Stop(eventId, fade);
+        fmod.Stop(eventId, fade);
     }
 
     public void Pause(bool pause)
     {
-        if (fmodCommands == null)
+        if (fmod == null)
             return;
 
-        fmodCommands.Pause(eventId, pause);
+        fmod.Pause(eventId, pause);
     }
 
     void OnDrawGizmos()
@@ -132,7 +127,6 @@ public class FmodEmitterCustom : MonoBehaviour
             return;
 
         Gizmos.color = gizmoColor;
-
         Gizmos.DrawWireSphere(transform.position, radius);
     }
 }

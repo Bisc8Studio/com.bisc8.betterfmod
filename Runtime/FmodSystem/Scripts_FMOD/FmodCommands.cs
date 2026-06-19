@@ -35,68 +35,50 @@ public class FmodCommands : MonoBehaviour
 
             foreach (var entry in list.events)
             {
-                if (eventDict.ContainsKey(entry.id))
-                {
-                    Debug.LogWarning("Duplicate ID: " + entry.id);
-                    continue;
-                }
-
-                eventDict.Add(entry.id, entry.reference);
+                if (!eventDict.ContainsKey(entry.id))
+                    eventDict.Add(entry.id, entry.reference);
             }
         }
     }
 
-    public bool HasEvent(string id)
-    {
-        return eventDict.ContainsKey(id);
-    }
 
     public EventReference GetEvent(string id)
     {
-        if (HasEvent(id))
-            return eventDict[id];
+        if (eventDict.TryGetValue(id, out var e))
+            return e;
 
         Debug.LogError("Event not found: " + id);
         return default;
     }
 
+
     public void PlayOneShot(string id)
     {
         var reference = GetEvent(id);
-
-        if (reference.IsNull)
-            return;
-
-        RuntimeManager.PlayOneShot(reference);
+        if (!reference.IsNull)
+            RuntimeManager.PlayOneShot(reference);
     }
 
     public void PlayOneShot3D(string id, Transform target)
-{
-    var reference = GetEvent(id);
+    {
+        var reference = GetEvent(id);
+        if (reference.IsNull) return;
 
-    if (reference.IsNull)
-        return;
+        EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-    EventInstance instance = RuntimeManager.CreateInstance(reference);
+        RuntimeManager.AttachInstanceToGameObject(instance, target);
 
-    RuntimeManager.AttachInstanceToGameObject(
-        instance,
-        target
-    );
+        instance.start();
+        instance.release();
+    }
 
-    instance.start();
-    instance.release();
-}
 
     public void PlayLoop(string id, bool fade = false, float fadeTime = 1f)
     {
-        if (instances.ContainsKey(id))
-            return;
+        if (instances.ContainsKey(id)) return;
 
         var reference = GetEvent(id);
-
-        if (reference.IsNull)
-            return;
+        if (reference.IsNull) return;
 
         EventInstance instance = RuntimeManager.CreateInstance(reference);
 
@@ -111,82 +93,59 @@ public class FmodCommands : MonoBehaviour
             StartCoroutine(FadeIn(instance, fadeTime));
     }
 
-    public void PlayLoop3D(string id, Transform target, bool fade = false, float fadeTime = 1f)
-{
-    if (instances.ContainsKey(id))
-        return;
 
-    var reference = GetEvent(id);
-
-    if (reference.IsNull)
-        return;
-
-    EventInstance instance = RuntimeManager.CreateInstance(reference);
-
-    RuntimeManager.AttachInstanceToGameObject(
-        instance,
-        target
-    );
-
-    if (fade)
-        instance.setVolume(0);
-
-    instance.start();
-
-    instances[id] = instance;
-
-    if (fade)
-        StartCoroutine(FadeIn(instance, fadeTime));
-}
-
-    public void Pause(string id, bool pause)
+    public void PlayLoop3D(string id, Transform target, float radius, bool fade = false, float fadeTime = 1f)
     {
-        if (instances.TryGetValue(id, out var instance))
-        {
-            instance.setPaused(pause);
-        }
+        if (instances.ContainsKey(id)) return;
+
+        var reference = GetEvent(id);
+        if (reference.IsNull) return;
+
+        EventInstance instance = RuntimeManager.CreateInstance(reference);
+
+        RuntimeManager.AttachInstanceToGameObject(instance, target);
+
+        instance.setProperty(EVENT_PROPERTY.MINIMUM_DISTANCE, 0f);
+        instance.setProperty(EVENT_PROPERTY.MAXIMUM_DISTANCE, radius);
+
+        if (fade)
+            instance.setVolume(0);
+
+        instance.start();
+
+        instances[id] = instance;
+
+        if (fade)
+            StartCoroutine(FadeIn(instance, fadeTime));
     }
 
-    public void TogglePause(string id)
-    {
-        if (instances.TryGetValue(id, out var instance))
-        {
-            instance.getPaused(out bool paused);
-            instance.setPaused(!paused);
-        }
-    }
 
     public void Stop(string id, bool fade = false, float fadeTime = 1f)
     {
-        if (instances.TryGetValue(id, out var instance))
+        if (!instances.TryGetValue(id, out var instance))
+            return;
+
+        if (fade)
         {
-            if (fade)
-            {
-                StartCoroutine(FadeOutAndStop(id, instance, fadeTime));
-            }
-            else
-            {
-                instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-                instance.release();
-                instances.Remove(id);
-            }
+            StartCoroutine(FadeOutAndStop(id, instance, fadeTime));
+            return;
         }
+
+        instance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        instance.release();
+        instances.Remove(id);
     }
 
     IEnumerator FadeOutAndStop(string id, EventInstance instance, float fadeTime)
     {
-        instance.getVolume(out float startVolume);
+        instance.getVolume(out float start);
 
-        float timer = 0;
+        float t = 0;
 
-        while (timer < fadeTime)
+        while (t < fadeTime)
         {
-            timer += Time.deltaTime;
-
-            float volume = Mathf.Lerp(startVolume, 0, timer / fadeTime);
-
-            instance.setVolume(volume);
-
+            t += Time.deltaTime;
+            instance.setVolume(Mathf.Lerp(start, 0, t / fadeTime));
             yield return null;
         }
 
@@ -197,41 +156,44 @@ public class FmodCommands : MonoBehaviour
 
     IEnumerator FadeIn(EventInstance instance, float fadeTime)
     {
-        float timer = 0;
+        float t = 0;
 
-        while (timer < fadeTime)
+        while (t < fadeTime)
         {
-            timer += Time.deltaTime;
-
-            float volume = Mathf.Lerp(0, 1, timer / fadeTime);
-
-            instance.setVolume(volume);
-
+            t += Time.deltaTime;
+            instance.setVolume(Mathf.Lerp(0, 1, t / fadeTime));
             yield return null;
         }
 
         instance.setVolume(1);
     }
 
+
     public PLAYBACK_STATE GetState(string id)
     {
         if (instances.TryGetValue(id, out var instance))
         {
-            instance.getPlaybackState(out PLAYBACK_STATE state);
+            instance.getPlaybackState(out var state);
             return state;
         }
 
         return PLAYBACK_STATE.STOPPED;
     }
 
-    public void AddEmitter(FmodEmitterCustom emitterObj)
+
+    public void Pause(string id, bool pause)
     {
-        emitterObj.enabled = true;
+        if (instances.TryGetValue(id, out var instance))
+            instance.setPaused(pause);
     }
 
-    public void RemoveEmitter(FmodEmitterCustom emitterObj)
+    public void TogglePause(string id)
     {
-        emitterObj.enabled = false;
+        if (instances.TryGetValue(id, out var instance))
+        {
+            instance.getPaused(out bool paused);
+            instance.setPaused(!paused);
+        }
     }
 }
 #endif
