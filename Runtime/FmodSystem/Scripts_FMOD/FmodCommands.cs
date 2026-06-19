@@ -71,19 +71,22 @@ public class FmodCommands : MonoBehaviour
     }
 
     public void PlayOneShot3D(string id, Transform target)
-    {
-        var reference = GetEvent(id);
+{
+    var reference = GetEvent(id);
 
-        if (reference.IsNull)
-            return;
+    if (reference.IsNull)
+        return;
 
-        var instance = RuntimeManager.CreateInstance(reference);
+    EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-        instance.set3DAttributes(RuntimeUtils.To3DAttributes(target));
+    RuntimeManager.AttachInstanceToGameObject(
+        instance,
+        target
+    );
 
-        instance.start();
-        instance.release();
-    }
+    instance.start();
+    instance.release();
+}
 
     public void PlayLoop(string id, bool fade = false, float fadeTime = 1f)
     {
@@ -109,29 +112,32 @@ public class FmodCommands : MonoBehaviour
     }
 
     public void PlayLoop3D(string id, Transform target, bool fade = false, float fadeTime = 1f)
-    {
-        if (instances.ContainsKey(id))
-            return;
+{
+    if (instances.ContainsKey(id))
+        return;
 
-        var reference = GetEvent(id);
+    var reference = GetEvent(id);
 
-        if (reference.IsNull)
-            return;
+    if (reference.IsNull)
+        return;
 
-        EventInstance instance = RuntimeManager.CreateInstance(reference);
+    EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-        instance.set3DAttributes(RuntimeUtils.To3DAttributes(target));
+    RuntimeManager.AttachInstanceToGameObject(
+        instance,
+        target
+    );
 
-        if (fade)
-            instance.setVolume(0);
+    if (fade)
+        instance.setVolume(0);
 
-        instance.start();
+    instance.start();
 
-        instances[id] = instance;
+    instances[id] = instance;
 
-        if (fade)
-            StartCoroutine(FadeIn(instance, fadeTime));
-    }
+    if (fade)
+        StartCoroutine(FadeIn(instance, fadeTime));
+}
 
     public void Pause(string id, bool pause)
     {

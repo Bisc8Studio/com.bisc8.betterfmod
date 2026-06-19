@@ -87,18 +87,25 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     public void Play()
+{
+    if (fmodCommands == null)
+        return;
+
+    if (oneShot)
     {
-        if (fmodCommands == null)
-            return;
-
-        if (oneShot)
-        {
+        if (is3D)
+            fmodCommands.PlayOneShot3D(eventId, transform);
+        else
             fmodCommands.PlayOneShot(eventId);
-            return;
-        }
 
-        fmodCommands.PlayLoop(eventId);
+        return;
     }
+
+    if (is3D)
+        fmodCommands.PlayLoop3D(eventId, transform);
+    else
+        fmodCommands.PlayLoop(eventId);
+}
 
     public void Stop(bool fade = true)
     {
