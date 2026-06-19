@@ -39,6 +39,7 @@ public class FmodEmitterCustom : MonoBehaviour
     public Color gizmoColor = Color.cyan;
 
     private FmodCommands fmod;
+    private float appliedRadius = -1f;
 
     void Awake()
     {
@@ -81,6 +82,14 @@ public class FmodEmitterCustom : MonoBehaviour
             Play();
     }
 
+    void Update()
+    {
+        if (fmod == null || !is3D || oneShot)
+            return;
+
+        ApplyRadiusToPlayingEvent();
+    }
+
     public void Play()
     {
         if (fmod == null)
@@ -89,7 +98,7 @@ public class FmodEmitterCustom : MonoBehaviour
         if (oneShot)
         {
             if (is3D)
-                fmod.PlayOneShot3D(eventId, transform);
+                fmod.PlayOneShot3D(eventId, transform, radius);
             else
                 fmod.PlayOneShot(eventId);
 
@@ -97,7 +106,7 @@ public class FmodEmitterCustom : MonoBehaviour
         }
 
         if (is3D)
-            fmod.PlayLoop3D(eventId, transform, radius); // 🔥 radius agora REAL
+            fmod.PlayLoop3D(eventId, transform, radius);
         else
             fmod.PlayLoop(eventId);
     }
@@ -108,6 +117,7 @@ public class FmodEmitterCustom : MonoBehaviour
             return;
 
         fmod.Stop(eventId, fade);
+        appliedRadius = -1f;
     }
 
     public void Pause(bool pause)
@@ -116,6 +126,17 @@ public class FmodEmitterCustom : MonoBehaviour
             return;
 
         fmod.Pause(eventId, pause);
+    }
+
+    private void ApplyRadiusToPlayingEvent()
+    {
+        float validRadius = Mathf.Max(0.01f, radius);
+
+        if (Mathf.Approximately(appliedRadius, validRadius))
+            return;
+
+        fmod.Set3DRange(eventId, validRadius);
+        appliedRadius = validRadius;
     }
 
     void OnDrawGizmos()
@@ -127,7 +148,12 @@ public class FmodEmitterCustom : MonoBehaviour
             return;
 
         Gizmos.color = gizmoColor;
-        Gizmos.DrawWireSphere(transform.position, radius);
+        Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.01f, radius));
+    }
+
+    void OnValidate()
+    {
+        radius = Mathf.Max(0.01f, radius);
     }
 }
 #endif

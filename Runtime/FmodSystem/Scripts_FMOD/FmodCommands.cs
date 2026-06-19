@@ -59,14 +59,15 @@ public class FmodCommands : MonoBehaviour
             RuntimeManager.PlayOneShot(reference);
     }
 
-    public void PlayOneShot3D(string id, Transform target)
+    public void PlayOneShot3D(string id, Transform target, float radius)
     {
         var reference = GetEvent(id);
         if (reference.IsNull) return;
 
         EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-        RuntimeManager.AttachInstanceToGameObject(instance, target);
+        RuntimeManager.AttachInstanceToGameObject(instance, target.gameObject);
+        Apply3DRange(instance, radius);
 
         instance.start();
         instance.release();
@@ -103,10 +104,8 @@ public class FmodCommands : MonoBehaviour
 
         EventInstance instance = RuntimeManager.CreateInstance(reference);
 
-        RuntimeManager.AttachInstanceToGameObject(instance, target);
-
-        instance.setProperty(EVENT_PROPERTY.MINIMUM_DISTANCE, 0f);
-        instance.setProperty(EVENT_PROPERTY.MAXIMUM_DISTANCE, radius);
+        RuntimeManager.AttachInstanceToGameObject(instance, target.gameObject);
+        Apply3DRange(instance, radius);
 
         if (fade)
             instance.setVolume(0);
@@ -117,6 +116,22 @@ public class FmodCommands : MonoBehaviour
 
         if (fade)
             StartCoroutine(FadeIn(instance, fadeTime));
+    }
+
+    public void Set3DRange(string id, float radius)
+    {
+        if (!instances.TryGetValue(id, out var instance))
+            return;
+
+        Apply3DRange(instance, radius);
+    }
+
+    private void Apply3DRange(EventInstance instance, float radius)
+    {
+        float maxDistance = Mathf.Max(0.01f, radius);
+
+        instance.setProperty(EVENT_PROPERTY.MINIMUM_DISTANCE, 0f);
+        instance.setProperty(EVENT_PROPERTY.MAXIMUM_DISTANCE, maxDistance);
     }
 
 
