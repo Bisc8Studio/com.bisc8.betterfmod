@@ -79,5 +79,6 @@ public void RemoveEmitter(FmodEmitterCustom emitterObj)
     {
         comp.enabled = false;
     }
+    }
 }
 #endif
