@@ -35,21 +35,38 @@ public class FmodSlider : MonoBehaviour
         ResetPrefs();
 
         // Main buses
-        masterBus = RuntimeManager.GetBus("bus:/Master");
-        musicBus = RuntimeManager.GetBus("bus:/Master/Music");
-        sfxBus = RuntimeManager.GetBus("bus:/Master/SFX");
-
-        SetupSlider(masterSlider, masterBus, "Master");
-        SetupSlider(musicSlider, musicBus, "Music");
-        SetupSlider(sfxSlider, sfxBus, "SFX");
+        TrySetupSlider(masterSlider, "bus:/Master", "Master", out masterBus);
+        TrySetupSlider(musicSlider, "bus:/Master/Music", "Music", out musicBus);
+        TrySetupSlider(sfxSlider, "bus:/Master/SFX", "SFX", out sfxBus);
 
         // Others sliders
         foreach (BusSlider busSlider in otherSliders)
         {
-            busSlider.bus = RuntimeManager.GetBus(busSlider.busPath);
-
-            SetupSlider(busSlider.slider, busSlider.bus, busSlider.name);
+            TrySetupSlider(busSlider.slider, busSlider.busPath, busSlider.name, out busSlider.bus);
         }
+    }
+
+    bool TrySetupSlider(Slider slider, string busPath, string saveName, out Bus bus)
+    {
+        bus = default;
+
+        if (slider == null || string.IsNullOrEmpty(busPath))
+            return false;
+
+        try
+        {
+            bus = RuntimeManager.GetBus(busPath);
+        }
+        catch (BusNotFoundException)
+        {
+            if (!FmodMultiplayerSettings.MultiplayerModeEnabled)
+                Debug.LogWarning("[FMOD] Bus not found: " + busPath);
+
+            return false;
+        }
+
+        SetupSlider(slider, bus, saveName);
+        return true;
     }
 
     void SetupSlider(Slider slider, Bus bus, string saveName)

@@ -70,7 +70,7 @@ namespace FMODUnity
                     sourceFileWatcher.EnableRaisingEvents = false;
                     sourceFilesChanged = false;
 
-                    if (!string.IsNullOrEmpty(sourceBankPath))
+                    if (!string.IsNullOrEmpty(sourceBankPath) && Directory.Exists(pathToWatch))
                     {
                         sourceFileWatcher.Path = pathToWatch;
                         sourceFileWatcher.EnableRaisingEvents = true;

@@ -17,6 +17,9 @@ public class FmodCommands : MonoBehaviour
     private Dictionary<string, EventInstance> instances =
         new Dictionary<string, EventInstance>();
 
+    private HashSet<string> missingEventsLogged =
+        new HashSet<string>();
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -47,7 +50,9 @@ public class FmodCommands : MonoBehaviour
         if (eventDict.TryGetValue(id, out var e))
             return e;
 
-        Debug.LogError("Event not found: " + id);
+        if (!FmodMultiplayerSettings.MultiplayerModeEnabled)
+            Debug.LogError("Event not found: " + id);
+
         return default;
     }
 
@@ -55,8 +60,13 @@ public class FmodCommands : MonoBehaviour
     public void PlayOneShot(string id)
     {
         var reference = GetEvent(id);
-        if (!reference.IsNull)
-            RuntimeManager.PlayOneShot(reference);
+        if (reference.IsNull) return;
+
+        if (!TryCreateInstance(id, reference, out EventInstance instance))
+            return;
+
+        instance.start();
+        instance.release();
     }
 
     public void PlayOneShot3D(string id, Transform target, float radius)
@@ -64,7 +74,8 @@ public class FmodCommands : MonoBehaviour
         var reference = GetEvent(id);
         if (reference.IsNull) return;
 
-        EventInstance instance = RuntimeManager.CreateInstance(reference);
+        if (!TryCreateInstance(id, reference, out EventInstance instance))
+            return;
 
         RuntimeManager.AttachInstanceToGameObject(instance, target.gameObject);
         Apply3DRange(instance, radius);
@@ -81,7 +92,8 @@ public class FmodCommands : MonoBehaviour
         var reference = GetEvent(id);
         if (reference.IsNull) return;
 
-        EventInstance instance = RuntimeManager.CreateInstance(reference);
+        if (!TryCreateInstance(id, reference, out EventInstance instance))
+            return;
 
         if (fade)
             instance.setVolume(0);
@@ -102,7 +114,8 @@ public class FmodCommands : MonoBehaviour
         var reference = GetEvent(id);
         if (reference.IsNull) return;
 
-        EventInstance instance = RuntimeManager.CreateInstance(reference);
+        if (!TryCreateInstance(id, reference, out EventInstance instance))
+            return;
 
         RuntimeManager.AttachInstanceToGameObject(instance, target.gameObject);
         Apply3DRange(instance, radius);
@@ -132,6 +145,31 @@ public class FmodCommands : MonoBehaviour
 
         instance.setProperty(EVENT_PROPERTY.MINIMUM_DISTANCE, 0f);
         instance.setProperty(EVENT_PROPERTY.MAXIMUM_DISTANCE, maxDistance);
+    }
+
+    private bool TryCreateInstance(string id, EventReference reference, out EventInstance instance)
+    {
+        instance = default;
+
+        try
+        {
+            instance = RuntimeManager.CreateInstance(reference);
+            return true;
+        }
+        catch (EventNotFoundException)
+        {
+            LogMissingEvent(id);
+            return false;
+        }
+    }
+
+    private void LogMissingEvent(string id)
+    {
+        if (FmodMultiplayerSettings.MultiplayerModeEnabled)
+            return;
+
+        if (missingEventsLogged.Add(id))
+            Debug.LogWarning("[FMOD] Event not found: " + id);
     }
 
 

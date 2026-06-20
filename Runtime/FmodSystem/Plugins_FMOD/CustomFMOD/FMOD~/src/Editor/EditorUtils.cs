@@ -62,6 +62,12 @@ namespace FMODUnity
                 if (!File.Exists(settings.SourceProjectPath))
                 {
                     valid = false;
+                    if (IsVirtualPlayerProject())
+                    {
+                        reason = null;
+                        return;
+                    }
+
                     reason = string.Format(L10n.Tr("The FMOD Studio project path '{0}' does not exist."), settings.SourceProjectPath);
                     return;
                 }
@@ -90,6 +96,12 @@ namespace FMODUnity
                 if (!Directory.Exists(settings.SourceBankPath))
                 {
                     valid = false;
+                    if (IsVirtualPlayerProject())
+                    {
+                        reason = null;
+                        return;
+                    }
+
                     reason = string.Format(L10n.Tr("The build path '{0}' does not exist."), settings.SourceBankPath);
                     return;
                 }
@@ -100,12 +112,24 @@ namespace FMODUnity
                     if (Directory.GetDirectories(settings.SourceBankPath).Length == 0)
                     {
                         valid = false;
+                        if (IsVirtualPlayerProject())
+                        {
+                            reason = null;
+                            return;
+                        }
+
                         reason = string.Format(L10n.Tr("Build path '{0}' does not contain any platform sub-directories. Please check that the build path is correct."), settings.SourceBankPath);
                         return;
                     }
                     else if (!Directory.Exists(defaultBankFolder))
                     {
                         valid = false;
+                        if (IsVirtualPlayerProject())
+                        {
+                            reason = null;
+                            return;
+                        }
+
                         reason = string.Format(L10n.Tr("Platform sub-directory '{0}' does not exist. Please check that the build path is correct."), defaultBankFolder);
                         return;
                     }
@@ -120,6 +144,12 @@ namespace FMODUnity
                     }
                 }
             }
+        }
+
+        private static bool IsVirtualPlayerProject()
+        {
+            string dataPath = Application.dataPath.Replace('\\', '/');
+            return dataPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static string[] GetBankPlatforms()
