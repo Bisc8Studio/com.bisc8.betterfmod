@@ -70,12 +70,7 @@ namespace FMODUnity
                     sourceFileWatcher.EnableRaisingEvents = false;
                     sourceFilesChanged = false;
 
-                    if (string.IsNullOrEmpty(sourceBankPath) || !Directory.Exists(pathToWatch))
-                    {
-                        return;
-                    }
-
-                    if (!string.IsNullOrEmpty(sourceBankPath))
+                    if (!string.IsNullOrEmpty(sourceBankPath) && Directory.Exists(pathToWatch))
                     {
                         sourceFileWatcher.Path = pathToWatch;
                         sourceFileWatcher.EnableRaisingEvents = true;
@@ -83,18 +78,9 @@ namespace FMODUnity
                 }
                 catch (ArgumentException e)
                 {
-                    if (!IsVirtualPlayerPath(pathToWatch))
-                    {
-                        RuntimeUtils.DebugLogWarningFormat("Error watching {0}: {1}", pathToWatch, e.Message);
-                    }
+                    RuntimeUtils.DebugLogWarningFormat("Error watching {0}: {1}", pathToWatch, e.Message);
                 }
             }
-        }
-
-        private static bool IsVirtualPlayerPath(string path)
-        {
-            string fullPath = RuntimeUtils.GetCommonPlatformPath(Path.GetFullPath(path));
-            return fullPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private static void CheckSourceFilesChanged()

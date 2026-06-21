@@ -102,11 +102,6 @@ namespace FMODUnity
             FMOD.StringWrapper func = new FMOD.StringWrapper(funcPtr);
             FMOD.StringWrapper message = new FMOD.StringWrapper(messagePtr);
 
-            if (ShouldSuppressVirtualPlayerLookupWarning(flags, (string)func, (string)message))
-            {
-                return FMOD.RESULT.OK;
-            }
-
             if (flags == FMOD.DEBUG_FLAGS.ERROR)
             {
                 RuntimeUtils.DebugLogError(string.Format(("[FMOD] {0} : {1}"), (string)func, (string)message));
@@ -120,28 +115,6 @@ namespace FMODUnity
                 RuntimeUtils.DebugLog(string.Format(("[FMOD] {0} : {1}"), (string)func, (string)message));
             }
             return FMOD.RESULT.OK;
-        }
-
-        private static bool ShouldSuppressVirtualPlayerLookupWarning(FMOD.DEBUG_FLAGS flags, string functionName, string message)
-        {
-#if UNITY_EDITOR
-            if (flags != FMOD.DEBUG_FLAGS.WARNING)
-            {
-                return false;
-            }
-
-            if (functionName != "ObjectLookup::get" || !message.Contains("Lookup failed for EventModel"))
-            {
-                return false;
-            }
-
-            string dataPath = Application.dataPath.Replace('\\', '/');
-            string currentDirectory = Environment.CurrentDirectory.Replace('\\', '/');
-            return dataPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0
-                || currentDirectory.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
-#else
-            return false;
-#endif
         }
 
         [AOT.MonoPInvokeCallback(typeof(FMOD.SYSTEM_CALLBACK))]

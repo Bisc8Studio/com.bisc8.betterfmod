@@ -52,7 +52,6 @@ public class FmodMultiplayerSettingsEditor : Editor
         serializedSettings.FindProperty("HasSourceProject").boolValue = false;
         serializedSettings.FindProperty("BankRefreshCooldown").intValue = -2;
         serializedSettings.FindProperty("ShowBankRefreshWindow").boolValue = false;
-        SetLoggingLevel(serializedSettings.FindProperty("LoggingLevel"), FMOD.DEBUG_FLAGS.ERROR);
         serializedSettings.ApplyModifiedProperties();
 
         DisableLiveUpdate(settings.DefaultPlatform);
@@ -84,14 +83,6 @@ public class FmodMultiplayerSettingsEditor : Editor
 
         serializedPlatform.ApplyModifiedProperties();
         EditorUtility.SetDirty(platform);
-    }
-
-    private static void SetLoggingLevel(SerializedProperty loggingLevel, FMOD.DEBUG_FLAGS value)
-    {
-        if (loggingLevel == null)
-            return;
-
-        loggingLevel.intValue = (int)value;
     }
 }
 #endif

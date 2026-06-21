@@ -1,7 +1,5 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using System;
-using System.IO;
 
 namespace FMODUnity
 {
@@ -78,11 +76,6 @@ namespace FMODUnity
 
         public static void HandleBankRefresh(string error)
         {
-            if (ShouldIgnoreVirtualPlayerRefreshError(error))
-            {
-                error = null;
-            }
-
             if (error != null)
             {
                 RuntimeUtils.DebugLogErrorFormat("FMOD: Bank refresh failed: {0}", error);
@@ -98,28 +91,6 @@ namespace FMODUnity
                     instance.closeTime = Time.realtimeSinceStartup + CloseDelay;
                 }
             }
-        }
-
-        private static bool ShouldIgnoreVirtualPlayerRefreshError(string error)
-        {
-            if (string.IsNullOrEmpty(error) || error.IndexOf("does not exist", StringComparison.OrdinalIgnoreCase) < 0)
-            {
-                return false;
-            }
-
-            Settings settings = Settings.Instance;
-            return IsVirtualPlayerPath(settings.SourceBankPath) || IsVirtualPlayerPath(settings.SourceProjectPath);
-        }
-
-        private static bool IsVirtualPlayerPath(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return false;
-            }
-
-            string fullPath = RuntimeUtils.GetCommonPlatformPath(Path.GetFullPath(path));
-            return fullPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private void OnGUI()
