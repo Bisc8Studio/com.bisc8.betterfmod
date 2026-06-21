@@ -62,7 +62,7 @@ namespace FMODUnity
                 if (!File.Exists(settings.SourceProjectPath))
                 {
                     valid = false;
-                    if (IsVirtualPlayerProject())
+                    if (IsVirtualPlayerPath(settings.SourceProjectPath))
                     {
                         reason = null;
                         return;
@@ -96,7 +96,7 @@ namespace FMODUnity
                 if (!Directory.Exists(settings.SourceBankPath))
                 {
                     valid = false;
-                    if (IsVirtualPlayerProject())
+                    if (IsVirtualPlayerPath(settings.SourceBankPath))
                     {
                         reason = null;
                         return;
@@ -112,7 +112,7 @@ namespace FMODUnity
                     if (Directory.GetDirectories(settings.SourceBankPath).Length == 0)
                     {
                         valid = false;
-                        if (IsVirtualPlayerProject())
+                        if (IsVirtualPlayerPath(settings.SourceBankPath))
                         {
                             reason = null;
                             return;
@@ -124,7 +124,7 @@ namespace FMODUnity
                     else if (!Directory.Exists(defaultBankFolder))
                     {
                         valid = false;
-                        if (IsVirtualPlayerProject())
+                        if (IsVirtualPlayerPath(defaultBankFolder))
                         {
                             reason = null;
                             return;
@@ -146,10 +146,10 @@ namespace FMODUnity
             }
         }
 
-        private static bool IsVirtualPlayerProject()
+        private static bool IsVirtualPlayerPath(string path)
         {
-            string dataPath = Application.dataPath.Replace('\\', '/');
-            return dataPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
+            string fullPath = RuntimeUtils.GetCommonPlatformPath(Path.GetFullPath(path));
+            return fullPath.IndexOf("/Library/VP/", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public static string[] GetBankPlatforms()

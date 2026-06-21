@@ -9,7 +9,7 @@ public class FmodCommands : MonoBehaviour
 {
     public static FmodCommands Instance;
 
-    [SerializeField] private List<CreateFmodList> eventLists;
+    [SerializeField] private List<CreateFmodList> eventLists = new List<CreateFmodList>();
 
     private Dictionary<string, EventReference> eventDict =
         new Dictionary<string, EventReference>();
@@ -24,20 +24,45 @@ public class FmodCommands : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
             return;
         }
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        BuildEventDictionary();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
+    private void BuildEventDictionary()
+    {
+        eventDict.Clear();
+
+        if (eventLists == null)
+            return;
+
         foreach (var list in eventLists)
         {
+            if (list == null)
+                continue;
+
             if (list.type == ListType.None)
+                continue;
+
+            if (list.events == null)
                 continue;
 
             foreach (var entry in list.events)
             {
+                if (entry == null || string.IsNullOrEmpty(entry.id))
+                    continue;
+
                 if (!eventDict.ContainsKey(entry.id))
                     eventDict.Add(entry.id, entry.reference);
             }
