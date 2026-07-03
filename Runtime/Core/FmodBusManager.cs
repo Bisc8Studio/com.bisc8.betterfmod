@@ -41,7 +41,7 @@ internal sealed class FmodBusManager
     internal void StopBus(string path)
     {
         if (TryGetBus(path, out Bus bus))
-            bus.stopAllEvents(STOP_MODE.ALLOWFADEOUT);
+            bus.stopAllEvents(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
     }
 
     internal void SetVcaVolume(string path, float volume)

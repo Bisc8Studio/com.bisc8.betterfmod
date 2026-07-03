@@ -65,7 +65,7 @@ internal sealed class FmodFadeManager
         yield return FadeToRoutine(managed, 0f, duration);
 
         if (managed.IsValid)
-            commands.ReleaseInstance(managed, STOP_MODE.IMMEDIATE);
+            commands.ReleaseInstance(managed, FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 }
 #endif

@@ -488,7 +488,7 @@ public class FmodCommands : MonoBehaviour
             return;
         }
 
-        ReleaseInstance(managed, STOP_MODE.IMMEDIATE);
+        ReleaseInstance(managed, FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     internal void Pause(int handleId)
@@ -678,7 +678,7 @@ public class FmodCommands : MonoBehaviour
             StopCoroutine(coroutine);
     }
 
-    internal void ReleaseInstance(FmodManagedInstance managed, STOP_MODE stopMode)
+    internal void ReleaseInstance(FmodManagedInstance managed, FMOD.Studio.STOP_MODE stopMode)
     {
         if (managed == null || managed.IsReleased)
             return;
@@ -830,7 +830,7 @@ public class FmodCommands : MonoBehaviour
             return;
 
         foreach (FmodManagedInstance managed in stopped)
-            ReleaseInstance(managed, STOP_MODE.IMMEDIATE);
+            ReleaseInstance(managed, FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 
     private void Apply3DAttributes(FmodManagedInstance managed)
