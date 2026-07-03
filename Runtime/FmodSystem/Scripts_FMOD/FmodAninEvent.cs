@@ -2,12 +2,12 @@
 using UnityEngine;
 
 /// <summary>
-/// Legacy animation event bridge for BetterFMOD commands.
+/// Ponte legado de Animation Event para comandos BetterFMOD.
 /// </summary>
 public class FmodAninEvent : MonoBehaviour
 {
     /// <summary>
-    /// Plays a one shot event from an animation event.
+    /// Toca um evento a partir de um Animation Event.
     /// </summary>
     public void PlayOneShot(string id)
     {
@@ -15,7 +15,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays a loop event from an animation event.
+    /// Toca um evento de loop a partir de um Animation Event.
     /// </summary>
     public void PlayLoop(string id)
     {
@@ -23,7 +23,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Resumes an event from an animation event.
+    /// Retoma um evento a partir de um Animation Event.
     /// </summary>
     public void Pause(string id)
     {
@@ -31,7 +31,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Stops an event immediately from an animation event.
+    /// Para um evento imediatamente a partir de um Animation Event.
     /// </summary>
     public void StopFadeOff(string id)
     {
@@ -39,7 +39,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Stops an event with fade from an animation event.
+    /// Para um evento com fade a partir de um Animation Event.
     /// </summary>
     public void StopFadeOn(string id)
     {
@@ -47,7 +47,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets an event state from an animation event.
+    /// Le o estado de um evento a partir de um Animation Event.
     /// </summary>
     public void GetState(string id)
     {
@@ -55,7 +55,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Enables a legacy emitter component.
+    /// Ativa um componente de emissor legado.
     /// </summary>
     public void AddEmitter(FmodEmitterCustom emitterObj)
     {
@@ -63,7 +63,7 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     /// <summary>
-    /// Disables a legacy emitter component.
+    /// Desativa um componente de emissor legado.
     /// </summary>
     public void RemoveEmitter(FmodEmitterCustom emitterObj)
     {

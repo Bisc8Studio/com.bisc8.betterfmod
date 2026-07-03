@@ -3,12 +3,12 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Legacy BetterFMOD emitter component kept for compatibility with existing scenes.
+/// Emissor legado do BetterFMOD mantido para compatibilidade com cenas existentes.
 /// </summary>
 public class FmodEmitterCustom : MonoBehaviour
 {
     /// <summary>
-    /// Defines the legacy emitter inspector mode.
+    /// Define o modo de inspector do emissor legado.
     /// </summary>
     public enum EmitterMode
     {
@@ -18,7 +18,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Defines when this legacy emitter plays.
+    /// Define quando este emissor legado toca.
     /// </summary>
     public enum PlayEvent
     {
@@ -29,7 +29,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Defines when this legacy emitter stops.
+    /// Define quando este emissor legado para.
     /// </summary>
     public enum StopEvent
     {
@@ -95,7 +95,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays the configured event.
+    /// Toca o evento configurado.
     /// </summary>
     public void Play()
     {
@@ -105,20 +105,20 @@ public class FmodEmitterCustom : MonoBehaviour
         if (oneShot)
         {
             if (is3D)
-                Fmod.Play(eventId, transform).Radius(radius);
+                Fmod.Event(eventId).As3D().FollowTransform(transform).Radius(radius).Play();
             else
-                Fmod.Play(eventId);
+                Fmod.Event(eventId).Play();
 
             return;
         }
 
         handle = is3D
-            ? Fmod.PlayLoop(eventId, transform).Radius(radius)
-            : Fmod.PlayLoop(eventId);
+            ? Fmod.Event(eventId).Loop().As3D().FollowTransform(transform).Radius(radius).Play()
+            : Fmod.Event(eventId).Loop().Play();
     }
 
     /// <summary>
-    /// Stops the configured event.
+    /// Para o evento configurado.
     /// </summary>
     public void Stop(bool fade = true)
     {
@@ -131,7 +131,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Pauses or resumes the configured event.
+    /// Pausa ou retoma o evento configurado.
     /// </summary>
     public void Pause(bool pause)
     {

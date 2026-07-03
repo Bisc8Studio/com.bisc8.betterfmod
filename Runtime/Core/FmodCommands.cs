@@ -6,12 +6,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Central BetterFMOD runtime service that owns event lookup, instance lifetime, and FMOD communication.
+/// Servico central interno do BetterFMOD que controla eventos, instancias e comunicacao com o FMOD.
 /// </summary>
 public class FmodCommands : MonoBehaviour
 {
     /// <summary>
-    /// Gets the active BetterFMOD command service.
+    /// Instancia ativa do servico central do BetterFMOD.
     /// </summary>
     public static FmodCommands Instance;
 
@@ -34,7 +34,7 @@ public class FmodCommands : MonoBehaviour
     internal FmodSnapshotManager SnapshotManager => snapshotManager;
 
     /// <summary>
-    /// Returns the active command service, creating one when the scene does not contain a BetterFMOD system object.
+    /// Retorna o servico ativo, criando um objeto BetterFMOD quando a cena ainda nao possui um.
     /// </summary>
     public static FmodCommands EnsureInstance()
     {
@@ -103,7 +103,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Rebuilds the event lookup table from the configured BetterFMOD event lists.
+    /// Reconstrói a tabela de eventos a partir das listas configuradas no BetterFMOD.
     /// </summary>
     public void RebuildEventLookup()
     {
@@ -125,7 +125,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the FMOD event reference registered for the provided BetterFMOD event id.
+    /// Le a referencia FMOD registrada para um id de evento do BetterFMOD.
     /// </summary>
     public EventReference GetEvent(string id)
     {
@@ -142,7 +142,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an event and returns a handle that can control the created instance.
+    /// Toca um evento e retorna o controle da instancia criada.
     /// </summary>
     public FmodHandle Play(string id)
     {
@@ -150,7 +150,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an event attached to a transform and returns a handle that can control the created instance.
+    /// Toca um evento, anexa a instancia a um Transform e retorna o controle da instancia criada.
     /// </summary>
     public FmodHandle Play(string id, Transform target)
     {
@@ -158,7 +158,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an event intended to be controlled as a loop and returns a handle for that specific instance.
+    /// Toca um evento como loop controlavel e retorna o controle da instancia criada.
     /// </summary>
     public FmodHandle PlayLoop(string id)
     {
@@ -166,7 +166,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an event intended to be controlled as a loop attached to a transform and returns a handle for that specific instance.
+    /// Toca um evento como loop controlavel, anexa a instancia a um Transform e retorna o controle da instancia criada.
     /// </summary>
     public FmodHandle PlayLoop(string id, Transform target)
     {
@@ -174,7 +174,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an FMOD one shot event without keeping a public handle.
+    /// Toca um evento sem exigir que o chamador guarde o handle retornado.
     /// </summary>
     public void PlayOneShot(string id)
     {
@@ -182,7 +182,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an FMOD one shot event attached to a transform without keeping a public handle.
+    /// Toca um evento anexado a um Transform sem exigir que o chamador guarde o handle retornado.
     /// </summary>
     public void PlayOneShot3D(string id, Transform target, float radius)
     {
@@ -190,7 +190,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays a managed looping event.
+    /// Toca um evento de loop gerenciado.
     /// </summary>
     public void PlayLoop(string id, bool fade = false, float fadeTime = 1f)
     {
@@ -201,7 +201,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays a managed looping event attached to a transform.
+    /// Toca um evento de loop gerenciado anexado a um Transform.
     /// </summary>
     public void PlayLoop3D(string id, Transform target, float radius, bool fade = false, float fadeTime = 1f)
     {
@@ -212,7 +212,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Stops every active instance of an event.
+    /// Para todas as instancias ativas de um evento.
     /// </summary>
     public void Stop(string id, bool fade = false, float fadeTime = 1f)
     {
@@ -232,7 +232,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Stops every active managed FMOD instance.
+    /// Para todas as instancias ativas gerenciadas pelo BetterFMOD.
     /// </summary>
     public void StopAll(bool fade = false, float fadeTime = 1f)
     {
@@ -244,7 +244,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Pauses every active instance of an event.
+    /// Pausa todas as instancias ativas de um evento.
     /// </summary>
     public void Pause(string id, bool pause)
     {
@@ -252,7 +252,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Resumes every active instance of an event.
+    /// Retoma todas as instancias pausadas de um evento.
     /// </summary>
     public void Resume(string id)
     {
@@ -260,7 +260,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggles pause on every active instance of an event.
+    /// Alterna pausa em todas as instancias ativas de um evento.
     /// </summary>
     public void TogglePause(string id)
     {
@@ -272,7 +272,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets a parameter on every active instance of an event.
+    /// Define um parametro em todas as instancias ativas de um evento.
     /// </summary>
     public void SetParameter(string id, string parameter, float value)
     {
@@ -280,7 +280,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets a parameter from the newest active instance of an event.
+    /// Le um parametro da instancia ativa mais recente de um evento.
     /// </summary>
     public float GetParameter(string id, string parameter)
     {
@@ -289,7 +289,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets a labeled parameter on every active instance of an event.
+    /// Define um parametro por label em todas as instancias ativas de um evento.
     /// </summary>
     public void SetParameterLabel(string id, string parameter, string label)
     {
@@ -297,7 +297,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets an FMOD global parameter.
+    /// Define um parametro global do FMOD.
     /// </summary>
     public void SetGlobalParameter(string parameter, float value)
     {
@@ -305,7 +305,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets an FMOD global parameter.
+    /// Le um parametro global do FMOD.
     /// </summary>
     public float GetGlobalParameter(string parameter)
     {
@@ -313,7 +313,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the volume on every active instance of an event.
+    /// Define o volume em todas as instancias ativas de um evento.
     /// </summary>
     public void SetVolume(string id, float volume)
     {
@@ -321,7 +321,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the volume from the newest active instance of an event.
+    /// Le o volume da instancia ativa mais recente de um evento.
     /// </summary>
     public float GetVolume(string id)
     {
@@ -330,7 +330,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Fades every active instance of an event to a volume over time.
+    /// Altera gradualmente o volume de todas as instancias ativas de um evento.
     /// </summary>
     public void FadeTo(string id, float volume, float duration)
     {
@@ -338,7 +338,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Fades in every active instance of an event.
+    /// Aplica fade in em todas as instancias ativas de um evento.
     /// </summary>
     public void FadeIn(string id, float duration)
     {
@@ -346,7 +346,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Fades out and stops every active instance of an event.
+    /// Aplica fade out e para todas as instancias ativas de um evento.
     /// </summary>
     public void FadeOut(string id, float duration)
     {
@@ -354,7 +354,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets pitch on every active instance of an event.
+    /// Define o pitch em todas as instancias ativas de um evento.
     /// </summary>
     public void SetPitch(string id, float pitch)
     {
@@ -362,7 +362,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets pitch from the newest active instance of an event.
+    /// Le o pitch da instancia ativa mais recente de um evento.
     /// </summary>
     public float GetPitch(string id)
     {
@@ -371,7 +371,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true when any active instance of an event is playing or sustaining.
+    /// Retorna verdadeiro quando alguma instancia ativa de um evento esta tocando ou sustentando.
     /// </summary>
     public bool IsPlaying(string id)
     {
@@ -381,7 +381,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true when any active instance of an event is paused.
+    /// Retorna verdadeiro quando alguma instancia ativa de um evento esta pausada.
     /// </summary>
     public bool IsPaused(string id)
     {
@@ -391,7 +391,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns true when at least one active instance exists for an event.
+    /// Retorna verdadeiro quando existe ao menos uma instancia ativa de um evento.
     /// </summary>
     public bool Exists(string id)
     {
@@ -399,7 +399,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the playback state for the newest active instance of an event.
+    /// Le o estado de playback da instancia ativa mais recente de um evento.
     /// </summary>
     public PLAYBACK_STATE GetState(string id)
     {
@@ -408,7 +408,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the BetterFMOD playback state for the newest active instance of an event.
+    /// Le o estado BetterFMOD da instancia ativa mais recente de um evento.
     /// </summary>
     public FmodPlaybackState GetBetterState(string id)
     {
@@ -416,7 +416,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the timeline position from the newest active instance of an event.
+    /// Le a posicao da timeline da instancia ativa mais recente de um evento.
     /// </summary>
     public int GetTimelinePosition(string id)
     {
@@ -425,7 +425,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the timeline position on every active instance of an event.
+    /// Define a posicao da timeline em todas as instancias ativas de um evento.
     /// </summary>
     public void SetTimelinePosition(string id, int milliseconds)
     {
@@ -433,7 +433,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Makes every active instance of an event follow a transform.
+    /// Faz todas as instancias ativas de um evento seguirem um Transform.
     /// </summary>
     public void Follow(string id, Transform target)
     {
@@ -441,7 +441,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Detaches every active instance of an event from a transform.
+    /// Desanexa todas as instancias ativas de um evento de seus Transforms.
     /// </summary>
     public void Detach(string id)
     {
@@ -449,7 +449,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the 3D position on every active instance of an event.
+    /// Define a posicao 3D em todas as instancias ativas de um evento.
     /// </summary>
     public void SetPosition(string id, Vector3 position)
     {
@@ -457,7 +457,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the 3D velocity on every active instance of an event.
+    /// Define a velocidade 3D em todas as instancias ativas de um evento.
     /// </summary>
     public void SetVelocity(string id, Vector3 velocity)
     {
@@ -465,7 +465,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the 3D maximum distance on every active instance of an event.
+    /// Define a distancia maxima 3D em todas as instancias ativas de um evento.
     /// </summary>
     public void Set3DRange(string id, float radius)
     {

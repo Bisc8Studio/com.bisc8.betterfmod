@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Binds a BetterFMOD parameter to a value source without custom gameplay code.
+/// Liga um parametro BetterFMOD a uma fonte de valor sem codigo de gameplay customizado.
 /// </summary>
 public class FmodParameter : MonoBehaviour
 {
@@ -30,7 +30,7 @@ public class FmodParameter : MonoBehaviour
     }
 
     /// <summary>
-    /// Applies the current source value to the configured BetterFMOD parameter.
+    /// Aplica o valor atual da fonte ao parametro BetterFMOD configurado.
     /// </summary>
     public void Apply()
     {
@@ -46,7 +46,7 @@ public class FmodParameter : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the manual float value used by this parameter binding.
+    /// Define o valor float manual usado por este vinculo de parametro.
     /// </summary>
     public void SetFloat(float value)
     {
@@ -55,7 +55,7 @@ public class FmodParameter : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the manual integer value used by this parameter binding.
+    /// Define o valor inteiro manual usado por este vinculo de parametro.
     /// </summary>
     public void SetInt(int value)
     {
@@ -121,7 +121,7 @@ public class FmodParameter : MonoBehaviour
 }
 
 /// <summary>
-/// Defines a value source for BetterFMOD parameter binding.
+/// Define uma fonte de valor para vinculo de parametros BetterFMOD.
 /// </summary>
 public enum FmodParameterSource
 {

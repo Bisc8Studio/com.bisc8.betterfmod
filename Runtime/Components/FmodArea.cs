@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Applies BetterFMOD snapshot, music, and parameter changes while a target is inside an area.
+/// Aplica snapshot, musica e parametros BetterFMOD enquanto um alvo esta dentro de uma area.
 /// </summary>
 public class FmodArea : MonoBehaviour
 {
@@ -35,7 +35,7 @@ public class FmodArea : MonoBehaviour
     }
 
     /// <summary>
-    /// Applies the configured area enter audio state.
+    /// Aplica o estado de audio configurado para entrada na area.
     /// </summary>
     public void Enter()
     {
@@ -43,14 +43,14 @@ public class FmodArea : MonoBehaviour
             snapshotHandle = Fmod.StartSnapshot(snapshot);
 
         if (!string.IsNullOrWhiteSpace(music))
-            musicHandle = Fmod.PlayLoop(music).FadeIn(0.25f);
+            musicHandle = Fmod.Event(music).Loop().FadeIn(0.25f).Play();
 
         if (!string.IsNullOrWhiteSpace(parameter))
             Fmod.SetParameter(parameterEvent, parameter, enterValue);
     }
 
     /// <summary>
-    /// Applies the configured area exit audio state.
+    /// Aplica o estado de audio configurado para saida da area.
     /// </summary>
     public void Exit()
     {

@@ -5,14 +5,14 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Legacy UI pointer component that executes BetterFMOD commands.
+/// Componente legado de ponteiro de UI que executa comandos BetterFMOD.
 /// </summary>
 public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private List<FmodButtonAction> actions = new();
 
     /// <summary>
-    /// Executes actions configured for pointer click.
+    /// Executa as acoes configuradas para clique do ponteiro.
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -20,7 +20,7 @@ public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     }
 
     /// <summary>
-    /// Executes actions configured for pointer enter.
+    /// Executa as acoes configuradas para entrada do ponteiro.
     /// </summary>
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -28,7 +28,7 @@ public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     }
 
     /// <summary>
-    /// Executes actions configured for pointer exit.
+    /// Executa as acoes configuradas para saida do ponteiro.
     /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
@@ -46,7 +46,7 @@ public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 }
 
 /// <summary>
-/// Represents a legacy UI pointer action that maps to a BetterFMOD command.
+/// Representa uma acao legada de ponteiro de UI mapeada para um comando BetterFMOD.
 /// </summary>
 [Serializable]
 public class FmodButtonAction
@@ -57,7 +57,7 @@ public class FmodButtonAction
     public bool fade;
 
     /// <summary>
-    /// Executes this BetterFMOD action.
+    /// Executa esta acao BetterFMOD.
     /// </summary>
     public void Execute()
     {
@@ -83,7 +83,7 @@ public class FmodButtonAction
 }
 
 /// <summary>
-/// Defines a legacy UI pointer moment.
+/// Define um momento legado de ponteiro de UI.
 /// </summary>
 public enum ButtonMoment
 {
@@ -94,7 +94,7 @@ public enum ButtonMoment
 }
 
 /// <summary>
-/// Defines a legacy BetterFMOD command type.
+/// Define um tipo legado de comando BetterFMOD.
 /// </summary>
 public enum FmodCommandType
 {

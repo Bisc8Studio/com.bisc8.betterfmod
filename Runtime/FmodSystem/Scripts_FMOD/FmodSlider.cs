@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Legacy slider component that controls BetterFMOD bus volumes.
+/// Componente legado de slider que controla volumes de buses pelo BetterFMOD.
 /// </summary>
 public class FmodSlider : MonoBehaviour
 {
@@ -16,7 +16,7 @@ public class FmodSlider : MonoBehaviour
     public BusSlider[] otherSliders;
 
     /// <summary>
-    /// Represents a slider bound to an FMOD bus path.
+    /// Representa um slider vinculado a um path de bus do FMOD.
     /// </summary>
     [Serializable]
     public class BusSlider

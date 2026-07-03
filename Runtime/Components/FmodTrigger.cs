@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Plays or stops BetterFMOD events from Unity trigger, collision, lifecycle, and click events.
+/// Toca ou para eventos BetterFMOD a partir de trigger, colisao, ciclo de vida e clique da Unity.
 /// </summary>
 public class FmodTrigger : MonoBehaviour, IPointerClickHandler
 {
@@ -71,7 +71,7 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// Executes actions configured for pointer click.
+    /// Executa as acoes configuradas para clique do ponteiro.
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -79,23 +79,28 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
     }
 
     /// <summary>
-    /// Plays the configured event.
+    /// Toca o evento configurado.
     /// </summary>
     public FmodHandle Play()
     {
         if (string.IsNullOrWhiteSpace(eventId))
             return FmodHandle.Invalid(eventId);
 
-        handle = loop ? Fmod.PlayLoop(eventId) : Fmod.Play(eventId);
+        FmodEventBuilder builder = Fmod.Event(eventId);
+
+        if (loop)
+            builder.Loop();
 
         if (followSelf)
-            handle.Follow(transform);
+            builder.FollowTransform(transform);
+
+        handle = builder.Play();
 
         return handle;
     }
 
     /// <summary>
-    /// Stops the active event.
+    /// Para o evento ativo.
     /// </summary>
     public void Stop()
     {
@@ -119,7 +124,7 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
 }
 
 /// <summary>
-/// Defines Unity moments that can trigger BetterFMOD actions.
+/// Define os momentos da Unity que podem disparar acoes do BetterFMOD.
 /// </summary>
 [Flags]
 public enum FmodTriggerMoment

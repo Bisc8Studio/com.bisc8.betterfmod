@@ -2,7 +2,7 @@
 using FMOD.Studio;
 
 /// <summary>
-/// Represents a BetterFMOD playback state without exposing FMOD Studio types in the public API.
+/// Representa um estado de playback BetterFMOD sem expor tipos do FMOD Studio na API publica.
 /// </summary>
 public enum FmodPlaybackState
 {

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Plays and controls a BetterFMOD event from a GameObject.
+/// Toca e controla um evento BetterFMOD a partir de um GameObject.
 /// </summary>
 public class FmodEmitter : MonoBehaviour
 {
@@ -38,30 +38,36 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays the configured BetterFMOD event.
+    /// Toca o evento BetterFMOD configurado.
     /// </summary>
     public FmodHandle Play()
     {
         if (string.IsNullOrWhiteSpace(eventId))
             return FmodHandle.Invalid(eventId);
 
+        FmodEventBuilder builder = Fmod.Event(eventId);
+
+        if (loop || !oneShot)
+            builder.Loop();
+
         Transform target = followTarget != null ? followTarget : transform;
-        handle = loop || !oneShot ? Fmod.PlayLoop(eventId) : Fmod.Play(eventId);
 
         if (target != null)
-            handle.Follow(target);
+            builder.FollowTransform(target);
 
         if (radius > 0f)
-            handle.Radius(radius);
+            builder.Radius(radius);
 
         if (fadeIn > 0f)
-            handle.FadeIn(fadeIn);
+            builder.FadeIn(fadeIn);
+
+        handle = builder.Play();
 
         return handle;
     }
 
     /// <summary>
-    /// Stops the active BetterFMOD event instance.
+    /// Para a instancia BetterFMOD ativa.
     /// </summary>
     public void Stop()
     {
@@ -70,7 +76,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Pauses the active BetterFMOD event instance.
+    /// Pausa a instancia BetterFMOD ativa.
     /// </summary>
     public void Pause()
     {
@@ -78,7 +84,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Resumes the active BetterFMOD event instance.
+    /// Retoma a instancia BetterFMOD ativa.
     /// </summary>
     public void Resume()
     {
@@ -86,7 +92,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets a parameter on the active BetterFMOD event instance.
+    /// Define um parametro na instancia BetterFMOD ativa.
     /// </summary>
     public void SetParameter(string parameter, float value)
     {

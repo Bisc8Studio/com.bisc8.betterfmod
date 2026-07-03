@@ -6,12 +6,12 @@ public class FmodMultiplayerSettings : MonoBehaviour
     [SerializeField] private bool isMultiplayer;
 
     /// <summary>
-    /// Gets whether this settings component enables BetterFMOD multiplayer mode.
+    /// Retorna verdadeiro quando este componente habilita o modo multiplayer do BetterFMOD.
     /// </summary>
     public bool IsMultiplayer => isMultiplayer;
 
     /// <summary>
-    /// Gets whether BetterFMOD multiplayer mode is currently enabled.
+    /// Retorna verdadeiro quando o modo multiplayer do BetterFMOD esta ativo.
     /// </summary>
     public static bool MultiplayerModeEnabled { get; private set; }
 

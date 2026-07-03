@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Controls a single BetterFMOD event instance.
+/// Controla uma unica instancia de evento criada pelo BetterFMOD.
 /// </summary>
 public sealed class FmodHandle
 {
@@ -16,7 +16,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets an invalid handle for a failed or missing event.
+    /// Cria um handle invalido para um evento que falhou ou nao foi encontrado.
     /// </summary>
     public static FmodHandle Invalid(string eventId = "")
     {
@@ -24,22 +24,22 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets the unique runtime id for this instance.
+    /// Le o id unico desta instancia em runtime.
     /// </summary>
     public int Id { get; }
 
     /// <summary>
-    /// Gets the BetterFMOD event id or FMOD path used to create this instance.
+    /// Le o id BetterFMOD ou o path FMOD usado para criar esta instancia.
     /// </summary>
     public string EventId { get; }
 
     /// <summary>
-    /// Gets whether this handle still points to a live FMOD instance.
+    /// Retorna verdadeiro se este handle ainda aponta para uma instancia valida.
     /// </summary>
     public bool IsValid => commands != null && commands.TryGetInstance(Id, out _);
 
     /// <summary>
-    /// Stops this event instance immediately.
+    /// Para esta instancia imediatamente.
     /// </summary>
     public FmodHandle Stop()
     {
@@ -48,7 +48,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Stops this event instance, optionally fading it out first.
+    /// Para esta instancia, com fade opcional.
     /// </summary>
     public FmodHandle Stop(bool fade, float fadeTime = 1f)
     {
@@ -57,7 +57,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Pauses this event instance.
+    /// Pausa esta instancia.
     /// </summary>
     public FmodHandle Pause()
     {
@@ -66,7 +66,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Resumes this event instance.
+    /// Retoma esta instancia pausada.
     /// </summary>
     public FmodHandle Resume()
     {
@@ -75,7 +75,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Toggles pause on this event instance.
+    /// Alterna esta instancia entre pausada e tocando.
     /// </summary>
     public FmodHandle TogglePause()
     {
@@ -84,7 +84,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets a parameter on this event instance.
+    /// Define um parametro nesta instancia.
     /// </summary>
     public FmodHandle Parameter(string parameter, float value)
     {
@@ -93,7 +93,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets a parameter on this event instance.
+    /// Define um parametro nesta instancia.
     /// </summary>
     public FmodHandle SetParameter(string parameter, float value)
     {
@@ -101,7 +101,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets a parameter from this event instance.
+    /// Le um parametro desta instancia.
     /// </summary>
     public float GetParameter(string parameter)
     {
@@ -109,7 +109,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets a labeled parameter on this event instance.
+    /// Define um parametro por label nesta instancia.
     /// </summary>
     public FmodHandle SetParameterLabel(string parameter, string label)
     {
@@ -118,7 +118,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the volume on this event instance.
+    /// Define o volume desta instancia.
     /// </summary>
     public FmodHandle Volume(float volume)
     {
@@ -127,7 +127,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the volume on this event instance.
+    /// Define o volume desta instancia.
     /// </summary>
     public FmodHandle SetVolume(float volume)
     {
@@ -135,7 +135,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets the volume from this event instance.
+    /// Le o volume desta instancia.
     /// </summary>
     public float GetVolume()
     {
@@ -143,7 +143,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Fades this event instance in from silence.
+    /// Aplica fade in nesta instancia a partir do silencio.
     /// </summary>
     public FmodHandle FadeIn(float duration)
     {
@@ -152,7 +152,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Fades this event instance out and stops it.
+    /// Aplica fade out e para esta instancia.
     /// </summary>
     public FmodHandle FadeOut(float duration)
     {
@@ -161,7 +161,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Fades this event instance to a target volume.
+    /// Altera gradualmente esta instancia ate o volume informado.
     /// </summary>
     public FmodHandle FadeTo(float volume, float duration)
     {
@@ -170,7 +170,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the pitch on this event instance.
+    /// Define o pitch desta instancia.
     /// </summary>
     public FmodHandle Pitch(float pitch)
     {
@@ -179,7 +179,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the pitch on this event instance.
+    /// Define o pitch desta instancia.
     /// </summary>
     public FmodHandle SetPitch(float pitch)
     {
@@ -187,7 +187,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets the pitch from this event instance.
+    /// Le o pitch desta instancia.
     /// </summary>
     public float GetPitch()
     {
@@ -195,7 +195,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets whether this event instance is currently playing.
+    /// Retorna verdadeiro se esta instancia estiver tocando.
     /// </summary>
     public bool IsPlaying()
     {
@@ -203,7 +203,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets whether this event instance is paused.
+    /// Retorna verdadeiro se esta instancia estiver pausada.
     /// </summary>
     public bool IsPaused()
     {
@@ -211,7 +211,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets the playback state for this event instance.
+    /// Le o estado de playback desta instancia.
     /// </summary>
     public FmodPlaybackState GetState()
     {
@@ -219,7 +219,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Gets the timeline position in milliseconds for this event instance.
+    /// Le a posicao da timeline desta instancia em milissegundos.
     /// </summary>
     public int GetTimelinePosition()
     {
@@ -227,7 +227,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the timeline position in milliseconds for this event instance.
+    /// Define a posicao da timeline desta instancia em milissegundos.
     /// </summary>
     public FmodHandle SetTimelinePosition(int milliseconds)
     {
@@ -236,7 +236,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Makes this event instance follow a transform.
+    /// Faz esta instancia seguir um Transform.
     /// </summary>
     public FmodHandle Follow(Transform target)
     {
@@ -245,7 +245,39 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Detaches this event instance from its follow target.
+    /// Marca esta instância como áudio 3D para deixar clara a intenção no encadeamento.
+    /// </summary>
+    public FmodHandle As3D()
+    {
+        return this;
+    }
+
+    /// <summary>
+    /// Faz esta instância seguir o Transform informado.
+    /// </summary>
+    public FmodHandle FollowTransform(Transform target)
+    {
+        return Follow(target);
+    }
+
+    /// <summary>
+    /// Anexa esta instância ao Transform informado.
+    /// </summary>
+    public FmodHandle AttachTo(Transform target)
+    {
+        return Follow(target);
+    }
+
+    /// <summary>
+    /// Faz esta instância seguir o Transform informado.
+    /// </summary>
+    public FmodHandle Transform(Transform target)
+    {
+        return Follow(target);
+    }
+
+    /// <summary>
+    /// Desanexa esta instancia do Transform que ela estava seguindo.
     /// </summary>
     public FmodHandle Detach()
     {
@@ -254,7 +286,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the 3D world position for this event instance.
+    /// Define a posicao 3D desta instancia no mundo.
     /// </summary>
     public FmodHandle SetPosition(Vector3 position)
     {
@@ -263,7 +295,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the 3D world position for this event instance.
+    /// Define a posicao 3D desta instancia no mundo.
     /// </summary>
     public FmodHandle Position(Vector3 position)
     {
@@ -271,7 +303,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the 3D velocity for this event instance.
+    /// Define a velocidade 3D desta instancia.
     /// </summary>
     public FmodHandle SetVelocity(Vector3 velocity)
     {
@@ -280,7 +312,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the 3D velocity for this event instance.
+    /// Define a velocidade 3D desta instancia.
     /// </summary>
     public FmodHandle Velocity(Vector3 velocity)
     {
@@ -288,7 +320,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Sets the 3D maximum radius for this event instance.
+    /// Define o raio maximo 3D desta instancia.
     /// </summary>
     public FmodHandle Radius(float radius)
     {

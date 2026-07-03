@@ -124,7 +124,7 @@ internal static class FmodEventsGenerator
         StringBuilder builder = new();
         builder.AppendLine("#if FMOD_PRESENT");
         builder.AppendLine("/// <summary>");
-        builder.AppendLine("/// Provides generated BetterFMOD event ids.");
+        builder.AppendLine("/// Fornece ids de eventos BetterFMOD gerados automaticamente.");
         builder.AppendLine("/// </summary>");
         builder.AppendLine("public static class FmodEvents");
         builder.AppendLine("{");
@@ -132,7 +132,7 @@ internal static class FmodEventsGenerator
         foreach (KeyValuePair<string, string> entry in events)
         {
             builder.AppendLine("    /// <summary>");
-            builder.AppendLine("    /// BetterFMOD event id: " + EscapeForXml(entry.Value));
+            builder.AppendLine("    /// Id de evento BetterFMOD: " + EscapeForXml(entry.Value));
             builder.AppendLine("    /// </summary>");
             builder.AppendLine("    public const string " + entry.Key + " = \"" + EscapeForCSharp(entry.Value) + "\";");
         }

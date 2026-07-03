@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// Stores BetterFMOD event ids and their FMOD event references.
+/// Armazena ids de eventos BetterFMOD e suas referencias de evento FMOD.
 /// </summary>
 public class CreateFmodList : ScriptableObject
 {
@@ -15,7 +15,7 @@ public class CreateFmodList : ScriptableObject
 }
 
 /// <summary>
-/// Represents a BetterFMOD event id mapped to an FMOD event reference.
+/// Representa um id BetterFMOD mapeado para uma referencia de evento FMOD.
 /// </summary>
 [Serializable]
 public class FMODListEntry
@@ -25,7 +25,7 @@ public class FMODListEntry
 }
 
 /// <summary>
-/// Defines a BetterFMOD event list category.
+/// Define uma categoria de lista de eventos BetterFMOD.
 /// </summary>
 public enum ListType
 {

@@ -1,6 +1,6 @@
 #if FMOD_PRESENT
 /// <summary>
-/// Provides generated BetterFMOD event ids.
+/// Fornece ids de eventos BetterFMOD gerados automaticamente.
 /// </summary>
 public static class FmodEvents
 {

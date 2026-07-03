@@ -2,12 +2,20 @@
 using UnityEngine;
 
 /// <summary>
-/// Public BetterFMOD API for playback, parameters, volume, pitch, 3D audio, buses, VCAs, and snapshots.
+/// API publica principal do BetterFMOD para tocar eventos, controlar instancias, parametros, buses, VCAs e snapshots.
 /// </summary>
 public static class Fmod
 {
     /// <summary>
-    /// Plays an FMOD event and returns a handle for the created instance.
+    /// Cria uma configuracao fluente para um evento antes de tocar.
+    /// </summary>
+    public static FmodEventBuilder Event(string id)
+    {
+        return new FmodEventBuilder(id);
+    }
+
+    /// <summary>
+    /// Toca um evento imediatamente e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle Play(string id)
     {
@@ -15,7 +23,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Plays an FMOD event attached to a transform and returns a handle for the created instance.
+    /// Toca um evento imediatamente, faz a instancia seguir um Transform e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle Play(string id, Transform target)
     {
@@ -23,7 +31,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Plays a loop-style FMOD event and returns a handle for the created instance.
+    /// Toca um evento como loop controlavel e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle PlayLoop(string id)
     {
@@ -31,7 +39,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Plays a loop-style FMOD event attached to a transform and returns a handle for the created instance.
+    /// Toca um evento como loop controlavel, faz a instancia seguir um Transform e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle PlayLoop(string id, Transform target)
     {
@@ -39,7 +47,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops every active instance of an event.
+    /// Para todas as instancias ativas de um evento.
     /// </summary>
     public static void Stop(string id)
     {
@@ -47,7 +55,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops every active instance of an event, optionally fading first.
+    /// Para todas as instancias ativas de um evento, com fade opcional.
     /// </summary>
     public static void Stop(string id, bool fade, float fadeTime = 1f)
     {
@@ -55,7 +63,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops every active BetterFMOD instance.
+    /// Para todas as instancias ativas controladas pelo BetterFMOD.
     /// </summary>
     public static void StopAll()
     {
@@ -63,7 +71,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops every active BetterFMOD instance, optionally fading first.
+    /// Para todas as instancias ativas controladas pelo BetterFMOD, com fade opcional.
     /// </summary>
     public static void StopAll(bool fade, float fadeTime = 1f)
     {
@@ -71,7 +79,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Pauses every active instance of an event.
+    /// Pausa todas as instancias ativas de um evento.
     /// </summary>
     public static void Pause(string id)
     {
@@ -79,7 +87,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Resumes every active instance of an event.
+    /// Retoma todas as instancias pausadas de um evento.
     /// </summary>
     public static void Resume(string id)
     {
@@ -87,7 +95,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Toggles pause on every active instance of an event.
+    /// Alterna entre pausado e tocando em todas as instancias ativas de um evento.
     /// </summary>
     public static void TogglePause(string id)
     {
@@ -95,7 +103,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets a parameter on every active instance of an event.
+    /// Define um parametro em todas as instancias ativas de um evento.
     /// </summary>
     public static void SetParameter(string id, string parameter, float value)
     {
@@ -103,7 +111,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets a parameter from the newest active instance of an event.
+    /// Le um parametro da instancia ativa mais recente de um evento.
     /// </summary>
     public static float GetParameter(string id, string parameter)
     {
@@ -111,7 +119,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets an FMOD global parameter.
+    /// Define um parametro global do FMOD.
     /// </summary>
     public static void SetGlobalParameter(string parameter, float value)
     {
@@ -119,7 +127,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets an FMOD global parameter.
+    /// Le um parametro global do FMOD.
     /// </summary>
     public static float GetGlobalParameter(string parameter)
     {
@@ -127,7 +135,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets a labeled parameter on every active instance of an event.
+    /// Define um parametro por label em todas as instancias ativas de um evento.
     /// </summary>
     public static void SetParameterLabel(string id, string parameter, string label)
     {
@@ -135,7 +143,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets volume on every active instance of an event.
+    /// Define o volume em todas as instancias ativas de um evento.
     /// </summary>
     public static void SetVolume(string id, float volume)
     {
@@ -143,7 +151,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets volume from the newest active instance of an event.
+    /// Le o volume da instancia ativa mais recente de um evento.
     /// </summary>
     public static float GetVolume(string id)
     {
@@ -151,7 +159,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Fades in every active instance of an event.
+    /// Aplica fade in em todas as instancias ativas de um evento.
     /// </summary>
     public static void FadeIn(string id, float duration)
     {
@@ -159,7 +167,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Fades out and stops every active instance of an event.
+    /// Aplica fade out e para todas as instancias ativas de um evento.
     /// </summary>
     public static void FadeOut(string id, float duration)
     {
@@ -167,7 +175,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Fades every active instance of an event to a target volume.
+    /// Altera gradualmente o volume de todas as instancias ativas de um evento.
     /// </summary>
     public static void FadeTo(string id, float volume, float duration)
     {
@@ -175,7 +183,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets pitch on every active instance of an event.
+    /// Define o pitch em todas as instancias ativas de um evento.
     /// </summary>
     public static void SetPitch(string id, float pitch)
     {
@@ -183,7 +191,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets pitch from the newest active instance of an event.
+    /// Le o pitch da instancia ativa mais recente de um evento.
     /// </summary>
     public static float GetPitch(string id)
     {
@@ -191,7 +199,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Returns true when any active instance of an event is playing.
+    /// Retorna verdadeiro se alguma instancia do evento estiver tocando.
     /// </summary>
     public static bool IsPlaying(string id)
     {
@@ -199,7 +207,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Returns true when any active instance of an event is paused.
+    /// Retorna verdadeiro se alguma instancia do evento estiver pausada.
     /// </summary>
     public static bool IsPaused(string id)
     {
@@ -207,7 +215,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Returns true when at least one active instance exists for an event.
+    /// Retorna verdadeiro se existir ao menos uma instancia ativa do evento.
     /// </summary>
     public static bool Exists(string id)
     {
@@ -215,7 +223,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets playback state from the newest active instance of an event.
+    /// Le o estado da instancia ativa mais recente de um evento.
     /// </summary>
     public static FmodPlaybackState GetState(string id)
     {
@@ -223,7 +231,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets timeline position in milliseconds from the newest active instance of an event.
+    /// Le a posicao da timeline, em milissegundos, da instancia ativa mais recente de um evento.
     /// </summary>
     public static int GetTimelinePosition(string id)
     {
@@ -231,7 +239,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets timeline position in milliseconds on every active instance of an event.
+    /// Define a posicao da timeline, em milissegundos, em todas as instancias ativas de um evento.
     /// </summary>
     public static void SetTimelinePosition(string id, int milliseconds)
     {
@@ -239,7 +247,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Makes every active instance of an event follow a transform.
+    /// Faz todas as instancias ativas de um evento seguirem um Transform.
     /// </summary>
     public static void Follow(string id, Transform target)
     {
@@ -247,7 +255,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Detaches every active instance of an event from a transform.
+    /// Desanexa todas as instancias ativas de um evento de seus Transforms.
     /// </summary>
     public static void Detach(string id)
     {
@@ -255,7 +263,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets world position on every active instance of an event.
+    /// Define a posicao 3D de todas as instancias ativas de um evento.
     /// </summary>
     public static void SetPosition(string id, Vector3 position)
     {
@@ -263,7 +271,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets velocity on every active instance of an event.
+    /// Define a velocidade 3D de todas as instancias ativas de um evento.
     /// </summary>
     public static void SetVelocity(string id, Vector3 velocity)
     {
@@ -271,7 +279,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets 3D maximum radius on every active instance of an event.
+    /// Define o raio maximo 3D de todas as instancias ativas de um evento.
     /// </summary>
     public static void Radius(string id, float radius)
     {
@@ -279,7 +287,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets an FMOD bus volume.
+    /// Define o volume de um bus do FMOD.
     /// </summary>
     public static void SetBusVolume(string path, float volume)
     {
@@ -287,7 +295,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets an FMOD bus volume.
+    /// Le o volume de um bus do FMOD.
     /// </summary>
     public static float GetBusVolume(string path)
     {
@@ -295,7 +303,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Pauses or resumes an FMOD bus.
+    /// Pausa ou retoma um bus do FMOD.
     /// </summary>
     public static void SetBusPaused(string path, bool paused)
     {
@@ -303,7 +311,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops all events routed through an FMOD bus.
+    /// Para todos os eventos roteados por um bus do FMOD.
     /// </summary>
     public static void StopBus(string path)
     {
@@ -311,7 +319,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets an FMOD VCA volume.
+    /// Define o volume de um VCA do FMOD.
     /// </summary>
     public static void SetVcaVolume(string path, float volume)
     {
@@ -319,7 +327,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Sets an FMOD VCA volume.
+    /// Define o volume de um VCA do FMOD.
     /// </summary>
     public static void SetVCAVolume(string path, float volume)
     {
@@ -327,7 +335,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets an FMOD VCA volume.
+    /// Le o volume de um VCA do FMOD.
     /// </summary>
     public static float GetVcaVolume(string path)
     {
@@ -335,7 +343,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Gets an FMOD VCA volume.
+    /// Le o volume de um VCA do FMOD.
     /// </summary>
     public static float GetVCAVolume(string path)
     {
@@ -343,7 +351,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Starts an FMOD snapshot and returns a handle for the created snapshot instance.
+    /// Inicia um snapshot do FMOD e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle StartSnapshot(string path)
     {
@@ -351,7 +359,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Stops every active instance of an FMOD snapshot.
+    /// Para todas as instancias ativas de um snapshot do FMOD.
     /// </summary>
     public static void StopSnapshot(string path)
     {
