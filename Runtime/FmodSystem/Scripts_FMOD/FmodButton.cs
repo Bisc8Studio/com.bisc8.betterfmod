@@ -5,34 +5,58 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Componente legado de ponteiro de UI que executa comandos BetterFMOD.
+/// Componente de botao que executa comandos BetterFMOD em Canvas ou objetos 3D no mundo.
 /// </summary>
 public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private List<FmodButtonAction> actions = new();
 
     /// <summary>
-    /// Executa as acoes configuradas para clique do ponteiro.
+    /// Executa as acoes configuradas para clique em UI Canvas.
     /// </summary>
     public void OnPointerClick(PointerEventData eventData)
     {
-        Execute(ButtonMoment.OnClick);
+        Execute(ButtonMoment.OnClickCanvas);
     }
 
     /// <summary>
-    /// Executa as acoes configuradas para entrada do ponteiro.
+    /// Executa as acoes configuradas para entrada do ponteiro em UI Canvas.
     /// </summary>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        Execute(ButtonMoment.OnEnter);
+        Execute(ButtonMoment.OnEnterCanvas);
     }
 
     /// <summary>
-    /// Executa as acoes configuradas para saida do ponteiro.
+    /// Executa as acoes configuradas para saida do ponteiro em UI Canvas.
     /// </summary>
     public void OnPointerExit(PointerEventData eventData)
     {
-        Execute(ButtonMoment.OnExit);
+        Execute(ButtonMoment.OnExitCanvas);
+    }
+
+    /// <summary>
+    /// Executa as acoes configuradas para clique em objeto 3D no mundo.
+    /// </summary>
+    private void OnMouseDown()
+    {
+        Execute(ButtonMoment.OnClickWorld);
+    }
+
+    /// <summary>
+    /// Executa as acoes configuradas para entrada do mouse em objeto 3D no mundo.
+    /// </summary>
+    private void OnMouseEnter()
+    {
+        Execute(ButtonMoment.OnEnterWorld);
+    }
+
+    /// <summary>
+    /// Executa as acoes configuradas para saida do mouse em objeto 3D no mundo.
+    /// </summary>
+    private void OnMouseExit()
+    {
+        Execute(ButtonMoment.OnExitWorld);
     }
 
     private void Execute(ButtonMoment moment)
@@ -83,14 +107,17 @@ public class FmodButtonAction
 }
 
 /// <summary>
-/// Define um momento legado de ponteiro de UI.
+/// Define o momento que dispara uma acao BetterFMOD no Canvas ou no mundo 3D.
 /// </summary>
 public enum ButtonMoment
 {
     None,
-    OnEnter,
-    OnExit,
-    OnClick
+    OnEnterCanvas,
+    OnExitCanvas,
+    OnClickCanvas,
+    OnEnterWorld,
+    OnExitWorld,
+    OnClickWorld
 }
 
 /// <summary>
