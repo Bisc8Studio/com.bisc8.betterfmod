@@ -5,16 +5,35 @@ public class FmodMultiplayerSettings : MonoBehaviour
 {
     [SerializeField] private bool isMultiplayer;
 
+    /// <summary>
+    /// Gets whether this settings component enables BetterFMOD multiplayer mode.
+    /// </summary>
     public bool IsMultiplayer => isMultiplayer;
 
+    /// <summary>
+    /// Gets whether BetterFMOD multiplayer mode is currently enabled.
+    /// </summary>
     public static bool MultiplayerModeEnabled { get; private set; }
 
     private static FmodMultiplayerSettings activeSettings;
 
     private void Awake()
     {
-        activeSettings = this;
-        MultiplayerModeEnabled = isMultiplayer;
+        ApplySettings();
+    }
+
+    private void OnEnable()
+    {
+        ApplySettings();
+    }
+
+    private void OnDisable()
+    {
+        if (activeSettings != this)
+            return;
+
+        activeSettings = null;
+        RefreshActiveSettings();
     }
 
     private void OnDestroy()
@@ -24,6 +43,12 @@ public class FmodMultiplayerSettings : MonoBehaviour
 
         activeSettings = null;
         RefreshActiveSettings();
+    }
+
+    private void ApplySettings()
+    {
+        activeSettings = this;
+        MultiplayerModeEnabled = isMultiplayer;
     }
 
     private static void RefreshActiveSettings()

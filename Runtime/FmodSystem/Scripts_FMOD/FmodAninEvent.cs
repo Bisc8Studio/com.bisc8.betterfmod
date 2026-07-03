@@ -1,84 +1,95 @@
 #if FMOD_PRESENT
 using UnityEngine;
 
+/// <summary>
+/// Legacy animation event bridge for BetterFMOD commands.
+/// </summary>
 public class FmodAninEvent : MonoBehaviour
 {
+    /// <summary>
+    /// Plays a one shot event from an animation event.
+    /// </summary>
     public void PlayOneShot(string id)
     {
-        FmodCommands.Instance.PlayOneShot(id);
+        Fmod.Play(id);
     }
 
+    /// <summary>
+    /// Plays a loop event from an animation event.
+    /// </summary>
     public void PlayLoop(string id)
     {
-        FmodCommands.Instance.PlayLoop(id);
+        Fmod.PlayLoop(id);
     }
 
+    /// <summary>
+    /// Resumes an event from an animation event.
+    /// </summary>
     public void Pause(string id)
     {
-        FmodCommands.Instance.Pause(id, false);
+        Fmod.Resume(id);
     }
 
+    /// <summary>
+    /// Stops an event immediately from an animation event.
+    /// </summary>
     public void StopFadeOff(string id)
     {
-        FmodCommands.Instance.Stop(id, false);
+        Fmod.Stop(id, false);
     }
 
+    /// <summary>
+    /// Stops an event with fade from an animation event.
+    /// </summary>
     public void StopFadeOn(string id)
     {
-        FmodCommands.Instance.Stop(id, true);
+        Fmod.Stop(id, true);
     }
 
+    /// <summary>
+    /// Gets an event state from an animation event.
+    /// </summary>
     public void GetState(string id)
     {
-        FmodCommands.Instance.GetState(id);
+        Fmod.GetState(id);
     }
 
+    /// <summary>
+    /// Enables a legacy emitter component.
+    /// </summary>
     public void AddEmitter(FmodEmitterCustom emitterObj)
-{
-    if (emitterObj != null)
     {
-        emitterObj.enabled = true;
-        return;
+        SetEmitterEnabled(emitterObj, true);
     }
 
-    GameObject emitter = GameObject.FindGameObjectWithTag("FmodEmitter");
-
-    if (emitter == null)
+    /// <summary>
+    /// Disables a legacy emitter component.
+    /// </summary>
+    public void RemoveEmitter(FmodEmitterCustom emitterObj)
     {
-        Debug.Log("Emitter not found");
-        return;
+        SetEmitterEnabled(emitterObj, false);
     }
 
-    FmodEmitterCustom comp = emitter.GetComponent<FmodEmitterCustom>();
-
-    if (comp != null)
+    private void SetEmitterEnabled(FmodEmitterCustom emitterObj, bool enabled)
     {
-        comp.enabled = true;
-    }
-}
+        if (emitterObj != null)
+        {
+            emitterObj.enabled = enabled;
+            return;
+        }
 
-public void RemoveEmitter(FmodEmitterCustom emitterObj)
-{
-    if (emitterObj != null)
-    {
-        emitterObj.enabled = false;
-        return;
-    }
+        GameObject emitter = GameObject.FindGameObjectWithTag("FmodEmitter");
 
-    GameObject emitter = GameObject.FindGameObjectWithTag("FmodEmitter");
+        if (emitter == null)
+        {
+            Debug.Log("Emitter not found");
+            return;
+        }
 
-    if (emitter == null)
-    {
-        Debug.Log("Emitter not found");
-        return;
-    }
+        FmodEmitterCustom component = emitter.GetComponent<FmodEmitterCustom>();
 
-    FmodEmitterCustom comp = emitter.GetComponent<FmodEmitterCustom>();
-
-    if (comp != null)
-    {
-        comp.enabled = false;
-    }
+        if (component != null)
+            component.enabled = enabled;
     }
 }
 #endif

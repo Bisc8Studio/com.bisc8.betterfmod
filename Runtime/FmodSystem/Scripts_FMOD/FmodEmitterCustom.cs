@@ -1,9 +1,15 @@
 #if FMOD_PRESENT
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
+/// <summary>
+/// Legacy BetterFMOD emitter component kept for compatibility with existing scenes.
+/// </summary>
 public class FmodEmitterCustom : MonoBehaviour
 {
+    /// <summary>
+    /// Defines the legacy emitter inspector mode.
+    /// </summary>
     public enum EmitterMode
     {
         None,
@@ -11,6 +17,9 @@ public class FmodEmitterCustom : MonoBehaviour
         Advanced
     }
 
+    /// <summary>
+    /// Defines when this legacy emitter plays.
+    /// </summary>
     public enum PlayEvent
     {
         None,
@@ -19,6 +28,9 @@ public class FmodEmitterCustom : MonoBehaviour
         OnMouseEnter
     }
 
+    /// <summary>
+    /// Defines when this legacy emitter stops.
+    /// </summary>
     public enum StopEvent
     {
         None,
@@ -27,105 +39,116 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     public EmitterMode mode;
-
     public string eventId;
-    public bool is3D = false;
-    public bool oneShot = false;
-
+    public bool is3D;
+    public bool oneShot;
     public PlayEvent playEvent;
     public StopEvent stopEvent;
-
     public float radius = 5f;
     public Color gizmoColor = Color.cyan;
 
-    private FmodCommands fmod;
+    private FmodHandle handle;
     private float appliedRadius = -1f;
 
-    void Awake()
-    {
-        fmod = FmodCommands.Instance;
-    }
-
-    void OnEnable()
+    private void OnEnable()
     {
         if (playEvent == PlayEvent.OnEnable)
             StartCoroutine(PlayNextFrame());
     }
 
-    IEnumerator PlayNextFrame()
+    private IEnumerator PlayNextFrame()
     {
         yield return null;
         Play();
     }
 
-    void Start()
+    private void Start()
     {
         if (playEvent == PlayEvent.OnStart)
             Play();
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
         if (stopEvent == StopEvent.OnDisable)
             Stop();
     }
 
-    void OnDestroy()
+    private void OnDestroy()
     {
         if (stopEvent == StopEvent.OnDestroy)
             Stop();
     }
 
-    void OnMouseEnter()
+    private void OnMouseEnter()
     {
         if (playEvent == PlayEvent.OnMouseEnter)
             Play();
     }
 
-    void Update()
+    private void Update()
     {
-        if (fmod == null || !is3D || oneShot)
+        if (!is3D || oneShot)
             return;
 
         ApplyRadiusToPlayingEvent();
     }
 
+    /// <summary>
+    /// Plays the configured event.
+    /// </summary>
     public void Play()
     {
-        if (fmod == null)
+        if (string.IsNullOrWhiteSpace(eventId))
             return;
 
         if (oneShot)
         {
             if (is3D)
-                fmod.PlayOneShot3D(eventId, transform, radius);
+                Fmod.Play(eventId, transform).Radius(radius);
             else
-                fmod.PlayOneShot(eventId);
+                Fmod.Play(eventId);
 
             return;
         }
 
-        if (is3D)
-            fmod.PlayLoop3D(eventId, transform, radius);
-        else
-            fmod.PlayLoop(eventId);
+        handle = is3D
+            ? Fmod.PlayLoop(eventId, transform).Radius(radius)
+            : Fmod.PlayLoop(eventId);
     }
 
+    /// <summary>
+    /// Stops the configured event.
+    /// </summary>
     public void Stop(bool fade = true)
     {
-        if (fmod == null)
-            return;
+        if (handle != null && handle.IsValid)
+            handle.Stop(fade);
+        else
+            Fmod.Stop(eventId, fade);
 
-        fmod.Stop(eventId, fade);
         appliedRadius = -1f;
     }
 
+    /// <summary>
+    /// Pauses or resumes the configured event.
+    /// </summary>
     public void Pause(bool pause)
     {
-        if (fmod == null)
-            return;
+        if (handle != null && handle.IsValid)
+        {
+            if (pause)
+                handle.Pause();
+            else
+                handle.Resume();
 
-        fmod.Pause(eventId, pause);
+            return;
+        }
+
+        if (pause)
+            Fmod.Pause(eventId);
+        else
+            Fmod.Resume(eventId);
     }
 
     private void ApplyRadiusToPlayingEvent()
@@ -135,23 +158,24 @@ public class FmodEmitterCustom : MonoBehaviour
         if (Mathf.Approximately(appliedRadius, validRadius))
             return;
 
-        fmod.Set3DRange(eventId, validRadius);
+        if (handle != null && handle.IsValid)
+            handle.Radius(validRadius);
+        else
+            Fmod.Radius(eventId, validRadius);
+
         appliedRadius = validRadius;
     }
 
-    void OnDrawGizmos()
+    private void OnDrawGizmos()
     {
-        if (mode != EmitterMode.Advanced)
-            return;
-
-        if (!is3D)
+        if (mode != EmitterMode.Advanced || !is3D)
             return;
 
         Gizmos.color = gizmoColor;
         Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.01f, radius));
     }
 
-    void OnValidate()
+    private void OnValidate()
     {
         radius = Mathf.Max(0.01f, radius);
     }
