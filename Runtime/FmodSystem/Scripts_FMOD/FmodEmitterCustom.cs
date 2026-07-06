@@ -1,14 +1,15 @@
 #if FMOD_PRESENT
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Emissor legado do BetterFMOD mantido para compatibilidade com cenas existentes.
+/// Emissor do BetterFMOD configurado por funcoes da cascata.
 /// </summary>
 public class FmodEmitterCustom : MonoBehaviour
 {
     /// <summary>
-    /// Define o modo de inspector do emissor legado.
+    /// Define o modo de inspector do emissor.
     /// </summary>
     public enum EmitterMode
     {
@@ -18,7 +19,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Define quando este emissor legado toca.
+    /// Define quando este emissor toca.
     /// </summary>
     public enum PlayEvent
     {
@@ -29,7 +30,7 @@ public class FmodEmitterCustom : MonoBehaviour
     }
 
     /// <summary>
-    /// Define quando este emissor legado para.
+    /// Define quando este emissor para.
     /// </summary>
     public enum StopEvent
     {
@@ -38,17 +39,42 @@ public class FmodEmitterCustom : MonoBehaviour
         OnDestroy
     }
 
+    public enum CascadeFunction
+    {
+        As3D,
+        Attach,
+        Position,
+        Velocity,
+        Radius,
+        Volume,
+        Pitch,
+        FadeIn,
+        Parameter,
+        ParameterLabel,
+        TimelinePosition
+    }
+
+    [System.Serializable]
+    public sealed class CascadeStep
+    {
+        public CascadeFunction function;
+        public Transform transform;
+        public Vector3 vectorValue;
+        public float floatValue = 1f;
+        public int intValue;
+        public string parameter;
+        public string label;
+    }
+
     public EmitterMode mode;
     public string eventId;
-    public bool is3D;
     public bool oneShot;
     public PlayEvent playEvent;
     public StopEvent stopEvent;
-    public float radius = 5f;
+    public List<CascadeStep> cascade = new();
     public Color gizmoColor = Color.cyan;
 
     private FmodHandle handle;
-    private float appliedRadius = -1f;
 
     private void OnEnable()
     {
@@ -86,14 +112,6 @@ public class FmodEmitterCustom : MonoBehaviour
             Play();
     }
 
-    private void Update()
-    {
-        if (!is3D || oneShot)
-            return;
-
-        ApplyRadiusToPlayingEvent();
-    }
-
     /// <summary>
     /// Toca o evento configurado.
     /// </summary>
@@ -102,19 +120,13 @@ public class FmodEmitterCustom : MonoBehaviour
         if (string.IsNullOrWhiteSpace(eventId))
             return;
 
-        if (oneShot)
-        {
-            if (is3D)
-                Fmod.Event(eventId).As3D().FollowTransform(transform).Radius(radius).Play();
-            else
-                Fmod.Event(eventId).Play();
+        FmodEventBuilder builder = Fmod.Event(eventId);
 
-            return;
-        }
+        if (!oneShot)
+            builder.Loop();
 
-        handle = is3D
-            ? Fmod.Event(eventId).Loop().As3D().FollowTransform(transform).Radius(radius).Play()
-            : Fmod.Event(eventId).Loop().Play();
+        ApplyCascade(builder);
+        handle = builder.Play();
     }
 
     /// <summary>
@@ -126,8 +138,6 @@ public class FmodEmitterCustom : MonoBehaviour
             handle.Stop(fade);
         else
             Fmod.Stop(eventId, fade);
-
-        appliedRadius = -1f;
     }
 
     /// <summary>
@@ -151,33 +161,87 @@ public class FmodEmitterCustom : MonoBehaviour
             Fmod.Resume(eventId);
     }
 
-    private void ApplyRadiusToPlayingEvent()
+    private void ApplyCascade(FmodEventBuilder builder)
     {
-        float validRadius = Mathf.Max(0.01f, radius);
-
-        if (Mathf.Approximately(appliedRadius, validRadius))
+        if (builder == null || cascade == null)
             return;
 
-        if (handle != null && handle.IsValid)
-            handle.Radius(validRadius);
-        else
-            Fmod.Radius(eventId, validRadius);
+        foreach (CascadeStep step in cascade)
+        {
+            if (step == null)
+                continue;
 
-        appliedRadius = validRadius;
+            switch (step.function)
+            {
+                case CascadeFunction.As3D:
+                    builder.As3D();
+                    break;
+                case CascadeFunction.Attach:
+                    builder.FollowTransform(step.transform != null ? step.transform : transform);
+                    break;
+                case CascadeFunction.Position:
+                    builder.Position(step.vectorValue);
+                    break;
+                case CascadeFunction.Velocity:
+                    builder.Velocity(step.vectorValue);
+                    break;
+                case CascadeFunction.Radius:
+                    builder.Radius(Mathf.Max(0.01f, step.floatValue));
+                    break;
+                case CascadeFunction.Volume:
+                    builder.Volume(step.floatValue);
+                    break;
+                case CascadeFunction.Pitch:
+                    builder.Pitch(step.floatValue);
+                    break;
+                case CascadeFunction.FadeIn:
+                    builder.FadeIn(Mathf.Max(0f, step.floatValue));
+                    break;
+                case CascadeFunction.Parameter:
+                    builder.Parameter(step.parameter, step.floatValue);
+                    break;
+                case CascadeFunction.ParameterLabel:
+                    builder.ParameterLabel(step.parameter, step.label);
+                    break;
+                case CascadeFunction.TimelinePosition:
+                    builder.TimelinePosition(Mathf.Max(0, step.intValue));
+                    break;
+            }
+        }
     }
 
     private void OnDrawGizmos()
     {
-        if (mode != EmitterMode.Advanced || !is3D)
+        if (mode != EmitterMode.Advanced || cascade == null)
             return;
 
-        Gizmos.color = gizmoColor;
-        Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.01f, radius));
+        foreach (CascadeStep step in cascade)
+        {
+            if (step == null || step.function != CascadeFunction.Radius)
+                continue;
+
+            Gizmos.color = gizmoColor;
+            Gizmos.DrawWireSphere(transform.position, Mathf.Max(0.01f, step.floatValue));
+        }
     }
 
     private void OnValidate()
     {
-        radius = Mathf.Max(0.01f, radius);
+        if (cascade == null)
+            return;
+
+        foreach (CascadeStep step in cascade)
+        {
+            if (step == null)
+                continue;
+
+            if (step.function == CascadeFunction.Radius)
+                step.floatValue = Mathf.Max(0.01f, step.floatValue);
+            else if (step.function == CascadeFunction.FadeIn)
+                step.floatValue = Mathf.Max(0f, step.floatValue);
+            else if (step.function == CascadeFunction.TimelinePosition)
+                step.intValue = Mathf.Max(0, step.intValue);
+        }
     }
 }
 #endif

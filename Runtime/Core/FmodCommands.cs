@@ -10,10 +10,7 @@ using UnityEngine;
 /// </summary>
 public class FmodCommands : MonoBehaviour
 {
-    /// <summary>
-    /// Instancia ativa do servico central do BetterFMOD.
-    /// </summary>
-    public static FmodCommands Instance;
+    private static FmodCommands instance;
 
     [SerializeField] private List<CreateFmodList> eventLists = new();
 
@@ -38,36 +35,36 @@ public class FmodCommands : MonoBehaviour
     /// </summary>
     public static FmodCommands EnsureInstance()
     {
-        if (Instance != null)
+        if (instance != null)
         {
-            Instance.Initialize();
-            return Instance;
+            instance.Initialize();
+            return instance;
         }
 
-        Instance = FindFirstObjectByType<FmodCommands>();
+        instance = FindFirstObjectByType<FmodCommands>();
 
-        if (Instance != null)
+        if (instance != null)
         {
-            Instance.Initialize();
-            return Instance;
+            instance.Initialize();
+            return instance;
         }
 
         GameObject system = new GameObject("BetterFMOD");
-        Instance = system.AddComponent<FmodCommands>();
-        Instance.Initialize();
+        instance = system.AddComponent<FmodCommands>();
+        instance.Initialize();
         DontDestroyOnLoad(system);
-        return Instance;
+        return instance;
     }
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        Instance = this;
+        instance = this;
         DontDestroyOnLoad(gameObject);
         Initialize();
     }
@@ -95,11 +92,11 @@ public class FmodCommands : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (Instance != this)
+        if (instance != this)
             return;
 
         StopAll();
-        Instance = null;
+        instance = null;
     }
 
     /// <summary>
@@ -171,44 +168,6 @@ public class FmodCommands : MonoBehaviour
     public FmodHandle PlayLoop(string id, Transform target)
     {
         return CreateAndStart(id).Follow(target);
-    }
-
-    /// <summary>
-    /// Toca um evento sem exigir que o chamador guarde o handle retornado.
-    /// </summary>
-    public void PlayOneShot(string id)
-    {
-        Play(id);
-    }
-
-    /// <summary>
-    /// Toca um evento anexado a um Transform sem exigir que o chamador guarde o handle retornado.
-    /// </summary>
-    public void PlayOneShot3D(string id, Transform target, float radius)
-    {
-        Play(id, target).Radius(radius);
-    }
-
-    /// <summary>
-    /// Toca um evento de loop gerenciado.
-    /// </summary>
-    public void PlayLoop(string id, bool fade = false, float fadeTime = 1f)
-    {
-        FmodHandle handle = PlayLoop(id);
-
-        if (fade)
-            handle.FadeIn(fadeTime);
-    }
-
-    /// <summary>
-    /// Toca um evento de loop gerenciado anexado a um Transform.
-    /// </summary>
-    public void PlayLoop3D(string id, Transform target, float radius, bool fade = false, float fadeTime = 1f)
-    {
-        FmodHandle handle = PlayLoop(id, target).Radius(radius);
-
-        if (fade)
-            handle.FadeIn(fadeTime);
     }
 
     /// <summary>

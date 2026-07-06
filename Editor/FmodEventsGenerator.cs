@@ -11,7 +11,7 @@ internal static class FmodEventsGenerator
     private const string RelativeOutputPath = "Runtime/Core/FmodEvents.Generated.cs";
     private static readonly Regex InvalidCharacters = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
 
-    [MenuItem("BetterFMOD/Generate FmodEvents")]
+    [MenuItem("FMOD/BISC8 Better FMOD/Generate FmodEvents", false, 21)]
     private static void GenerateFromMenu()
     {
         Generate();

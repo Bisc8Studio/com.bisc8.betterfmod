@@ -17,12 +17,6 @@ public static class FMODPrefabMenu
         CreatePrefab("FmodSlider_Mng.prefab", command);
     }
 
-    [MenuItem("GameObject/BISC8 FMOD/Fmod System OUT", false, 12)]
-    private static void CreateFmodSystemOut(MenuCommand command)
-    {
-        CreatePrefab("Fmod_System OUT.prefab", command);
-    }
-
     private static void CreatePrefab(string prefabFileName, MenuCommand command)
     {
         GameObject prefab = LoadPrefab(prefabFileName);

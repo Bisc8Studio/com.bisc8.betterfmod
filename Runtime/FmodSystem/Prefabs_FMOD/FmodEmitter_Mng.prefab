@@ -46,9 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FmodEmitterCustom
   mode: 0
   eventId: 
-  is3D: 0
   oneShot: 0
   playEvent: 0
   stopEvent: 0
-  radius: 5
+  cascade: []
   gizmoColor: {r: 1, g: 0, b: 0.772892, a: 1}
