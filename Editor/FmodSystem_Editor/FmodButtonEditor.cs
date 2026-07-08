@@ -6,8 +6,6 @@ using UnityEngine;
 public class FmodButtonEditor : Editor
 {
     SerializedProperty actions;
-
-    // Tracks which action index the pending "add step" menu refers to.
     private int pendingActionIndex = -1;
 
     void OnEnable()
@@ -24,8 +22,7 @@ public class FmodButtonEditor : Editor
 
         for (int i = 0; i < actions.arraySize; i++)
         {
-            bool removed = DrawAction(actions.GetArrayElementAtIndex(i), i);
-            if (removed)
+            if (DrawAction(actions.GetArrayElementAtIndex(i), i))
             {
                 actions.DeleteArrayElementAtIndex(i);
                 break;
@@ -39,19 +36,30 @@ public class FmodButtonEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    // Returns true when the action was deleted (caller must break the loop).
+    // Returns true when the action was deleted.
     bool DrawAction(SerializedProperty action, int actionIndex)
     {
-        SerializedProperty moment = action.FindPropertyRelative("moment");
-        SerializedProperty cascade = action.FindPropertyRelative("cascade");
+        SerializedProperty moment     = action.FindPropertyRelative("moment");
+        SerializedProperty command    = action.FindPropertyRelative("command");
+        SerializedProperty soundId    = action.FindPropertyRelative("soundId");
+        SerializedProperty fade       = action.FindPropertyRelative("fade");
+        SerializedProperty floatValue  = action.FindPropertyRelative("floatValue");
+        SerializedProperty floatValue2 = action.FindPropertyRelative("floatValue2");
+        SerializedProperty parameter  = action.FindPropertyRelative("parameter");
+        SerializedProperty label      = action.FindPropertyRelative("label");
+        SerializedProperty cascade    = action.FindPropertyRelative("cascade");
 
-        string headerLabel = moment.enumDisplayNames[moment.enumValueIndex];
+        ButtonRootCommand cmd = (ButtonRootCommand)command.enumValueIndex;
+
+        string header = moment.enumDisplayNames[moment.enumValueIndex]
+                      + "  →  "
+                      + command.enumDisplayNames[command.enumValueIndex];
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-        // ---- header row ----
+        // ── header row ──────────────────────────────────────────────────
         EditorGUILayout.BeginHorizontal();
-        action.isExpanded = EditorGUILayout.Foldout(action.isExpanded, headerLabel, true, EditorStyles.boldLabel);
+        action.isExpanded = EditorGUILayout.Foldout(action.isExpanded, header, true, EditorStyles.boldLabel);
         if (GUILayout.Button("-", EditorStyles.miniButton, GUILayout.Width(22)))
         {
             EditorGUILayout.EndHorizontal();
@@ -64,26 +72,35 @@ public class FmodButtonEditor : Editor
         {
             EditorGUI.indentLevel++;
 
-            EditorGUILayout.PropertyField(moment, new GUIContent("Moment"));
-            EditorGUILayout.Space(4);
+            // ── moment + command ────────────────────────────────────────
+            EditorGUILayout.PropertyField(moment,  new GUIContent("Moment"));
+            EditorGUILayout.PropertyField(command, new GUIContent("Command"));
+            EditorGUILayout.Space(2);
 
-            // ---- cascade steps ----
-            for (int i = 0; i < cascade.arraySize; i++)
+            // ── root command fields ─────────────────────────────────────
+            DrawRootFields(cmd, soundId, fade, floatValue, floatValue2, parameter, label);
+
+            // ── cascade (only for handle-returning commands) ────────────
+            if (FmodButtonAction.IsHandleCommand(cmd))
             {
-                bool stepRemoved = DrawCascadeStep(cascade, cascade.GetArrayElementAtIndex(i), i);
-                if (stepRemoved)
+                EditorGUILayout.Space(4);
+                EditorGUILayout.LabelField("Cascade", EditorStyles.miniBoldLabel);
+
+                for (int i = 0; i < cascade.arraySize; i++)
                 {
-                    cascade.DeleteArrayElementAtIndex(i);
-                    break;
+                    if (DrawCascadeStep(cascade, cascade.GetArrayElementAtIndex(i), i))
+                    {
+                        cascade.DeleteArrayElementAtIndex(i);
+                        break;
+                    }
                 }
-            }
 
-            // ---- add step button ----
-            Rect addRect = EditorGUILayout.GetControlRect();
-            if (GUI.Button(addRect, "+", EditorStyles.miniButton))
-            {
-                pendingActionIndex = actionIndex;
-                ShowAddStepMenu();
+                Rect addRect = EditorGUILayout.GetControlRect();
+                if (GUI.Button(addRect, "+", EditorStyles.miniButton))
+                {
+                    pendingActionIndex = actionIndex;
+                    ShowAddModifierMenu();
+                }
             }
 
             EditorGUI.indentLevel--;
@@ -93,23 +110,117 @@ public class FmodButtonEditor : Editor
         return false;
     }
 
-    // Returns true when the step was deleted (caller must break the loop).
+    void DrawRootFields(ButtonRootCommand cmd,
+        SerializedProperty soundId, SerializedProperty fade,
+        SerializedProperty floatValue, SerializedProperty floatValue2,
+        SerializedProperty parameter, SerializedProperty label)
+    {
+        switch (cmd)
+        {
+            // ── play / control – just need a Sound ID ──
+            case ButtonRootCommand.Play:
+            case ButtonRootCommand.PlayLoop:
+            case ButtonRootCommand.Pause:
+            case ButtonRootCommand.Resume:
+            case ButtonRootCommand.TogglePause:
+                EditorGUILayout.PropertyField(soundId, new GUIContent("Sound ID"));
+                break;
+
+            // ── snapshot / bus / VCA paths ──
+            case ButtonRootCommand.StartSnapshot:
+            case ButtonRootCommand.StopSnapshot:
+                EditorGUILayout.PropertyField(soundId, new GUIContent("Path"));
+                break;
+
+            case ButtonRootCommand.SetBusVolume:
+            case ButtonRootCommand.SetVcaVolume:
+                EditorGUILayout.PropertyField(soundId,    new GUIContent("Path"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Volume"));
+                break;
+
+            // ── stop with optional fade ──
+            case ButtonRootCommand.Stop:
+                EditorGUILayout.PropertyField(soundId, new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(fade,    new GUIContent("Fade"));
+                if (fade.boolValue)
+                    EditorGUILayout.PropertyField(floatValue, new GUIContent("Fade Time"));
+                break;
+
+            case ButtonRootCommand.StopAll:
+                EditorGUILayout.PropertyField(fade, new GUIContent("Fade"));
+                if (fade.boolValue)
+                    EditorGUILayout.PropertyField(floatValue, new GUIContent("Fade Time"));
+                break;
+
+            // ── fade in / out ──
+            case ButtonRootCommand.FadeIn:
+            case ButtonRootCommand.FadeOut:
+                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Duration"));
+                break;
+
+            // ── fade to target volume ──
+            case ButtonRootCommand.FadeTo:
+                EditorGUILayout.PropertyField(soundId,     new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(floatValue,  new GUIContent("Volume"));
+                EditorGUILayout.PropertyField(floatValue2, new GUIContent("Duration"));
+                break;
+
+            // ── volume / pitch ──
+            case ButtonRootCommand.SetVolume:
+                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Volume"));
+                break;
+
+            case ButtonRootCommand.SetPitch:
+                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Pitch"));
+                break;
+
+            // ── parameters ──
+            case ButtonRootCommand.SetParameter:
+                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(parameter,  new GUIContent("Parameter"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
+                break;
+
+            case ButtonRootCommand.SetParameterLabel:
+                EditorGUILayout.PropertyField(soundId,   new GUIContent("Sound ID"));
+                EditorGUILayout.PropertyField(parameter, new GUIContent("Parameter"));
+                EditorGUILayout.PropertyField(label,     new GUIContent("Label"));
+                break;
+
+            case ButtonRootCommand.SetGlobalParameter:
+                EditorGUILayout.PropertyField(parameter,  new GUIContent("Parameter"));
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
+                break;
+
+            // ── kept handle ──
+            case ButtonRootCommand.Kept:
+                EditorGUILayout.PropertyField(soundId, new GUIContent("Keep Key"));
+                break;
+        }
+    }
+
+    // Returns true when the step was deleted.
     bool DrawCascadeStep(SerializedProperty cascade, SerializedProperty step, int index)
     {
-        SerializedProperty command    = step.FindPropertyRelative("command");
-        SerializedProperty soundId    = step.FindPropertyRelative("soundId");
-        SerializedProperty fade       = step.FindPropertyRelative("fade");
-        SerializedProperty floatValue  = step.FindPropertyRelative("floatValue");
-        SerializedProperty floatValue2 = step.FindPropertyRelative("floatValue2");
-        SerializedProperty parameter  = step.FindPropertyRelative("parameter");
-        SerializedProperty label      = step.FindPropertyRelative("label");
+        SerializedProperty modifier   = step.FindPropertyRelative("modifier");
+        SerializedProperty strVal     = step.FindPropertyRelative("stringValue");
+        SerializedProperty strVal2    = step.FindPropertyRelative("stringValue2");
+        SerializedProperty floatVal   = step.FindPropertyRelative("floatValue");
+        SerializedProperty floatVal2  = step.FindPropertyRelative("floatValue2");
+        SerializedProperty boolVal    = step.FindPropertyRelative("boolValue");
+        SerializedProperty intVal     = step.FindPropertyRelative("intValue");
+        SerializedProperty vecVal     = step.FindPropertyRelative("vectorValue");
+        SerializedProperty targetProp = step.FindPropertyRelative("target");
 
-        ButtonCommandType cmd = (ButtonCommandType)command.enumValueIndex;
+        ButtonCascadeModifier mod = (ButtonCascadeModifier)modifier.enumValueIndex;
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.PropertyField(command, GUIContent.none);
+        EditorGUILayout.PropertyField(modifier, GUIContent.none);
 
         GUI.enabled = index > 0;
         if (GUILayout.Button("Up", EditorStyles.miniButtonLeft, GUILayout.Width(34)))
@@ -129,76 +240,72 @@ public class FmodButtonEditor : Editor
 
         EditorGUILayout.EndHorizontal();
 
-        switch (cmd)
+        switch (mod)
         {
-            case ButtonCommandType.Play:
-            case ButtonCommandType.Pause:
-            case ButtonCommandType.Resume:
-            case ButtonCommandType.TogglePause:
-                EditorGUILayout.PropertyField(soundId, new GUIContent("Sound ID"));
+            // no extra fields
+            case ButtonCascadeModifier.As3D:
+            case ButtonCascadeModifier.Detach:
+            case ButtonCascadeModifier.Pause:
+            case ButtonCascadeModifier.Resume:
+            case ButtonCascadeModifier.TogglePause:
                 break;
 
-            case ButtonCommandType.Stop:
-                EditorGUILayout.PropertyField(soundId, new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(fade,    new GUIContent("Fade"));
-                if (fade.boolValue)
-                    EditorGUILayout.PropertyField(floatValue, new GUIContent("Fade Time"));
+            case ButtonCascadeModifier.Volume:
+                EditorGUILayout.PropertyField(floatVal, new GUIContent("Volume"));
                 break;
 
-            case ButtonCommandType.StopAll:
-                EditorGUILayout.PropertyField(fade, new GUIContent("Fade"));
-                if (fade.boolValue)
-                    EditorGUILayout.PropertyField(floatValue, new GUIContent("Fade Time"));
+            case ButtonCascadeModifier.Pitch:
+                EditorGUILayout.PropertyField(floatVal, new GUIContent("Pitch"));
                 break;
 
-            case ButtonCommandType.FadeIn:
-            case ButtonCommandType.FadeOut:
-                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Duration"));
+            case ButtonCascadeModifier.Radius:
+                EditorGUILayout.PropertyField(floatVal, new GUIContent("Radius"));
                 break;
 
-            case ButtonCommandType.FadeTo:
-                EditorGUILayout.PropertyField(soundId,     new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(floatValue,  new GUIContent("Volume"));
-                EditorGUILayout.PropertyField(floatValue2, new GUIContent("Duration"));
+            case ButtonCascadeModifier.FadeIn:
+            case ButtonCascadeModifier.FadeOut:
+                EditorGUILayout.PropertyField(floatVal, new GUIContent("Duration"));
                 break;
 
-            case ButtonCommandType.SetVolume:
-                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Volume"));
+            case ButtonCascadeModifier.FadeTo:
+                EditorGUILayout.PropertyField(floatVal,  new GUIContent("Volume"));
+                EditorGUILayout.PropertyField(floatVal2, new GUIContent("Duration"));
                 break;
 
-            case ButtonCommandType.SetPitch:
-                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Pitch"));
+            case ButtonCascadeModifier.Stop:
+                EditorGUILayout.PropertyField(boolVal, new GUIContent("Fade"));
+                if (boolVal.boolValue)
+                    EditorGUILayout.PropertyField(floatVal, new GUIContent("Fade Time"));
                 break;
 
-            case ButtonCommandType.SetParameter:
-                EditorGUILayout.PropertyField(soundId,    new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(parameter,  new GUIContent("Parameter"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
+            case ButtonCascadeModifier.Parameter:
+                EditorGUILayout.PropertyField(strVal,  new GUIContent("Parameter"));
+                EditorGUILayout.PropertyField(floatVal, new GUIContent("Value"));
                 break;
 
-            case ButtonCommandType.SetParameterLabel:
-                EditorGUILayout.PropertyField(soundId,   new GUIContent("Sound ID"));
-                EditorGUILayout.PropertyField(parameter, new GUIContent("Parameter"));
-                EditorGUILayout.PropertyField(label,     new GUIContent("Label"));
+            case ButtonCascadeModifier.ParameterLabel:
+                EditorGUILayout.PropertyField(strVal,  new GUIContent("Parameter"));
+                EditorGUILayout.PropertyField(strVal2, new GUIContent("Label"));
                 break;
 
-            case ButtonCommandType.SetGlobalParameter:
-                EditorGUILayout.PropertyField(parameter,  new GUIContent("Parameter"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
+            case ButtonCascadeModifier.TimelinePosition:
+                EditorGUILayout.PropertyField(intVal, new GUIContent("Milliseconds"));
                 break;
 
-            case ButtonCommandType.StartSnapshot:
-            case ButtonCommandType.StopSnapshot:
-                EditorGUILayout.PropertyField(soundId, new GUIContent("Path"));
+            case ButtonCascadeModifier.Follow:
+                EditorGUILayout.PropertyField(targetProp, new GUIContent("Transform"));
                 break;
 
-            case ButtonCommandType.SetBusVolume:
-            case ButtonCommandType.SetVcaVolume:
-                EditorGUILayout.PropertyField(soundId,    new GUIContent("Path"));
-                EditorGUILayout.PropertyField(floatValue, new GUIContent("Volume"));
+            case ButtonCascadeModifier.Position:
+                EditorGUILayout.PropertyField(vecVal, new GUIContent("Position"));
+                break;
+
+            case ButtonCascadeModifier.Velocity:
+                EditorGUILayout.PropertyField(vecVal, new GUIContent("Velocity"));
+                break;
+
+            case ButtonCascadeModifier.Keep:
+                EditorGUILayout.PropertyField(strVal, new GUIContent("Key (optional)"));
                 break;
         }
 
@@ -210,22 +317,29 @@ public class FmodButtonEditor : Editor
     {
         int idx = actions.arraySize;
         actions.InsertArrayElementAtIndex(idx);
-        SerializedProperty newAction = actions.GetArrayElementAtIndex(idx);
-        newAction.FindPropertyRelative("moment").enumValueIndex = 0;
-        newAction.FindPropertyRelative("cascade").ClearArray();
-        newAction.isExpanded = true;
+        SerializedProperty a = actions.GetArrayElementAtIndex(idx);
+        a.FindPropertyRelative("moment").enumValueIndex  = 0;
+        a.FindPropertyRelative("command").enumValueIndex = 0;
+        a.FindPropertyRelative("soundId").stringValue    = string.Empty;
+        a.FindPropertyRelative("fade").boolValue         = false;
+        a.FindPropertyRelative("floatValue").floatValue  = 1f;
+        a.FindPropertyRelative("floatValue2").floatValue = 1f;
+        a.FindPropertyRelative("parameter").stringValue  = string.Empty;
+        a.FindPropertyRelative("label").stringValue      = string.Empty;
+        a.FindPropertyRelative("cascade").ClearArray();
+        a.isExpanded = true;
         serializedObject.ApplyModifiedProperties();
     }
 
-    void ShowAddStepMenu()
+    void ShowAddModifierMenu()
     {
         GenericMenu menu = new GenericMenu();
-        foreach (string name in System.Enum.GetNames(typeof(ButtonCommandType)))
-            menu.AddItem(new GUIContent(name), false, AddStep, name);
+        foreach (string name in System.Enum.GetNames(typeof(ButtonCascadeModifier)))
+            menu.AddItem(new GUIContent(name), false, AddModifierStep, name);
         menu.ShowAsContext();
     }
 
-    void AddStep(object commandName)
+    void AddModifierStep(object modifierName)
     {
         if (pendingActionIndex < 0 || pendingActionIndex >= actions.arraySize)
             return;
@@ -239,14 +353,16 @@ public class FmodButtonEditor : Editor
         cascade.InsertArrayElementAtIndex(idx);
         SerializedProperty step = cascade.GetArrayElementAtIndex(idx);
 
-        step.FindPropertyRelative("command").enumValueIndex =
-            (int)System.Enum.Parse(typeof(ButtonCommandType), (string)commandName);
-        step.FindPropertyRelative("soundId").stringValue    = string.Empty;
-        step.FindPropertyRelative("fade").boolValue         = false;
-        step.FindPropertyRelative("floatValue").floatValue  = 1f;
-        step.FindPropertyRelative("floatValue2").floatValue = 1f;
-        step.FindPropertyRelative("parameter").stringValue  = string.Empty;
-        step.FindPropertyRelative("label").stringValue      = string.Empty;
+        step.FindPropertyRelative("modifier").enumValueIndex =
+            (int)System.Enum.Parse(typeof(ButtonCascadeModifier), (string)modifierName);
+        step.FindPropertyRelative("stringValue").stringValue  = string.Empty;
+        step.FindPropertyRelative("stringValue2").stringValue = string.Empty;
+        step.FindPropertyRelative("floatValue").floatValue    = 1f;
+        step.FindPropertyRelative("floatValue2").floatValue   = 1f;
+        step.FindPropertyRelative("boolValue").boolValue      = false;
+        step.FindPropertyRelative("intValue").intValue        = 0;
+        step.FindPropertyRelative("vectorValue").vector3Value = Vector3.zero;
+        step.FindPropertyRelative("target").objectReferenceValue = null;
 
         pendingActionIndex = -1;
         serializedObject.ApplyModifiedProperties();

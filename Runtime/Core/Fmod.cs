@@ -352,12 +352,19 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Recupera um handle de instancia guardado anteriormente com .Keep().
-    /// Se a chave nao existir retorna um handle invalido.
+    /// Recupera um handle de instancia guardado anteriormente com .Keep(key).
+    /// Permite encadear operacoes sem precisar armazenar o handle em variavel.
+    /// Exemplo: Fmod.Play("som").Keep("bgm")  →  Fmod.Kept("bgm").Stop(true)
+    /// Retorna um handle invalido quando a chave nao existe.
     /// </summary>
-    public static FmodHandle GetKept(string key)
+    public static FmodHandle Kept(string key)
     {
         return FmodCommands.EnsureInstance().GetKeptHandle(key);
     }
+
+    /// <summary>
+    /// Alias de Fmod.Kept(key).
+    /// </summary>
+    public static FmodHandle GetKept(string key) => Kept(key);
 }
 #endif
