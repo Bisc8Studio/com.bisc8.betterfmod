@@ -327,5 +327,17 @@ public sealed class FmodHandle
         commands?.Set3DRange(Id, radius);
         return this;
     }
+
+    /// <summary>
+    /// Guarda esta instancia no registro global do BetterFMOD.
+    /// Se nenhuma chave for informada, usa o EventId como chave.
+    /// Use Fmod.GetKept(key) para recuperar a instancia depois.
+    /// </summary>
+    public FmodHandle Keep(string key = null)
+    {
+        string resolvedKey = string.IsNullOrWhiteSpace(key) ? EventId : key;
+        commands?.KeepHandle(this, resolvedKey);
+        return this;
+    }
 }
 #endif

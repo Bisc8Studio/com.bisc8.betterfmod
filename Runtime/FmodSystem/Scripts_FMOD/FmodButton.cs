@@ -5,109 +5,132 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Componente de botao que executa comandos BetterFMOD em Canvas ou objetos 3D no mundo.
+/// Componente de botao que executa cascatas de comandos BetterFMOD em Canvas ou objetos 3D no mundo.
 /// </summary>
 public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private List<FmodButtonAction> actions = new();
 
-    /// <summary>
-    /// Executa as acoes configuradas para clique em UI Canvas.
-    /// </summary>
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Execute(ButtonMoment.OnClickCanvas);
-    }
-
-    /// <summary>
-    /// Executa as acoes configuradas para entrada do ponteiro em UI Canvas.
-    /// </summary>
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        Execute(ButtonMoment.OnEnterCanvas);
-    }
-
-    /// <summary>
-    /// Executa as acoes configuradas para saida do ponteiro em UI Canvas.
-    /// </summary>
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        Execute(ButtonMoment.OnExitCanvas);
-    }
-
-    /// <summary>
-    /// Executa as acoes configuradas para clique em objeto 3D no mundo.
-    /// </summary>
-    private void OnMouseDown()
-    {
-        Execute(ButtonMoment.OnClickWorld);
-    }
-
-    /// <summary>
-    /// Executa as acoes configuradas para entrada do mouse em objeto 3D no mundo.
-    /// </summary>
-    private void OnMouseEnter()
-    {
-        Execute(ButtonMoment.OnEnterWorld);
-    }
-
-    /// <summary>
-    /// Executa as acoes configuradas para saida do mouse em objeto 3D no mundo.
-    /// </summary>
-    private void OnMouseExit()
-    {
-        Execute(ButtonMoment.OnExitWorld);
-    }
+    public void OnPointerClick(PointerEventData eventData) => Execute(ButtonMoment.OnClickCanvas);
+    public void OnPointerEnter(PointerEventData eventData) => Execute(ButtonMoment.OnEnterCanvas);
+    public void OnPointerExit(PointerEventData eventData) => Execute(ButtonMoment.OnExitCanvas);
+    private void OnMouseDown() => Execute(ButtonMoment.OnClickWorld);
+    private void OnMouseEnter() => Execute(ButtonMoment.OnEnterWorld);
+    private void OnMouseExit() => Execute(ButtonMoment.OnExitWorld);
 
     private void Execute(ButtonMoment moment)
     {
         foreach (FmodButtonAction action in actions)
         {
-            if (action.moment == moment)
+            if (action != null && action.moment == moment)
                 action.Execute();
         }
     }
 }
 
 /// <summary>
-/// Representa uma acao legada de ponteiro de UI mapeada para um comando BetterFMOD.
+/// Acao de botao: define um momento de disparo e uma cascata de comandos BetterFMOD.
 /// </summary>
 [Serializable]
 public class FmodButtonAction
 {
     public ButtonMoment moment = ButtonMoment.None;
-    public FmodCommandType command = FmodCommandType.PlayOneShot;
-    public string soundId;
-    public bool fade;
+    public List<ButtonCascadeStep> cascade = new();
 
     /// <summary>
-    /// Executa esta acao BetterFMOD.
+    /// Executa todos os passos da cascata desta acao.
     /// </summary>
     public void Execute()
     {
-        if (moment == ButtonMoment.None || string.IsNullOrWhiteSpace(soundId))
+        if (moment == ButtonMoment.None || cascade == null)
             return;
 
+        foreach (ButtonCascadeStep step in cascade)
+            step?.Execute();
+    }
+}
+
+/// <summary>
+/// Um passo da cascata de comandos do FmodButton.
+/// </summary>
+[Serializable]
+public class ButtonCascadeStep
+{
+    public ButtonCommandType command = ButtonCommandType.Play;
+    public string soundId;
+    public bool fade;
+    public float floatValue = 1f;
+    public float floatValue2 = 1f;
+    public string parameter;
+    public string label;
+
+    /// <summary>
+    /// Executa este passo usando a API do BetterFMOD.
+    /// </summary>
+    public void Execute()
+    {
         switch (command)
         {
-            case FmodCommandType.PlayOneShot:
-                Fmod.Play(soundId);
+            case ButtonCommandType.Play:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.Play(soundId);
                 break;
-            case FmodCommandType.PlayLoop:
-                Fmod.PlayLoop(soundId);
+            case ButtonCommandType.Stop:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.Stop(soundId, fade, floatValue);
                 break;
-            case FmodCommandType.Stop:
-                Fmod.Stop(soundId, fade);
+            case ButtonCommandType.Pause:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.Pause(soundId);
                 break;
-            case FmodCommandType.Pause:
-                Fmod.TogglePause(soundId);
+            case ButtonCommandType.Resume:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.Resume(soundId);
+                break;
+            case ButtonCommandType.TogglePause:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.TogglePause(soundId);
+                break;
+            case ButtonCommandType.StopAll:
+                Fmod.StopAll(fade, floatValue);
+                break;
+            case ButtonCommandType.FadeIn:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.FadeIn(soundId, floatValue);
+                break;
+            case ButtonCommandType.FadeOut:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.FadeOut(soundId, floatValue);
+                break;
+            case ButtonCommandType.FadeTo:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.FadeTo(soundId, floatValue, floatValue2);
+                break;
+            case ButtonCommandType.SetVolume:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetVolume(soundId, floatValue);
+                break;
+            case ButtonCommandType.SetPitch:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetPitch(soundId, floatValue);
+                break;
+            case ButtonCommandType.SetParameter:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetParameter(soundId, parameter, floatValue);
+                break;
+            case ButtonCommandType.SetParameterLabel:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetParameterLabel(soundId, parameter, label);
+                break;
+            case ButtonCommandType.SetGlobalParameter:
+                Fmod.SetGlobalParameter(parameter, floatValue);
+                break;
+            case ButtonCommandType.StartSnapshot:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.StartSnapshot(soundId);
+                break;
+            case ButtonCommandType.StopSnapshot:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.StopSnapshot(soundId);
+                break;
+            case ButtonCommandType.SetBusVolume:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetBusVolume(soundId, floatValue);
+                break;
+            case ButtonCommandType.SetVcaVolume:
+                if (!string.IsNullOrWhiteSpace(soundId)) Fmod.SetVcaVolume(soundId, floatValue);
                 break;
         }
     }
 }
 
 /// <summary>
-/// Define o momento que dispara uma acao BetterFMOD no Canvas ou no mundo 3D.
+/// Define o momento que dispara uma acao do FmodButton.
 /// </summary>
 public enum ButtonMoment
 {
@@ -121,13 +144,27 @@ public enum ButtonMoment
 }
 
 /// <summary>
-/// Define um tipo legado de comando BetterFMOD.
+/// Tipos de comandos BetterFMOD disponíveis em um passo de cascata do FmodButton.
 /// </summary>
-public enum FmodCommandType
+public enum ButtonCommandType
 {
-    PlayOneShot,
-    PlayLoop,
+    Play,
     Stop,
-    Pause
+    Pause,
+    Resume,
+    TogglePause,
+    StopAll,
+    FadeIn,
+    FadeOut,
+    FadeTo,
+    SetVolume,
+    SetPitch,
+    SetParameter,
+    SetParameterLabel,
+    SetGlobalParameter,
+    StartSnapshot,
+    StopSnapshot,
+    SetBusVolume,
+    SetVcaVolume
 }
 #endif

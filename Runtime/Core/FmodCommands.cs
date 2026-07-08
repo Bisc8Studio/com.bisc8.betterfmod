@@ -17,6 +17,7 @@ public class FmodCommands : MonoBehaviour
     private readonly Dictionary<string, EventReference> eventReferences = new();
     private readonly Dictionary<int, FmodManagedInstance> instancesByHandle = new();
     private readonly Dictionary<string, HashSet<int>> handlesByEvent = new();
+    private readonly Dictionary<string, FmodHandle> keptHandles = new();
     private readonly HashSet<string> missingEventsLogged = new();
     private readonly FmodParameterManager parameterManager = new();
     private FmodFadeManager fadeManager;
@@ -147,14 +148,6 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Toca um evento, anexa a instancia a um Transform e retorna o controle da instancia criada.
-    /// </summary>
-    public FmodHandle Play(string id, Transform target)
-    {
-        return CreateAndStart(id).Follow(target);
-    }
-
-    /// <summary>
     /// Toca um evento como loop controlavel e retorna o controle da instancia criada.
     /// </summary>
     public FmodHandle PlayLoop(string id)
@@ -162,13 +155,6 @@ public class FmodCommands : MonoBehaviour
         return CreateAndStart(id);
     }
 
-    /// <summary>
-    /// Toca um evento como loop controlavel, anexa a instancia a um Transform e retorna o controle da instancia criada.
-    /// </summary>
-    public FmodHandle PlayLoop(string id, Transform target)
-    {
-        return CreateAndStart(id).Follow(target);
-    }
 
     /// <summary>
     /// Para todas as instancias ativas de um evento.
@@ -429,6 +415,28 @@ public class FmodCommands : MonoBehaviour
     public void Set3DRange(string id, float radius)
     {
         ForEachInstance(id, managed => Set3DRange(managed.HandleId, radius));
+    }
+
+    /// <summary>
+    /// Registra um handle no dicionario de instancias mantidas pelo BetterFMOD.
+    /// </summary>
+    internal void KeepHandle(FmodHandle handle, string key)
+    {
+        if (string.IsNullOrWhiteSpace(key) || handle == null)
+            return;
+
+        keptHandles[key] = handle;
+    }
+
+    /// <summary>
+    /// Recupera um handle mantido pelo BetterFMOD a partir de uma chave.
+    /// </summary>
+    internal FmodHandle GetKeptHandle(string key)
+    {
+        if (!string.IsNullOrWhiteSpace(key) && keptHandles.TryGetValue(key, out FmodHandle handle))
+            return handle;
+
+        return FmodHandle.Invalid(key ?? string.Empty);
     }
 
     internal bool TryGetInstance(int handleId, out FmodManagedInstance managed)

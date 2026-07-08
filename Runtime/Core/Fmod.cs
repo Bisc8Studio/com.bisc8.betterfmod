@@ -23,14 +23,6 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Toca um evento imediatamente, faz a instancia seguir um Transform e retorna o controle da instancia criada.
-    /// </summary>
-    public static FmodHandle Play(string id, Transform target)
-    {
-        return FmodCommands.EnsureInstance().Play(id, target);
-    }
-
-    /// <summary>
     /// Toca um evento como loop controlavel e retorna o controle da instancia criada.
     /// </summary>
     public static FmodHandle PlayLoop(string id)
@@ -38,13 +30,6 @@ public static class Fmod
         return FmodCommands.EnsureInstance().PlayLoop(id);
     }
 
-    /// <summary>
-    /// Toca um evento como loop controlavel, faz a instancia seguir um Transform e retorna o controle da instancia criada.
-    /// </summary>
-    public static FmodHandle PlayLoop(string id, Transform target)
-    {
-        return FmodCommands.EnsureInstance().PlayLoop(id, target);
-    }
 
     /// <summary>
     /// Para todas as instancias ativas de um evento.
@@ -364,6 +349,15 @@ public static class Fmod
     public static void StopSnapshot(string path)
     {
         FmodCommands.EnsureInstance().SnapshotManager.StopSnapshot(path);
+    }
+
+    /// <summary>
+    /// Recupera um handle de instancia guardado anteriormente com .Keep().
+    /// Se a chave nao existir retorna um handle invalido.
+    /// </summary>
+    public static FmodHandle GetKept(string key)
+    {
+        return FmodCommands.EnsureInstance().GetKeptHandle(key);
     }
 }
 #endif
