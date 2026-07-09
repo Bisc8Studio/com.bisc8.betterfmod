@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using UnityEngine;
 
 /// <summary>
@@ -92,4 +91,3 @@ public class FmodAninEvent : MonoBehaviour
             component.enabled = enabled;
     }
 }
-#endif

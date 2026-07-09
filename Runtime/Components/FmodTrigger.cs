@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -138,4 +137,3 @@ public enum FmodTriggerMoment
     Destroy = 32,
     Click = 64
 }
-#endif

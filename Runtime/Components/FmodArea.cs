@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using UnityEngine;
 
 /// <summary>
@@ -69,4 +68,3 @@ public class FmodArea : MonoBehaviour
         return string.IsNullOrWhiteSpace(targetTag) || other.CompareTag(targetTag);
     }
 }
-#endif

@@ -12,7 +12,6 @@
   "precompiledReferences": [],
   "autoReferenced": true,
   "defineConstraints": [
-    "BISC8_BETTERFMOD_PRESENT",
     "B8FMOD_UNITY_NETCODE"
   ],
   "versionDefines": [

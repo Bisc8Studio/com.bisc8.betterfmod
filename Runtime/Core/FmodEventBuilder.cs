@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -228,4 +227,3 @@ public sealed class FmodEventBuilder
         internal string Label { get; }
     }
 }
-#endif

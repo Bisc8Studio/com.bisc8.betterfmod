@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using UnityEngine;
 
 /// <summary>
@@ -99,4 +98,3 @@ public class FmodEmitter : MonoBehaviour
         handle?.Parameter(parameter, value);
     }
 }
-#endif

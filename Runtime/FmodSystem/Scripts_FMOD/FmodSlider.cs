@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -70,4 +69,3 @@ public class FmodSlider : MonoBehaviour
 #endif
     }
 }
-#endif

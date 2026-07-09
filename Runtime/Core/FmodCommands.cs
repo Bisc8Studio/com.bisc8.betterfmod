@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 using System;
@@ -901,4 +900,3 @@ public class FmodCommands : MonoBehaviour
             Debug.LogWarning(message);
     }
 }
-#endif

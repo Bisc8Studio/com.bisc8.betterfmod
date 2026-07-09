@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using FMOD.Studio;
 using UnityEngine;
 
@@ -21,4 +20,3 @@ internal sealed class FmodManagedInstance
     internal bool IsReleased { get; set; }
     internal bool IsValid => !IsReleased && Instance.isValid();
 }
-#endif

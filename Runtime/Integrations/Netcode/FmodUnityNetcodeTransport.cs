@@ -1,4 +1,4 @@
-#if BISC8_BETTERFMOD_PRESENT && B8FMOD_UNITY_NETCODE
+#if B8FMOD_UNITY_NETCODE
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;

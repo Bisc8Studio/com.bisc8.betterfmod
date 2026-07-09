@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
@@ -103,4 +102,3 @@ internal sealed class FmodBusManager
             Debug.LogWarning(message);
     }
 }
-#endif

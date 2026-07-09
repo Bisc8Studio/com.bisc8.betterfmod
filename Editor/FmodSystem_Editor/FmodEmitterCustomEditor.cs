@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using UnityEditor;
 using UnityEngine;
 
@@ -186,4 +185,3 @@ public class FmodEmitterCustomEditor : Editor
         EditorGUILayout.PropertyField(stopEvent);
     }
 }
-#endif

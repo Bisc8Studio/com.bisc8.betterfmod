@@ -10,8 +10,6 @@
   "overrideReferences": false,
   "precompiledReferences": [],
   "noEngineReferences": false,
-  "defineConstraints": [
-    "BISC8_BETTERFMOD_PRESENT"
-  ],
+  "defineConstraints": [],
   "versionDefines": []
 }

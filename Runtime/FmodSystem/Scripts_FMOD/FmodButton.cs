@@ -1,4 +1,3 @@
-#if BISC8_BETTERFMOD_PRESENT
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -625,4 +624,3 @@ public enum ButtonCascadeModifier
     Velocity,
     Keep
 }
-#endif

@@ -47,7 +47,6 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
-    private const string FMODDefine = "BISC8_BETTERFMOD_PRESENT";
     private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
@@ -117,8 +116,8 @@ public static class FMODInstaller
     {
         bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Copy or update FMOD in Assets/BISC8/BetterFMOD/FMOD?",
-            "Setup / Update FMOD",
+            "Copy FMOD to Assets/BISC8/BetterFMOD/FMOD for compatibility?",
+            "Copy FMOD",
             "Not now"
         );
 
@@ -145,13 +144,21 @@ public static class FMODInstaller
 
         try
         {
+            if (activeSourcePath != null)
+            {
+                RemoveLegacyFMODDefine();
+                MarkSetupComplete(GetPackageVersion(), GetPackageRootPath());
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD is provided directly by the BetterFMOD package.");
+                return;
+            }
+
             string sourcePath = hiddenSourcePath ?? activeSourcePath;
             bool synchronizedAllFiles = SyncFMODToAssets(sourcePath);
 
             if (!File.Exists(InstalledMarkerPath))
                 throw new IOException("FMODUnity.asmdef was not installed in Assets.");
 
-            EnsureFMODDefine();
+            RemoveLegacyFMODDefine();
 
             if (synchronizedAllFiles)
                 MarkSetupComplete(GetPackageVersion(), GetPackageRootPath());
@@ -222,13 +229,29 @@ public static class FMODInstaller
 
     private static bool IsSetupCurrent()
     {
+        string packageVersion = GetPackageVersion();
+        string packageRootPath = GetPackageRootPath();
+
+        string activeSourcePath = GetActiveFMODSourcePath();
+        if (activeSourcePath != null && File.Exists(Path.Combine(activeSourcePath, "FMODUnity.asmdef")))
+        {
+            RemoveLegacyFMODDefine();
+
+            if (!FMODInstallerState.instance.SetupComplete ||
+                FMODInstallerState.instance.InstalledPackageVersion != packageVersion ||
+                FMODInstallerState.instance.InstalledPackageRootPath != packageRootPath)
+            {
+                MarkSetupComplete(packageVersion, packageRootPath);
+            }
+
+            return true;
+        }
+
         if (!File.Exists(InstalledMarkerPath))
             return false;
 
-        EnsureFMODDefine();
+        RemoveLegacyFMODDefine();
 
-        string packageVersion = GetPackageVersion();
-        string packageRootPath = GetPackageRootPath();
         if (FMODInstallerState.instance.SetupComplete &&
             FMODInstallerState.instance.InstalledPackageVersion == packageVersion &&
             FMODInstallerState.instance.InstalledPackageRootPath == packageRootPath)
@@ -253,7 +276,7 @@ public static class FMODInstaller
             AssetDatabase.CreateFolder(parent, name);
     }
 
-    private static void EnsureFMODDefine()
+    private static void RemoveLegacyFMODDefine()
     {
         BuildTargetGroup targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
         if (targetGroup == BuildTargetGroup.Unknown)
@@ -262,19 +285,11 @@ public static class FMODInstaller
         NamedBuildTarget namedTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
         string defines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
         string[] symbols = defines.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-        bool hasFMODDefine = false;
         bool removedLegacyDefine = false;
         string updatedDefines = string.Empty;
 
         foreach (string symbol in symbols)
         {
-            if (symbol.Trim() == FMODDefine)
-            {
-                hasFMODDefine = true;
-                updatedDefines = AppendDefine(updatedDefines, FMODDefine);
-                continue;
-            }
-
             if (symbol.Trim() == LegacyFMODDefine)
             {
                 removedLegacyDefine = true;
@@ -284,10 +299,7 @@ public static class FMODInstaller
             updatedDefines = AppendDefine(updatedDefines, symbol.Trim());
         }
 
-        if (!hasFMODDefine)
-            updatedDefines = AppendDefine(updatedDefines, FMODDefine);
-
-        if (!hasFMODDefine || removedLegacyDefine)
+        if (removedLegacyDefine)
             PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
     }
 
