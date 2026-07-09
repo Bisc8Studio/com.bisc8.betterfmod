@@ -12,11 +12,23 @@ internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerStat
     [SerializeField]
     private bool setupComplete;
 
+    [SerializeField]
+    private string installedPackageVersion;
+
+    [SerializeField]
+    private string installedPackageRootPath;
+
     internal bool SetupComplete => setupComplete;
 
-    internal void MarkSetupComplete()
+    internal string InstalledPackageVersion => installedPackageVersion;
+
+    internal string InstalledPackageRootPath => installedPackageRootPath;
+
+    internal void MarkSetupComplete(string packageVersion, string packageRootPath)
     {
         setupComplete = true;
+        installedPackageVersion = packageVersion;
+        installedPackageRootPath = packageRootPath;
         Save(true);
     }
 
@@ -38,6 +50,7 @@ public static class FMODInstaller
     private const string FMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
+    private const string UnknownPackageVersion = "unknown";
 
     static FMODInstaller()
     {
@@ -52,7 +65,7 @@ public static class FMODInstaller
             return;
         }
 
-        if (IsSetupComplete())
+        if (IsSetupCurrent())
             return;
 
         if (SessionState.GetBool(PopupShownKey, false))
@@ -103,8 +116,8 @@ public static class FMODInstaller
     {
         bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Copy FMOD from Packages to Assets/BISC8/BetterFMOD/FMOD?",
-            "Copy FMOD",
+            "Copy or update FMOD in Assets/BISC8/BetterFMOD/FMOD?",
+            "Setup / Update FMOD",
             "Not now"
         );
 
@@ -120,14 +133,6 @@ public static class FMODInstaller
             return;
         }
 
-        if (File.Exists(InstalledMarkerPath))
-        {
-            EnsureFMODDefine();
-            MarkSetupComplete();
-            Debug.Log("[BISC8 FMOD] Setup already complete. Existing FMOD installation was kept.");
-            return;
-        }
-
         string hiddenSourcePath = GetHiddenFMODSourcePath();
         string activeSourcePath = GetActiveFMODSourcePath();
 
@@ -139,35 +144,33 @@ public static class FMODInstaller
 
         try
         {
-            // Remove incomplete installations before copying a fresh one.
-            if (Directory.Exists(InstalledFMODPath))
-            {
-                if (!TryDeleteDirectory(InstalledFMODPath))
-                    return;
-
-                string existingMeta = InstalledFMODPath + ".meta";
-                if (File.Exists(existingMeta) && !TryDeleteFile(existingMeta))
-                    return;
-            }
-
-            string installedMeta = InstalledFMODPath + ".meta";
-            if (File.Exists(installedMeta))
-            {
-                if (!TryDeleteFile(installedMeta))
-                    return;
-            }
-
             string sourcePath = hiddenSourcePath ?? activeSourcePath;
-            MoveFMODToAssets(sourcePath);
+            bool synchronizedAllFiles = SyncFMODToAssets(sourcePath);
 
             if (!File.Exists(InstalledMarkerPath))
                 throw new IOException("FMODUnity.asmdef was not installed in Assets.");
 
             EnsureFMODDefine();
-            MarkSetupComplete();
+
+            if (synchronizedAllFiles)
+                MarkSetupComplete(GetPackageVersion(), GetPackageRootPath());
+            else
+            {
+                FMODInstallerState.instance.ResetSetup();
+                EditorPrefs.DeleteKey(LegacySetupKey);
+            }
+
             AssetDatabase.Refresh();
 
-            Debug.Log("[BISC8 FMOD] Setup complete. FMOD was copied to Assets/BISC8/BetterFMOD/FMOD.");
+            if (synchronizedAllFiles)
+            {
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD files were synchronized to Assets/BISC8/BetterFMOD/FMOD.");
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "[BISC8 FMOD] Setup partially complete. Editable FMOD files were synchronized, but one or more locked files could not be updated yet.");
+            }
         }
         catch (Exception exception)
         {
@@ -184,21 +187,6 @@ public static class FMODInstaller
 
     private static void ResetSetup()
     {
-        if (Directory.Exists(InstalledFMODPath))
-        {
-            if (!TryDeleteDirectory(InstalledFMODPath))
-            {
-                FMODInstallerState.instance.ResetSetup();
-                EditorPrefs.DeleteKey(LegacySetupKey);
-                SessionState.SetBool(PopupShownKey, false);
-                return;
-            }
-
-            string metaPath = InstalledFMODPath + ".meta";
-            if (File.Exists(metaPath))
-                TryDeleteFile(metaPath);
-        }
-
         FMODInstallerState.instance.ResetSetup();
         EditorPrefs.DeleteKey(LegacySetupKey);
         SessionState.SetBool(PopupShownKey, false);
@@ -224,49 +212,36 @@ public static class FMODInstaller
         }
     }
 
-    private static bool TryDeleteDirectory(string path)
-    {
-        try
-        {
-            DeleteDirectory(path);
-            return true;
-        }
-        catch (UnauthorizedAccessException exception)
-        {
-            LogLockedInstallWarning(path, exception);
-            return false;
-        }
-        catch (IOException exception)
-        {
-            LogLockedInstallWarning(path, exception);
-            return false;
-        }
-    }
-
     private static void LogLockedInstallWarning(string path, Exception exception)
     {
         Debug.LogWarning(
-            "[BISC8 FMOD] Could not remove '" + path + "' because Unity or the OS is still using one of the FMOD native libraries. " +
-            "Close Unity and reopen the project if you really need to force reinstall FMOD. Details: " + exception.Message);
+            "[BISC8 FMOD] Could not update or remove '" + path + "' because Unity or the OS is still using it. " +
+            "Other FMOD files will still be updated. Restart Unity only if this specific native library must be replaced. Details: " + exception.Message);
     }
 
-    private static bool IsSetupComplete()
+    private static bool IsSetupCurrent()
     {
         if (!File.Exists(InstalledMarkerPath))
             return false;
 
         EnsureFMODDefine();
 
-        if (FMODInstallerState.instance.SetupComplete)
+        string packageVersion = GetPackageVersion();
+        string packageRootPath = GetPackageRootPath();
+        if (FMODInstallerState.instance.SetupComplete &&
+            FMODInstallerState.instance.InstalledPackageVersion == packageVersion &&
+            FMODInstallerState.instance.InstalledPackageRootPath == packageRootPath)
+        {
             return true;
+        }
 
-        MarkSetupComplete();
+        RunSetup();
         return true;
     }
 
-    private static void MarkSetupComplete()
+    private static void MarkSetupComplete(string packageVersion, string packageRootPath)
     {
-        FMODInstallerState.instance.MarkSetupComplete();
+        FMODInstallerState.instance.MarkSetupComplete(packageVersion, packageRootPath);
         EditorPrefs.SetBool(LegacySetupKey, true);
     }
 
@@ -340,33 +315,60 @@ public static class FMODInstaller
         return Path.GetFullPath(PackagePath);
     }
 
-    private static void MoveFMODToAssets(string sourcePath)
+    private static string GetPackageVersion()
+    {
+        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(
+            "Packages/com.bisc8.betterfmod/package.json");
+
+        if (packageInfo == null)
+            packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
+
+        if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.version))
+            return packageInfo.version;
+
+        string packageJsonPath = Path.Combine(GetPackageRootPath(), "package.json");
+        if (!File.Exists(packageJsonPath))
+            return UnknownPackageVersion;
+
+        string packageJson = File.ReadAllText(packageJsonPath);
+        const string versionToken = "\"version\"";
+        int versionIndex = packageJson.IndexOf(versionToken, StringComparison.Ordinal);
+        if (versionIndex < 0)
+            return UnknownPackageVersion;
+
+        int colonIndex = packageJson.IndexOf(':', versionIndex);
+        int firstQuoteIndex = packageJson.IndexOf('"', colonIndex + 1);
+        int secondQuoteIndex = packageJson.IndexOf('"', firstQuoteIndex + 1);
+
+        if (colonIndex < 0 || firstQuoteIndex < 0 || secondQuoteIndex < 0)
+            return UnknownPackageVersion;
+
+        return packageJson.Substring(firstQuoteIndex + 1, secondQuoteIndex - firstQuoteIndex - 1);
+    }
+
+    private static bool SyncFMODToAssets(string sourcePath)
     {
         EnsureAssetFolder("Assets", "BISC8");
         EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
 
-        // Always copy (never move) so the package cache source stays intact for future setups
-        CopyDirectory(sourcePath, InstalledFMODPath);
+        bool copiedAllFiles = CopyDirectory(sourcePath, InstalledFMODPath);
+        bool deletedStaleFiles = DeleteFilesMissingFromSource(sourcePath, InstalledFMODPath);
+        bool deletedEmptyDirectories = DeleteEmptyDirectories(InstalledFMODPath);
 
         // Copy the .meta file if present alongside the source folder
         string sourceMetaPath = sourcePath + ".meta";
         if (File.Exists(sourceMetaPath))
         {
             string destinationMetaPath = InstalledFMODPath + ".meta";
-            File.Copy(sourceMetaPath, destinationMetaPath, true);
+            copiedAllFiles = CopyFileIfChanged(sourceMetaPath, destinationMetaPath) && copiedAllFiles;
         }
+
+        return copiedAllFiles && deletedStaleFiles && deletedEmptyDirectories;
     }
 
-    private static void DeleteDirectory(string path)
+    private static bool CopyDirectory(string sourcePath, string destinationPath)
     {
-        foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
-            File.SetAttributes(file, FileAttributes.Normal);
-
-        Directory.Delete(path, true);
-    }
-
-    private static void CopyDirectory(string sourcePath, string destinationPath)
-    {
+        bool copiedAllFiles = true;
         Directory.CreateDirectory(destinationPath);
 
         foreach (string directory in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
@@ -381,8 +383,117 @@ public static class FMODInstaller
             string destinationFile = Path.Combine(destinationPath, relativePath);
 
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
-            File.Copy(file, destinationFile, true);
+            copiedAllFiles = CopyFileIfChanged(file, destinationFile) && copiedAllFiles;
         }
+
+        return copiedAllFiles;
+    }
+
+    private static bool CopyFileIfChanged(string sourceFile, string destinationFile)
+    {
+        if (File.Exists(destinationFile) && FilesAreEqual(sourceFile, destinationFile))
+            return true;
+
+        try
+        {
+            if (File.Exists(destinationFile))
+                File.SetAttributes(destinationFile, FileAttributes.Normal);
+
+            File.Copy(sourceFile, destinationFile, true);
+            return true;
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            LogLockedInstallWarning(destinationFile, exception);
+            return false;
+        }
+        catch (IOException exception)
+        {
+            LogLockedInstallWarning(destinationFile, exception);
+            return false;
+        }
+    }
+
+    private static bool FilesAreEqual(string firstPath, string secondPath)
+    {
+        try
+        {
+            FileInfo firstInfo = new FileInfo(firstPath);
+            FileInfo secondInfo = new FileInfo(secondPath);
+
+            if (firstInfo.Length != secondInfo.Length)
+                return false;
+
+            byte[] firstBytes = File.ReadAllBytes(firstPath);
+            byte[] secondBytes = File.ReadAllBytes(secondPath);
+
+            for (int i = 0; i < firstBytes.Length; i++)
+            {
+                if (firstBytes[i] != secondBytes[i])
+                    return false;
+            }
+
+            return true;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return false;
+        }
+        catch (IOException)
+        {
+            return false;
+        }
+    }
+
+    private static bool DeleteFilesMissingFromSource(string sourcePath, string destinationPath)
+    {
+        if (!Directory.Exists(destinationPath))
+            return true;
+
+        bool deletedAllFiles = true;
+        foreach (string destinationFile in Directory.GetFiles(destinationPath, "*", SearchOption.AllDirectories))
+        {
+            string relativePath = GetRelativePath(destinationPath, destinationFile);
+            string sourceFile = Path.Combine(sourcePath, relativePath);
+
+            if (!File.Exists(sourceFile))
+                deletedAllFiles = TryDeleteFile(destinationFile) && deletedAllFiles;
+        }
+
+        return deletedAllFiles;
+    }
+
+    private static bool DeleteEmptyDirectories(string path)
+    {
+        if (!Directory.Exists(path))
+            return true;
+
+        bool deletedAllDirectories = true;
+        string[] directories = Directory.GetDirectories(path, "*", SearchOption.AllDirectories);
+        Array.Sort(directories, (first, second) => second.Length.CompareTo(first.Length));
+
+        foreach (string directory in directories)
+        {
+            if (Directory.GetFiles(directory).Length > 0 || Directory.GetDirectories(directory).Length > 0)
+                continue;
+
+            try
+            {
+                Directory.Delete(directory, false);
+            }
+            catch (UnauthorizedAccessException exception)
+            {
+                LogLockedInstallWarning(directory, exception);
+                deletedAllDirectories = false;
+            }
+            catch (IOException exception)
+            {
+                LogLockedInstallWarning(directory, exception);
+                deletedAllDirectories = false;
+            }
+        }
+
+        return deletedAllDirectories;
     }
 
     private static string GetRelativePath(string rootPath, string path)
