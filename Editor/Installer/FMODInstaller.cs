@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
@@ -47,7 +47,8 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
-    private const string FMODDefine = "FMOD_PRESENT";
+    private const string FMODDefine = "BISC8_BETTERFMOD_PRESENT";
+    private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
     private const string UnknownPackageVersion = "unknown";
@@ -261,18 +262,43 @@ public static class FMODInstaller
         NamedBuildTarget namedTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
         string defines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
         string[] symbols = defines.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        bool hasFMODDefine = false;
+        bool removedLegacyDefine = false;
+        string updatedDefines = string.Empty;
 
         foreach (string symbol in symbols)
         {
             if (symbol.Trim() == FMODDefine)
-                return;
+            {
+                hasFMODDefine = true;
+                updatedDefines = AppendDefine(updatedDefines, FMODDefine);
+                continue;
+            }
+
+            if (symbol.Trim() == LegacyFMODDefine)
+            {
+                removedLegacyDefine = true;
+                continue;
+            }
+
+            updatedDefines = AppendDefine(updatedDefines, symbol.Trim());
         }
 
-        string updatedDefines = string.IsNullOrWhiteSpace(defines)
-            ? FMODDefine
-            : defines.TrimEnd(';') + ";" + FMODDefine;
+        if (!hasFMODDefine)
+            updatedDefines = AppendDefine(updatedDefines, FMODDefine);
 
-        PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
+        if (!hasFMODDefine || removedLegacyDefine)
+            PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
+    }
+
+    private static string AppendDefine(string defines, string symbol)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            return defines;
+
+        return string.IsNullOrWhiteSpace(defines)
+            ? symbol
+            : defines.TrimEnd(';') + ";" + symbol;
     }
 
     private static string GetHiddenFMODSourcePath()

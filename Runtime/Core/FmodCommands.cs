@@ -1,4 +1,4 @@
-﻿#if FMOD_PRESENT
+#if BISC8_BETTERFMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 using System;
@@ -113,7 +113,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Reconstrói a tabela de eventos a partir das listas configuradas no BetterFMOD.
+    /// Reconstr�i a tabela de eventos a partir das listas configuradas no BetterFMOD.
     /// </summary>
     public void RebuildEventLookup()
     {

@@ -1,4 +1,4 @@
-#if FMOD_PRESENT
+#if BISC8_BETTERFMOD_PRESENT
 internal sealed class FmodSnapshotManager
 {
     private readonly FmodCommands commands;

@@ -1,4 +1,4 @@
-#if FMOD_PRESENT
+#if BISC8_BETTERFMOD_PRESENT
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -122,7 +122,7 @@ internal static class FmodEventsGenerator
     private static string BuildSource(Dictionary<string, string> events)
     {
         StringBuilder builder = new();
-        builder.AppendLine("#if FMOD_PRESENT");
+        builder.AppendLine("#if BISC8_BETTERFMOD_PRESENT");
         builder.AppendLine("/// <summary>");
         builder.AppendLine("/// Fornece ids de eventos BetterFMOD gerados automaticamente.");
         builder.AppendLine("/// </summary>");

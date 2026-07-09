@@ -13,6 +13,6 @@
   "precompiledReferences": [],
   "noEngineReferences": false,
   "defineConstraints": [
-    "FMOD_PRESENT"
+    "BISC8_BETTERFMOD_PRESENT"
   ]
 }

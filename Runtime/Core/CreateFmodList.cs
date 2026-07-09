@@ -1,4 +1,4 @@
-#if FMOD_PRESENT
+#if BISC8_BETTERFMOD_PRESENT
 using UnityEngine;
 using FMODUnity;
 using System.Collections.Generic;
