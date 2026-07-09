@@ -1,4 +1,4 @@
-﻿#if UNITY_ADDRESSABLES_EXIST
+#if UNITY_ADDRESSABLES_EXIST
     // The Addressables package depends on the ScriptableBuildPipeline package
     #define UNITY_SCRIPTABLEBUILDPIPELINE_EXIST
 #endif
@@ -712,7 +712,7 @@ namespace FMODUnity
         [MenuItem("FMOD/Help/Support Forum", priority = 16)]
         private static void OnlineQA()
         {
-            Application.OpenURL("https://qa.fmod.com/");
+            Application.OpenURL("https://qa.FMOD.com/");
         }
 
         [MenuItem("FMOD/Help/Revision History", priority = 5)]
@@ -723,7 +723,7 @@ namespace FMODUnity
 
         public static void OpenOnlineDocumentation(string section, string page = null, string anchor = null)
         {
-            const string Prefix = "https://fmod.com/docs/";
+            const string Prefix = "https://FMOD.com/docs/";
             string version = string.Format("{0:X}.{1:X}", FMOD.VERSION.number >> 16, (FMOD.VERSION.number >> 8) & 0xFF);
             string url;
 

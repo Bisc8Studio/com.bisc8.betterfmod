@@ -535,7 +535,7 @@ namespace FMODUnity
 
         public static void EnforceLibraryOrder()
         {
-            // Call a function in fmod.dll to make sure it's loaded before fmodstudio.dll
+            // Call a function in FMOD.dll to make sure it's loaded before fmodstudio.dll
             int temp1, temp2;
             FMOD.Memory.GetStats(out temp1, out temp2);
 

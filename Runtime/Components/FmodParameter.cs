@@ -40,9 +40,9 @@ public class FmodParameter : MonoBehaviour
         float value = ReadValue() * multiplier;
 
         if (globalParameter)
-            Fmod.SetGlobalParameter(parameter, value);
+            FmodB8.SetGlobalParameter(parameter, value);
         else
-            Fmod.SetParameter(eventId, parameter, value);
+            FmodB8.SetParameter(eventId, parameter, value);
     }
 
     /// <summary>

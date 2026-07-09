@@ -245,7 +245,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Marca esta instÃ¢ncia como Ã¡udio 3D para deixar clara a intenÃ§Ã£o no encadeamento.
+    /// Marca esta instância como áudio 3D para deixar clara a intenção no encadeamento.
     /// </summary>
     public FmodHandle As3D()
     {
@@ -253,7 +253,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Faz esta instÃ¢ncia seguir o Transform informado.
+    /// Faz esta instância seguir o Transform informado.
     /// </summary>
     public FmodHandle FollowTransform(Transform target)
     {
@@ -261,7 +261,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Anexa esta instÃ¢ncia ao Transform informado.
+    /// Anexa esta instância ao Transform informado.
     /// </summary>
     public FmodHandle AttachTo(Transform target)
     {
@@ -269,7 +269,7 @@ public sealed class FmodHandle
     }
 
     /// <summary>
-    /// Faz esta instÃ¢ncia seguir o Transform informado.
+    /// Faz esta instância seguir o Transform informado.
     /// </summary>
     public FmodHandle Transform(Transform target)
     {
@@ -331,7 +331,7 @@ public sealed class FmodHandle
     /// <summary>
     /// Guarda esta instancia no registro global do BetterFMOD.
     /// Se nenhuma chave for informada, usa o EventId como chave.
-    /// Use Fmod.GetKept(key) para recuperar a instancia depois.
+    /// Use FmodB8.GetKept(key) para recuperar a instancia depois.
     /// </summary>
     public FmodHandle Keep(string key = null)
     {

@@ -23,7 +23,38 @@ public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         foreach (FmodButtonAction action in actions)
         {
             if (action != null && action.moment == moment)
-                action.Execute();
+                action.Execute(transform);
+        }
+    }
+
+    private void OnValidate()
+    {
+        ValidateActions();
+    }
+
+    public void ValidateActions()
+    {
+        if (actions == null)
+            return;
+
+        foreach (FmodButtonAction action in actions)
+            action?.ValidateDependencies(transform);
+    }
+
+    public void ApplyMultiplayerDefaults(bool enableMultiplayer)
+    {
+        if (actions == null)
+            return;
+
+        foreach (FmodButtonAction action in actions)
+        {
+            if (action == null)
+                continue;
+
+            if (enableMultiplayer && FmodButtonAction.IsNetworkableCommand(action.command))
+                action.playbackScope = FmodPlaybackScope.Multiplayer;
+
+            action.ValidateDependencies(transform);
         }
     }
 }
@@ -36,6 +67,8 @@ public class FmodButtonAction
 {
     public ButtonMoment moment  = ButtonMoment.None;
     public ButtonRootCommand command = ButtonRootCommand.Play;
+    public FmodPlaybackScope playbackScope = FmodPlaybackScope.Local;
+    public bool playLocally = true;
 
     // Campos do comando raiz
     public string soundId;          // Event ID, Keep Key, path de snapshot/bus/VCA
@@ -48,18 +81,33 @@ public class FmodButtonAction
     // Modificadores de cascata aplicados ao FmodHandle (so para Play / PlayLoop / StartSnapshot / Kept)
     public List<ButtonCascadeStep> cascade = new();
 
-    public void Execute()
+    public void Execute(Transform source = null)
     {
         if (moment == ButtonMoment.None)
             return;
 
+        ValidateDependencies(source);
+
+        if (ShouldDispatchMultiplayer())
+        {
+            FmodCommands.EnsureInstance().DispatchButtonAction(this, source, playLocally);
+            return;
+        }
+
+        ExecuteLocal(source);
+    }
+
+    internal FmodHandle ExecuteLocal(Transform source = null)
+    {
         FmodHandle handle = ExecuteRoot();
 
         if (handle != null && IsHandleCommand(command) && cascade != null)
         {
             foreach (ButtonCascadeStep step in cascade)
-                step?.Apply(handle);
+                step?.Apply(handle, source);
         }
+
+        return handle;
     }
 
     private FmodHandle ExecuteRoot()
@@ -69,45 +117,45 @@ public class FmodButtonAction
         switch (command)
         {
             case ButtonRootCommand.Play:
-                return hasId ? Fmod.Play(soundId) : null;
+                return hasId ? FmodB8.Play(soundId) : null;
             case ButtonRootCommand.PlayLoop:
-                return hasId ? Fmod.PlayLoop(soundId) : null;
+                return hasId ? FmodB8.PlayLoop(soundId) : null;
             case ButtonRootCommand.Stop:
-                if (hasId) Fmod.Stop(soundId, fade, floatValue); return null;
+                if (hasId) FmodB8.Stop(soundId, fade, floatValue); return null;
             case ButtonRootCommand.Pause:
-                if (hasId) Fmod.Pause(soundId); return null;
+                if (hasId) FmodB8.Pause(soundId); return null;
             case ButtonRootCommand.Resume:
-                if (hasId) Fmod.Resume(soundId); return null;
+                if (hasId) FmodB8.Resume(soundId); return null;
             case ButtonRootCommand.TogglePause:
-                if (hasId) Fmod.TogglePause(soundId); return null;
+                if (hasId) FmodB8.TogglePause(soundId); return null;
             case ButtonRootCommand.StopAll:
-                Fmod.StopAll(fade, floatValue); return null;
+                FmodB8.StopAll(fade, floatValue); return null;
             case ButtonRootCommand.FadeIn:
-                if (hasId) Fmod.FadeIn(soundId, floatValue); return null;
+                if (hasId) FmodB8.FadeIn(soundId, floatValue); return null;
             case ButtonRootCommand.FadeOut:
-                if (hasId) Fmod.FadeOut(soundId, floatValue); return null;
+                if (hasId) FmodB8.FadeOut(soundId, floatValue); return null;
             case ButtonRootCommand.FadeTo:
-                if (hasId) Fmod.FadeTo(soundId, floatValue, floatValue2); return null;
+                if (hasId) FmodB8.FadeTo(soundId, floatValue, floatValue2); return null;
             case ButtonRootCommand.SetVolume:
-                if (hasId) Fmod.SetVolume(soundId, floatValue); return null;
+                if (hasId) FmodB8.SetVolume(soundId, floatValue); return null;
             case ButtonRootCommand.SetPitch:
-                if (hasId) Fmod.SetPitch(soundId, floatValue); return null;
+                if (hasId) FmodB8.SetPitch(soundId, floatValue); return null;
             case ButtonRootCommand.SetParameter:
-                if (hasId) Fmod.SetParameter(soundId, parameter, floatValue); return null;
+                if (hasId) FmodB8.SetParameter(soundId, parameter, floatValue); return null;
             case ButtonRootCommand.SetParameterLabel:
-                if (hasId) Fmod.SetParameterLabel(soundId, parameter, label); return null;
+                if (hasId) FmodB8.SetParameterLabel(soundId, parameter, label); return null;
             case ButtonRootCommand.SetGlobalParameter:
-                Fmod.SetGlobalParameter(parameter, floatValue); return null;
+                FmodB8.SetGlobalParameter(parameter, floatValue); return null;
             case ButtonRootCommand.StartSnapshot:
-                return hasId ? Fmod.StartSnapshot(soundId) : null;
+                return hasId ? FmodB8.StartSnapshot(soundId) : null;
             case ButtonRootCommand.StopSnapshot:
-                if (hasId) Fmod.StopSnapshot(soundId); return null;
+                if (hasId) FmodB8.StopSnapshot(soundId); return null;
             case ButtonRootCommand.SetBusVolume:
-                if (hasId) Fmod.SetBusVolume(soundId, floatValue); return null;
+                if (hasId) FmodB8.SetBusVolume(soundId, floatValue); return null;
             case ButtonRootCommand.SetVcaVolume:
-                if (hasId) Fmod.SetVcaVolume(soundId, floatValue); return null;
+                if (hasId) FmodB8.SetVcaVolume(soundId, floatValue); return null;
             case ButtonRootCommand.Kept:
-                return hasId ? Fmod.Kept(soundId) : null;
+                return hasId ? FmodB8.Kept(soundId) : null;
             default:
                 return null;
         }
@@ -121,6 +169,98 @@ public class FmodButtonAction
         || cmd == ButtonRootCommand.PlayLoop
         || cmd == ButtonRootCommand.StartSnapshot
         || cmd == ButtonRootCommand.Kept;
+
+    public static bool IsNetworkableCommand(ButtonRootCommand cmd)
+        => cmd == ButtonRootCommand.Play
+        || cmd == ButtonRootCommand.PlayLoop
+        || cmd == ButtonRootCommand.StartSnapshot;
+
+    public void ValidateDependencies(Transform defaultTarget)
+    {
+        if (!IsHandleCommand(command))
+            return;
+
+        cascade ??= new List<ButtonCascadeStep>();
+
+        bool requires3D = HasModifier(ButtonCascadeModifier.As3D)
+                       || HasModifier(ButtonCascadeModifier.Radius)
+                       || HasModifier(ButtonCascadeModifier.Follow)
+                       || HasModifier(ButtonCascadeModifier.Position)
+                       || HasModifier(ButtonCascadeModifier.Velocity);
+
+        if (requires3D && !HasModifier(ButtonCascadeModifier.As3D))
+            cascade.Insert(0, new ButtonCascadeStep { modifier = ButtonCascadeModifier.As3D });
+
+        bool hasSpatialAnchor = HasModifier(ButtonCascadeModifier.Follow)
+                             || HasModifier(ButtonCascadeModifier.Position);
+
+        if (requires3D && !hasSpatialAnchor)
+        {
+            cascade.Add(new ButtonCascadeStep
+            {
+                modifier = ButtonCascadeModifier.Follow,
+                target = defaultTarget
+            });
+        }
+
+        foreach (ButtonCascadeStep step in cascade)
+        {
+            if (step != null && step.modifier == ButtonCascadeModifier.Follow && step.target == null)
+                step.target = defaultTarget;
+        }
+    }
+
+    public FmodButtonActionPayload ToPayload(Transform source = null)
+    {
+        ValidateDependencies(source);
+
+        FmodButtonActionPayload payload = new FmodButtonActionPayload
+        {
+            command = command,
+            soundId = soundId,
+            fade = fade,
+            floatValue = floatValue,
+            floatValue2 = floatValue2,
+            parameter = parameter,
+            label = label,
+            hasSourcePosition = source != null,
+            sourcePosition = source != null ? source.position : Vector3.zero
+        };
+
+        if (cascade == null)
+            return payload;
+
+        foreach (ButtonCascadeStep step in cascade)
+        {
+            if (step == null)
+                continue;
+
+            payload.cascade.Add(step.ToPayload(source));
+        }
+
+        return payload;
+    }
+
+    private bool ShouldDispatchMultiplayer()
+    {
+        return playbackScope == FmodPlaybackScope.Multiplayer
+            && FmodMultiplayerSettings.MultiplayerModeEnabled
+            && IsNetworkableCommand(command);
+    }
+
+    private bool HasModifier(ButtonCascadeModifier modifier)
+    {
+        if (cascade == null)
+            return false;
+
+        foreach (ButtonCascadeStep step in cascade)
+        {
+            if (step != null && step.modifier == modifier)
+                return true;
+        }
+
+        return false;
+    }
 }
 
 /// <summary>
@@ -140,6 +280,217 @@ public class ButtonCascadeStep
     public int       intValue;             // Timeline position
     public Vector3   vectorValue;          // Position / Velocity
     public Transform target;               // Follow
+
+    public void Apply(FmodHandle handle, Transform defaultTarget = null)
+    {
+        if (handle == null || !handle.IsValid)
+            return;
+
+        switch (modifier)
+        {
+            case ButtonCascadeModifier.As3D:
+                handle.As3D();
+                break;
+            case ButtonCascadeModifier.Volume:
+                handle.Volume(floatValue);
+                break;
+            case ButtonCascadeModifier.Pitch:
+                handle.Pitch(floatValue);
+                break;
+            case ButtonCascadeModifier.Radius:
+                handle.Radius(Mathf.Max(0.01f, floatValue));
+                break;
+            case ButtonCascadeModifier.FadeIn:
+                handle.FadeIn(floatValue);
+                break;
+            case ButtonCascadeModifier.FadeOut:
+                handle.FadeOut(floatValue);
+                break;
+            case ButtonCascadeModifier.FadeTo:
+                handle.FadeTo(floatValue, floatValue2);
+                break;
+            case ButtonCascadeModifier.Stop:
+                handle.Stop(boolValue, floatValue);
+                break;
+            case ButtonCascadeModifier.Pause:
+                handle.Pause();
+                break;
+            case ButtonCascadeModifier.Resume:
+                handle.Resume();
+                break;
+            case ButtonCascadeModifier.TogglePause:
+                handle.TogglePause();
+                break;
+            case ButtonCascadeModifier.Parameter:
+                handle.Parameter(stringValue, floatValue);
+                break;
+            case ButtonCascadeModifier.ParameterLabel:
+                handle.SetParameterLabel(stringValue, stringValue2);
+                break;
+            case ButtonCascadeModifier.TimelinePosition:
+                handle.SetTimelinePosition(Mathf.Max(0, intValue));
+                break;
+            case ButtonCascadeModifier.Follow:
+                Transform resolvedTarget = target != null ? target : defaultTarget;
+                if (resolvedTarget != null) handle.Follow(resolvedTarget);
+                break;
+            case ButtonCascadeModifier.Detach:
+                handle.Detach();
+                break;
+            case ButtonCascadeModifier.Position:
+                handle.Position(vectorValue);
+                break;
+            case ButtonCascadeModifier.Velocity:
+                handle.Velocity(vectorValue);
+                break;
+            case ButtonCascadeModifier.Keep:
+                handle.Keep(stringValue);
+                break;
+        }
+    }
+
+    internal ButtonCascadeStepPayload ToPayload(Transform source = null)
+    {
+        ButtonCascadeStepPayload payload = new ButtonCascadeStepPayload
+        {
+            modifier = modifier,
+            stringValue = stringValue,
+            stringValue2 = stringValue2,
+            floatValue = floatValue,
+            floatValue2 = floatValue2,
+            boolValue = boolValue,
+            intValue = intValue,
+            vectorValue = vectorValue
+        };
+
+        if (modifier == ButtonCascadeModifier.Follow)
+        {
+            Transform resolvedTarget = target != null ? target : source;
+            if (resolvedTarget != null)
+            {
+                payload.modifier = ButtonCascadeModifier.Position;
+                payload.vectorValue = resolvedTarget.position;
+            }
+        }
+
+        return payload;
+    }
+}
+
+[Serializable]
+public class FmodButtonActionPayload
+{
+    public ButtonRootCommand command = ButtonRootCommand.Play;
+    public string soundId;
+    public bool fade;
+    public float floatValue = 1f;
+    public float floatValue2 = 1f;
+    public string parameter;
+    public string label;
+    public bool hasSourcePosition;
+    public Vector3 sourcePosition;
+    public List<ButtonCascadeStepPayload> cascade = new();
+
+    public FmodHandle ExecuteLocal()
+    {
+        ValidateDependencies();
+
+        FmodButtonAction action = new FmodButtonAction
+        {
+            command = command,
+            soundId = soundId,
+            fade = fade,
+            floatValue = floatValue,
+            floatValue2 = floatValue2,
+            parameter = parameter,
+            label = label
+        };
+
+        FmodHandle handle = action.ExecuteLocal();
+
+        if (handle != null && FmodButtonAction.IsHandleCommand(command) && cascade != null)
+        {
+            foreach (ButtonCascadeStepPayload step in cascade)
+                step?.Apply(handle);
+
+            if (hasSourcePosition && !HasSpatialAnchor())
+                handle.Position(sourcePosition);
+        }
+
+        return handle;
+    }
+
+    public void ValidateDependencies()
+    {
+        if (!FmodButtonAction.IsHandleCommand(command))
+            return;
+
+        cascade ??= new List<ButtonCascadeStepPayload>();
+
+        bool requires3D = hasSourcePosition;
+        bool hasAs3D = false;
+        bool hasSpatialAnchor = false;
+
+        foreach (ButtonCascadeStepPayload step in cascade)
+        {
+            if (step == null)
+                continue;
+
+            if (step.modifier == ButtonCascadeModifier.As3D)
+                hasAs3D = true;
+
+            if (step.modifier == ButtonCascadeModifier.Radius
+             || step.modifier == ButtonCascadeModifier.Follow
+             || step.modifier == ButtonCascadeModifier.Position
+             || step.modifier == ButtonCascadeModifier.Velocity)
+                requires3D = true;
+
+            if (step.modifier == ButtonCascadeModifier.Follow || step.modifier == ButtonCascadeModifier.Position)
+                hasSpatialAnchor = true;
+        }
+
+        if (requires3D && !hasAs3D)
+            cascade.Insert(0, new ButtonCascadeStepPayload { modifier = ButtonCascadeModifier.As3D });
+
+        if (requires3D && !hasSpatialAnchor && hasSourcePosition)
+        {
+            cascade.Add(new ButtonCascadeStepPayload
+            {
+                modifier = ButtonCascadeModifier.Position,
+                vectorValue = sourcePosition
+            });
+        }
+    }
+
+    private bool HasSpatialAnchor()
+    {
+        if (cascade == null)
+            return false;
+
+        foreach (ButtonCascadeStepPayload step in cascade)
+        {
+            if (step == null)
+                continue;
+
+            if (step.modifier == ButtonCascadeModifier.Position || step.modifier == ButtonCascadeModifier.Follow)
+                return true;
+        }
+
+        return false;
+    }
+}
+
+[Serializable]
+public class ButtonCascadeStepPayload
+{
+    public ButtonCascadeModifier modifier = ButtonCascadeModifier.Volume;
+    public string stringValue;
+    public string stringValue2;
+    public float floatValue = 1f;
+    public float floatValue2 = 1f;
+    public bool boolValue;
+    public int intValue;
+    public Vector3 vectorValue;
 
     public void Apply(FmodHandle handle)
     {
@@ -190,13 +541,11 @@ public class ButtonCascadeStep
             case ButtonCascadeModifier.TimelinePosition:
                 handle.SetTimelinePosition(Mathf.Max(0, intValue));
                 break;
-            case ButtonCascadeModifier.Follow:
-                if (target != null) handle.Follow(target);
-                break;
             case ButtonCascadeModifier.Detach:
                 handle.Detach();
                 break;
             case ButtonCascadeModifier.Position:
+            case ButtonCascadeModifier.Follow:
                 handle.Position(vectorValue);
                 break;
             case ButtonCascadeModifier.Velocity:
@@ -244,6 +593,12 @@ public enum ButtonRootCommand
     SetBusVolume,
     SetVcaVolume,
     Kept
+}
+
+public enum FmodPlaybackScope
+{
+    Local,
+    Multiplayer
 }
 
 /// <summary>Modificador de cascata aplicado ao FmodHandle apos o comando raiz.</summary>

@@ -45,7 +45,7 @@ public class FmodEmitter : MonoBehaviour
         if (string.IsNullOrWhiteSpace(eventId))
             return FmodHandle.Invalid(eventId);
 
-        FmodEventBuilder builder = Fmod.Event(eventId);
+        FmodEventBuilder builder = FmodB8.Event(eventId);
 
         if (loop || !oneShot)
             builder.Loop();

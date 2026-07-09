@@ -120,7 +120,7 @@ public class FmodEmitterCustom : MonoBehaviour
         if (string.IsNullOrWhiteSpace(eventId))
             return;
 
-        FmodEventBuilder builder = Fmod.Event(eventId);
+        FmodEventBuilder builder = FmodB8.Event(eventId);
 
         if (!oneShot)
             builder.Loop();
@@ -137,7 +137,7 @@ public class FmodEmitterCustom : MonoBehaviour
         if (handle != null && handle.IsValid)
             handle.Stop(fade);
         else
-            Fmod.Stop(eventId, fade);
+            FmodB8.Stop(eventId, fade);
     }
 
     /// <summary>
@@ -156,9 +156,9 @@ public class FmodEmitterCustom : MonoBehaviour
         }
 
         if (pause)
-            Fmod.Pause(eventId);
+            FmodB8.Pause(eventId);
         else
-            Fmod.Resume(eventId);
+            FmodB8.Resume(eventId);
     }
 
     private void ApplyCascade(FmodEventBuilder builder)

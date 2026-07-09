@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Build;
@@ -17,6 +17,12 @@ internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerStat
     internal void MarkSetupComplete()
     {
         setupComplete = true;
+        Save(true);
+    }
+
+    internal void ResetSetup()
+    {
+        setupComplete = false;
         Save(true);
     }
 }
@@ -59,7 +65,25 @@ public static class FMODInstaller
     [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
     public static void RunSetupFromFMODMenu()
     {
+        ResetSetup();
         RunSetup();
+    }
+
+    private static void ResetSetup()
+    {
+        // Delete existing FMOD installation so setup copies fresh
+        if (Directory.Exists(InstalledFMODPath))
+        {
+            DeleteDirectory(InstalledFMODPath);
+            string metaPath = InstalledFMODPath + ".meta";
+            if (File.Exists(metaPath))
+                File.Delete(metaPath);
+        }
+
+        // Reset state flags
+        FMODInstallerState.instance.ResetSetup();
+        EditorPrefs.DeleteKey(LegacySetupKey);
+        SessionState.SetBool(PopupShownKey, false);
     }
 
     [MenuItem("Assets/BISC8 FMOD/Create FMOD List", false, 10)]
@@ -114,25 +138,26 @@ public static class FMODInstaller
             return;
         }
 
-        if (File.Exists(InstalledMarkerPath))
-        {
-            EnsureFMODDefine();
-            MarkSetupComplete();
-            Debug.Log("[BISC8 FMOD] FMOD is already installed in Assets/BISC8/BetterFMOD/FMOD.");
-            return;
-        }
-
         string hiddenSourcePath = GetHiddenFMODSourcePath();
         string activeSourcePath = GetActiveFMODSourcePath();
 
         if (hiddenSourcePath == null && activeSourcePath == null)
         {
-            Debug.LogError("[BISC8 FMOD] FMOD source folder was not found in the package.");
+            Debug.LogError("[BISC8 FMOD] FMOD source folder was not found in the package. Package root: " + GetPackageRootPath());
             return;
         }
 
         try
         {
+            // Always reset: remove any existing installation
+            if (Directory.Exists(InstalledFMODPath))
+            {
+                DeleteDirectory(InstalledFMODPath);
+                string existingMeta = InstalledFMODPath + ".meta";
+                if (File.Exists(existingMeta))
+                    File.Delete(existingMeta);
+            }
+
             string sourcePath = hiddenSourcePath ?? activeSourcePath;
             MoveFMODToAssets(sourcePath);
 
@@ -219,48 +244,43 @@ public static class FMODInstaller
 
     private static string GetPackageRootPath()
     {
-        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
+        // Try with package.json which is more reliable than the bare folder path
+        var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(
+            "Packages/com.bisc8.betterfmod/package.json");
+
+        if (packageInfo == null)
+            packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
 
         if (packageInfo != null && !string.IsNullOrEmpty(packageInfo.resolvedPath))
             return packageInfo.resolvedPath;
+
+        // Scan Library/PackageCache as a fallback (handles git packages)
+        string projectRoot = Path.GetFullPath(".");
+        string packageCacheDir = Path.Combine(projectRoot, "Library", "PackageCache");
+        if (Directory.Exists(packageCacheDir))
+        {
+            foreach (string dir in Directory.GetDirectories(packageCacheDir, "com.bisc8.betterfmod*"))
+                return dir;
+        }
 
         return Path.GetFullPath(PackagePath);
     }
 
     private static void MoveFMODToAssets(string sourcePath)
     {
-        Directory.CreateDirectory(InstalledRootPath);
+        EnsureAssetFolder("Assets", "BISC8");
+        EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
 
-        if (!Directory.Exists(InstalledFMODPath))
-        {
-            try
-            {
-                Directory.Move(sourcePath, InstalledFMODPath);
-                MoveRootMeta(sourcePath);
-                return;
-            }
-            catch (IOException)
-            {
-                // Directory.Move cannot cross volumes. Fall back to move-by-copy.
-            }
-        }
-
+        // Always copy (never move) so the package cache source stays intact for future setups
         CopyDirectory(sourcePath, InstalledFMODPath);
-        DeleteDirectory(sourcePath);
-        MoveRootMeta(sourcePath);
-    }
 
-    private static void MoveRootMeta(string sourcePath)
-    {
+        // Copy the .meta file if present alongside the source folder
         string sourceMetaPath = sourcePath + ".meta";
-        if (!File.Exists(sourceMetaPath))
-            return;
-
-        string destinationMetaPath = InstalledFMODPath + ".meta";
-        if (File.Exists(destinationMetaPath))
-            File.Delete(destinationMetaPath);
-
-        File.Move(sourceMetaPath, destinationMetaPath);
+        if (File.Exists(sourceMetaPath))
+        {
+            string destinationMetaPath = InstalledFMODPath + ".meta";
+            File.Copy(sourceMetaPath, destinationMetaPath, true);
+        }
     }
 
     private static void DeleteDirectory(string path)

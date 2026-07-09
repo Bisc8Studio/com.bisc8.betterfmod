@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System;
 
 /// <summary>
-/// Armazena ids de eventos BetterFMOD e suas referencias de evento FMOD.
+/// Armazena ids de eventos BetterFMOD e suas referencias de evento FmodB8.
 /// </summary>
 public class CreateFmodList : ScriptableObject
 {
@@ -15,7 +15,7 @@ public class CreateFmodList : ScriptableObject
 }
 
 /// <summary>
-/// Representa um id BetterFMOD mapeado para uma referencia de evento FMOD.
+/// Representa um id BetterFMOD mapeado para uma referencia de evento FmodB8.
 /// </summary>
 [Serializable]
 public class FMODListEntry

@@ -86,7 +86,7 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
         if (string.IsNullOrWhiteSpace(eventId))
             return FmodHandle.Invalid(eventId);
 
-        FmodEventBuilder builder = Fmod.Event(eventId);
+        FmodEventBuilder builder = FmodB8.Event(eventId);
 
         if (loop)
             builder.Loop();
@@ -107,7 +107,7 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
         if (handle != null && handle.IsValid)
             handle.Stop(fadeOut > 0f, fadeOut);
         else
-            Fmod.Stop(eventId, fadeOut > 0f, fadeOut);
+            FmodB8.Stop(eventId, fadeOut > 0f, fadeOut);
     }
 
     private void Execute(FmodTriggerMoment moment)

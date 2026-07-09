@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// API publica principal do BetterFMOD para tocar eventos, controlar instancias, parametros, buses, VCAs e snapshots.
 /// </summary>
-public static class Fmod
+public static class FmodB8
 {
     /// <summary>
     /// Cria uma configuracao fluente para um evento antes de tocar.
@@ -104,7 +104,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Define um parametro global do FMOD.
+    /// Define um parametro global do FmodB8.
     /// </summary>
     public static void SetGlobalParameter(string parameter, float value)
     {
@@ -112,7 +112,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Le um parametro global do FMOD.
+    /// Le um parametro global do FmodB8.
     /// </summary>
     public static float GetGlobalParameter(string parameter)
     {
@@ -272,7 +272,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Define o volume de um bus do FMOD.
+    /// Define o volume de um bus do FmodB8.
     /// </summary>
     public static void SetBusVolume(string path, float volume)
     {
@@ -280,7 +280,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Le o volume de um bus do FMOD.
+    /// Le o volume de um bus do FmodB8.
     /// </summary>
     public static float GetBusVolume(string path)
     {
@@ -288,7 +288,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Pausa ou retoma um bus do FMOD.
+    /// Pausa ou retoma um bus do FmodB8.
     /// </summary>
     public static void SetBusPaused(string path, bool paused)
     {
@@ -296,7 +296,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Para todos os eventos roteados por um bus do FMOD.
+    /// Para todos os eventos roteados por um bus do FmodB8.
     /// </summary>
     public static void StopBus(string path)
     {
@@ -304,7 +304,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Define o volume de um VCA do FMOD.
+    /// Define o volume de um VCA do FmodB8.
     /// </summary>
     public static void SetVcaVolume(string path, float volume)
     {
@@ -312,7 +312,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Define o volume de um VCA do FMOD.
+    /// Define o volume de um VCA do FmodB8.
     /// </summary>
     public static void SetVCAVolume(string path, float volume)
     {
@@ -320,7 +320,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Le o volume de um VCA do FMOD.
+    /// Le o volume de um VCA do FmodB8.
     /// </summary>
     public static float GetVcaVolume(string path)
     {
@@ -328,7 +328,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Le o volume de um VCA do FMOD.
+    /// Le o volume de um VCA do FmodB8.
     /// </summary>
     public static float GetVCAVolume(string path)
     {
@@ -344,7 +344,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Para todas as instancias ativas de um snapshot do FMOD.
+    /// Para todas as instancias ativas de um snapshot do FmodB8.
     /// </summary>
     public static void StopSnapshot(string path)
     {
@@ -354,7 +354,7 @@ public static class Fmod
     /// <summary>
     /// Recupera um handle de instancia guardado anteriormente com .Keep(key).
     /// Permite encadear operacoes sem precisar armazenar o handle em variavel.
-    /// Exemplo: Fmod.Play("som").Keep("bgm")  →  Fmod.Kept("bgm").Stop(true)
+    /// Exemplo: FmodB8.Play("som").Keep("bgm")  ?  FmodB8.Kept("bgm").Stop(true)
     /// Retorna um handle invalido quando a chave nao existe.
     /// </summary>
     public static FmodHandle Kept(string key)
@@ -363,7 +363,7 @@ public static class Fmod
     }
 
     /// <summary>
-    /// Alias de Fmod.Kept(key).
+    /// Alias de FmodB8.Kept(key).
     /// </summary>
     public static FmodHandle GetKept(string key) => Kept(key);
 }

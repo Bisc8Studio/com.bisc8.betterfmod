@@ -3,6 +3,9 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BackgroundAgentGlobalSettings">
+    <option name="selectedModelId" value="claude-sonnet-4.6" />
+  </component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
@@ -10,7 +13,44 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
+    <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodArea.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodArea.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodEmitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodParameter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodParameter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodTrigger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/CreateFmodList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/CreateFmodList.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/Fmod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/Fmod.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodBackend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodBackend.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodBusManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodBusManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodCommands.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodCommands.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodFadeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodFadeManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodHandle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodManagedInstance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodManagedInstance.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodParameterManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodParameterManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodPlaybackState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodPlaybackState.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/Haptics/Scripts/FMODHaptics.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/Haptics/Scripts/FMODHaptics.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/ResonanceAudio/Scripts/FmodResonanceAudio.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/ResonanceAudio/Scripts/FmodResonanceAudio.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/linux/src/PlatformLinux.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/linux/src/PlatformLinux.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/win/src/PlatformWindows.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/win/src/PlatformWindows.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Editor/BoltIntegration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Editor/BoltIntegration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/EventReference.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/EventReference.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/FMODEventPlayable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/FMODEventPlayable.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/ParamRef.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/ParamRef.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Platform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Platform.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/PlatformPlayInEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/PlatformPlayInEditor.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeUtils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeUtils.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Settings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioEventEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioEventEmitter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioGlobalParameterTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioGlobalParameterTrigger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioListener.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioParameterTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioParameterTrigger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_dsp.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_dsp.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_errors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_errors.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_studio.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_studio.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -80,28 +120,26 @@
     &quot;assignee&quot;: &quot;thor-xz&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Bisc8Studio/com.bisc8.betterfmod.git",
-    "accountId": "7d25fc9d-80b2-44aa-a438-1bf05d9b8ba7"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Bisc8Studio/com.bisc8.betterfmod.git&quot;,
+    &quot;accountId&quot;: &quot;7d25fc9d-80b2-44aa-a438-1bf05d9b8ba7&quot;
   }
-}]]></component>
+}</component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodButtonEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodEmitterCustomEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodListEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodSliderEditor.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/Editor/BoltIntegration.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/Editor/FileReorganizer.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/RuntimeUtils.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/StudioEventEmitter.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/fmod.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/src/fmod_dsp.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/CreateFmodList.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodAninEvent.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodCommands.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodEmitterCustom.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodSlider.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/Components/FmodTrigger.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/Core/Fmod.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/Core/FmodCommands.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/Core/FmodHandle.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodAninEvent.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodButton.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodEmitterCustom.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodSlider.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -110,61 +148,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0352804185805553" />
-      <entry key="MS500" value="1.8429563742475024" />
-      <entry key="S2" value="4.1590992946401135" />
-      <entry key="S5" value="6.487175363374398" />
-      <entry key="S10" value="7.92904307685261" />
-      <entry key="S30" value="11.195455605067085" />
-      <entry key="S60" value="25.152452213199446" />
-      <entry key="M2" value="54.7736990661468" />
-      <entry key="M5" value="96.88199690499064" />
-      <entry key="M10" value="141.36980984348781" />
-      <entry key="M15" value="207.57381868857175" />
-      <entry key="M30" value="488.99162867357387" />
-      <entry key="H1" value="1051.3248599196315" />
-      <entry key="H2" value="1907.159214243906" />
-      <entry key="H4" value="2890.994000891981" />
-      <entry key="D1" value="4464.142207929409" />
-      <entry key="W1" value="4852.7295202334935" />
+      <entry key="MS100" value="1.0002010720257002" />
+      <entry key="MS500" value="1.1822511723520723" />
+      <entry key="S2" value="1.6533826269465868" />
+      <entry key="S5" value="1.8434649359703945" />
+      <entry key="S10" value="1.9184034734399713" />
+      <entry key="S30" value="1.974091996030273" />
+      <entry key="S60" value="2.050193790983052" />
+      <entry key="M2" value="2.3553153045011355" />
+      <entry key="M5" value="3.421293016533614" />
+      <entry key="M10" value="8.861528582445995" />
+      <entry key="M15" value="25.035652570267022" />
+      <entry key="M30" value="154.59825495252605" />
+      <entry key="H1" value="584.2399686018034" />
+      <entry key="H2" value="1421.1594466030635" />
+      <entry key="H4" value="2499.7068078380853" />
+      <entry key="D1" value="4373.777893527674" />
+      <entry key="W1" value="4857.93558003386" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
-      <entry key="S10" value="1.8730401677569708E-188" />
-      <entry key="S30" value="2.6557204858150226E-63" />
-      <entry key="S60" value="5.153368302202866E-32" />
-      <entry key="M2" value="2.2701031479213856E-16" />
-      <entry key="M5" value="5.526093596449428E-7" />
-      <entry key="M10" value="7.433770120732257E-4" />
-      <entry key="M15" value="0.008206220298834301" />
-      <entry key="M30" value="0.0909889223990759" />
-      <entry key="H1" value="0.3343877157429206" />
-      <entry key="H2" value="0.8623254868208291" />
-      <entry key="H4" value="1.7086591743872592" />
-      <entry key="D1" value="3.434989333826309" />
-      <entry key="W1" value="3.91301293649244" />
+      <entry key="S10" value="1.1736310523831687E-284" />
+      <entry key="S30" value="2.27253473797932E-95" />
+      <entry key="S60" value="4.7671110098037766E-48" />
+      <entry key="M2" value="2.1833714777388438E-24" />
+      <entry key="M5" value="3.4328201681748647E-10" />
+      <entry key="M10" value="1.8527871727576135E-5" />
+      <entry key="M15" value="7.001978568254851E-4" />
+      <entry key="M30" value="0.02657830766394251" />
+      <entry key="H1" value="0.18072561693865422" />
+      <entry key="H2" value="0.6339513382469184" />
+      <entry key="H4" value="1.4650343015289722" />
+      <entry key="D1" value="3.3480411299835406" />
+      <entry key="W1" value="3.8987072471846727" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.0134917070483351" />
-      <entry key="MS500" value="1.8327926100341225" />
-      <entry key="S2" value="4.153104343654134" />
-      <entry key="S5" value="6.4834677629441115" />
-      <entry key="S10" value="7.926783973242091" />
-      <entry key="S30" value="11.194372390431454" />
-      <entry key="S60" value="25.151175743897305" />
-      <entry key="M2" value="54.7722795585265" />
-      <entry key="M5" value="96.88098504668412" />
-      <entry key="M10" value="141.3697977142275" />
-      <entry key="M15" value="207.58119951809937" />
-      <entry key="M30" value="489.0812452510901" />
-      <entry key="H1" value="1051.657457557427" />
-      <entry key="H2" value="1908.0197957439784" />
-      <entry key="H4" value="2892.7012818660505" />
-      <entry key="D1" value="4467.576824076547" />
-      <entry key="W1" value="4856.642474589444" />
+      <entry key="MS100" value="0.9594596930258478" />
+      <entry key="MS500" value="1.1729600848481498" />
+      <entry key="S2" value="1.6504001928435292" />
+      <entry key="S5" value="1.8421659185647064" />
+      <entry key="S10" value="1.9177330713863172" />
+      <entry key="S30" value="1.9738632607655828" />
+      <entry key="S60" value="2.0500744738433854" />
+      <entry key="M2" value="2.35524515606584" />
+      <entry key="M5" value="3.421250160402818" />
+      <entry key="M10" value="8.861491113562352" />
+      <entry key="M15" value="25.03624499231938" />
+      <entry key="M30" value="154.62439809408448" />
+      <entry key="H1" value="584.4197015832168" />
+      <entry key="H2" value="1421.7921003080185" />
+      <entry key="H4" value="2501.1706517942757" />
+      <entry key="D1" value="4377.1255693347675" />
+      <entry key="W1" value="4861.8342286849265" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -175,10 +213,10 @@
   <component name="ProjectSessionTemplates">
     <option name="panelTemplate">
       <template>
-        <option name="modeId" value="file:///c%3A/snapshot/cls-source/dist/assets/agents/Plan.agent.md" />
+        <option name="modeId" value="Agent" />
         <option name="model">
           <model>
-            <option name="modelType" value="builtin_family" />
+            <option name="modelType" value="builtin_id" />
             <option name="modelValue" value="claude-sonnet-4.6" />
           </model>
         </option>
@@ -190,29 +228,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;fix/infinity-startup&quot;,
-    &quot;git.auto.fetch.suggestion.counter&quot;: &quot;3&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;application.passwordSafe&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "available/main",
+    "git.auto.fetch.suggestion.counter": "3",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "application.passwordSafe",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="" />
@@ -398,7 +436,39 @@
       <option name="project" value="LOCAL" />
       <updated>1781545720995</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Tentativa de adicao de cascata no botao">
+      <option name="closed" value="true" />
+      <created>1783532658148</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1783532658148</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Agora fez certinho">
+      <option name="closed" value="true" />
+      <created>1783534388545</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1783534388545</updated>
+    </task>
+    <task id="LOCAL-00024" summary="novo nome">
+      <option name="closed" value="true" />
+      <created>1783535471564</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1783535471564</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Revert">
+      <option name="closed" value="true" />
+      <created>1783535687392</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1783535687392</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -429,7 +499,11 @@
     <MESSAGE value="COISA P KRL" />
     <MESSAGE value="MAIS COISA" />
     <MESSAGE value="tentando arrumar a verificacao de fmod" />
-    <option name="LAST_COMMIT_MESSAGE" value="tentando arrumar a verificacao de fmod" />
+    <MESSAGE value="Tentativa de adicao de cascata no botao" />
+    <MESSAGE value="Agora fez certinho" />
+    <MESSAGE value="novo nome" />
+    <MESSAGE value="Revert" />
+    <option name="LAST_COMMIT_MESSAGE" value="Revert" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

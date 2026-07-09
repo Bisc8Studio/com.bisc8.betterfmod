@@ -199,7 +199,7 @@ namespace FMODUnity
                             activity = activityClass.GetStatic<AndroidJavaObject>("currentActivity");
                         }
 
-                        using (var fmodJava = new AndroidJavaClass("org.fmod.FMOD"))
+                        using (var fmodJava = new AndroidJavaClass("org.FMOD.FMOD"))
                         {
                             if (fmodJava != null)
                             {

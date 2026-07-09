@@ -7,7 +7,7 @@
 /* register and use.  See the documentation and examples on how to make a working plugin.   */
 /*                                                                                          */
 /* For more detail visit:                                                                   */
-/* https://fmod.com/docs/2.03/api/plugin-api-dsp.html                                       */
+/* https://FMOD.com/docs/2.03/api/plugin-api-dsp.html                                       */
 /* =========================================================================================*/
 
 using System;

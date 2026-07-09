@@ -1,12 +1,19 @@
 #if FMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IFmodMultiplayerTransport
+{
+    bool CanSendFmodCommands { get; }
+    void SendFmodButtonAction(FmodButtonActionPayload payload);
+}
+
 /// <summary>
-/// Servico central interno do BetterFMOD que controla eventos, instancias e comunicacao com o FMOD.
+/// Servico central interno do BetterFMOD que controla eventos, instancias e comunicacao com o FmodB8.
 /// </summary>
 public class FmodCommands : MonoBehaviour
 {
@@ -30,6 +37,10 @@ public class FmodCommands : MonoBehaviour
     internal FmodBusManager BusManager => busManager;
 
     internal FmodSnapshotManager SnapshotManager => snapshotManager;
+
+    public static IFmodMultiplayerTransport MultiplayerTransport { get; set; }
+
+    public static event Action<FmodButtonActionPayload> MultiplayerButtonActionRequested;
 
     /// <summary>
     /// Retorna o servico ativo, criando um objeto BetterFMOD quando a cena ainda nao possui um.
@@ -101,7 +112,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// ReconstrÃ³i a tabela de eventos a partir das listas configuradas no BetterFMOD.
+    /// Reconstrói a tabela de eventos a partir das listas configuradas no BetterFMOD.
     /// </summary>
     public void RebuildEventLookup()
     {
@@ -153,6 +164,54 @@ public class FmodCommands : MonoBehaviour
     public FmodHandle PlayLoop(string id)
     {
         return CreateAndStart(id);
+    }
+
+    /// <summary>
+    /// Envia uma acao de FmodButton para o transporte multiplayer registrado pelo projeto.
+    /// </summary>
+    public void DispatchButtonAction(FmodButtonAction action, Transform source, bool playLocally)
+    {
+        if (action == null)
+            return;
+
+        FmodButtonActionPayload payload = action.ToPayload(source);
+        DispatchButtonAction(payload, playLocally);
+    }
+
+    /// <summary>
+    /// Envia um payload de FmodButton para o transporte multiplayer registrado pelo projeto.
+    /// </summary>
+    public void DispatchButtonAction(FmodButtonActionPayload payload, bool playLocally = true)
+    {
+        if (payload == null)
+            return;
+
+        payload.ValidateDependencies();
+
+        bool dispatched = false;
+
+        if (MultiplayerTransport != null && MultiplayerTransport.CanSendFmodCommands)
+        {
+            MultiplayerTransport.SendFmodButtonAction(payload);
+            dispatched = true;
+        }
+
+        if (MultiplayerButtonActionRequested != null)
+        {
+            MultiplayerButtonActionRequested.Invoke(payload);
+            dispatched = true;
+        }
+
+        if (playLocally || (!dispatched && FmodMultiplayerSettings.PlayLocalWhenTransportMissing))
+            payload.ExecuteLocal();
+    }
+
+    /// <summary>
+    /// Deve ser chamado pelo RPC/transport do projeto em cada cliente que precisa tocar o som.
+    /// </summary>
+    public static FmodHandle ReceiveMultiplayerButtonAction(FmodButtonActionPayload payload)
+    {
+        return payload == null ? FmodHandle.Invalid() : payload.ExecuteLocal();
     }
 
 
@@ -242,7 +301,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Define um parametro global do FMOD.
+    /// Define um parametro global do FmodB8.
     /// </summary>
     public void SetGlobalParameter(string parameter, float value)
     {
@@ -250,7 +309,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Le um parametro global do FMOD.
+    /// Le um parametro global do FmodB8.
     /// </summary>
     public float GetGlobalParameter(string parameter)
     {

@@ -11,7 +11,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void PlayOneShot(string id)
     {
-        Fmod.Play(id);
+        FmodB8.Play(id);
     }
 
     /// <summary>
@@ -19,7 +19,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void PlayLoop(string id)
     {
-        Fmod.PlayLoop(id);
+        FmodB8.PlayLoop(id);
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void Pause(string id)
     {
-        Fmod.Resume(id);
+        FmodB8.Resume(id);
     }
 
     /// <summary>
@@ -35,7 +35,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void StopFadeOff(string id)
     {
-        Fmod.Stop(id, false);
+        FmodB8.Stop(id, false);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void StopFadeOn(string id)
     {
-        Fmod.Stop(id, true);
+        FmodB8.Stop(id, true);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class FmodAninEvent : MonoBehaviour
     /// </summary>
     public void GetState(string id)
     {
-        Fmod.GetState(id);
+        FmodB8.GetState(id);
     }
 
     /// <summary>

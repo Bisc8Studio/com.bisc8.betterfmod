@@ -16,7 +16,7 @@ public class FmodSlider : MonoBehaviour
     public BusSlider[] otherSliders;
 
     /// <summary>
-    /// Representa um slider vinculado a um path de bus do FMOD.
+    /// Representa um slider vinculado a um path de bus do FmodB8.
     /// </summary>
     [Serializable]
     public class BusSlider
@@ -46,11 +46,11 @@ public class FmodSlider : MonoBehaviour
 
         float savedVolume = PlayerPrefs.GetFloat(saveName, 0.5f);
         slider.value = savedVolume;
-        Fmod.SetBusVolume(busPath, savedVolume);
+        FmodB8.SetBusVolume(busPath, savedVolume);
 
         slider.onValueChanged.AddListener(value =>
         {
-            Fmod.SetBusVolume(busPath, value);
+            FmodB8.SetBusVolume(busPath, value);
             PlayerPrefs.SetFloat(saveName, value);
             PlayerPrefs.Save();
         });

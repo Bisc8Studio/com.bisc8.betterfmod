@@ -41,6 +41,8 @@ public class FmodButtonEditor : Editor
     {
         SerializedProperty moment     = action.FindPropertyRelative("moment");
         SerializedProperty command    = action.FindPropertyRelative("command");
+        SerializedProperty playbackScope = action.FindPropertyRelative("playbackScope");
+        SerializedProperty playLocally = action.FindPropertyRelative("playLocally");
         SerializedProperty soundId    = action.FindPropertyRelative("soundId");
         SerializedProperty fade       = action.FindPropertyRelative("fade");
         SerializedProperty floatValue  = action.FindPropertyRelative("floatValue");
@@ -75,6 +77,15 @@ public class FmodButtonEditor : Editor
             // ── moment + command ────────────────────────────────────────
             EditorGUILayout.PropertyField(moment,  new GUIContent("Moment"));
             EditorGUILayout.PropertyField(command, new GUIContent("Command"));
+
+            if (FmodButtonAction.IsNetworkableCommand(cmd))
+            {
+                EditorGUILayout.PropertyField(playbackScope, new GUIContent("Playback"));
+
+                if ((FmodPlaybackScope)playbackScope.enumValueIndex == FmodPlaybackScope.Multiplayer)
+                    EditorGUILayout.PropertyField(playLocally, new GUIContent("Play On Local Client"));
+            }
+
             EditorGUILayout.Space(2);
 
             // ── root command fields ─────────────────────────────────────
@@ -320,6 +331,8 @@ public class FmodButtonEditor : Editor
         SerializedProperty a = actions.GetArrayElementAtIndex(idx);
         a.FindPropertyRelative("moment").enumValueIndex  = 0;
         a.FindPropertyRelative("command").enumValueIndex = 0;
+        a.FindPropertyRelative("playbackScope").enumValueIndex = (int)FmodPlaybackScope.Local;
+        a.FindPropertyRelative("playLocally").boolValue  = true;
         a.FindPropertyRelative("soundId").stringValue    = string.Empty;
         a.FindPropertyRelative("fade").boolValue         = false;
         a.FindPropertyRelative("floatValue").floatValue  = 1f;

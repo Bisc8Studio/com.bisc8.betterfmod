@@ -7,10 +7,14 @@ using UnityEngine;
 public class FmodMultiplayerSettingsEditor : Editor
 {
     private SerializedProperty isMultiplayer;
+    private SerializedProperty autoConfigureFmodButtons;
+    private SerializedProperty playLocalWhenTransportMissing;
 
     private void OnEnable()
     {
         isMultiplayer = serializedObject.FindProperty("isMultiplayer");
+        autoConfigureFmodButtons = serializedObject.FindProperty("autoConfigureFmodButtons");
+        playLocalWhenTransportMissing = serializedObject.FindProperty("playLocalWhenTransportMissing");
     }
 
     public override void OnInspectorGUI()
@@ -19,6 +23,8 @@ public class FmodMultiplayerSettingsEditor : Editor
 
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(isMultiplayer, new GUIContent("IsMultiplayer"));
+        EditorGUILayout.PropertyField(autoConfigureFmodButtons, new GUIContent("Auto Configure FmodButtons"));
+        EditorGUILayout.PropertyField(playLocalWhenTransportMissing, new GUIContent("Play Local Without Transport"));
 
         if (EditorGUI.EndChangeCheck())
         {
@@ -26,7 +32,7 @@ public class FmodMultiplayerSettingsEditor : Editor
 
             if (isMultiplayer.boolValue)
             {
-                ApplyMultiplayerFmodSettings();
+                ApplyMultiplayerFmodSettings((FmodMultiplayerSettings)target);
             }
 
             return;
@@ -36,29 +42,52 @@ public class FmodMultiplayerSettingsEditor : Editor
 
         if (isMultiplayer.boolValue && GUILayout.Button("Apply FMOD Multiplayer Settings"))
         {
-            ApplyMultiplayerFmodSettings();
+            ApplyMultiplayerFmodSettings((FmodMultiplayerSettings)target);
         }
     }
 
-    private static void ApplyMultiplayerFmodSettings()
+    private static void ApplyMultiplayerFmodSettings(FmodMultiplayerSettings multiplayerSettings)
     {
         Settings settings = Settings.Instance;
-        if (settings == null)
-            return;
+        if (settings != null)
+        {
+            Undo.RecordObject(settings, "Apply FMOD Multiplayer Settings");
 
-        Undo.RecordObject(settings, "Apply FMOD Multiplayer Settings");
+            SerializedObject serializedSettings = new SerializedObject(settings);
+            serializedSettings.FindProperty("HasSourceProject").boolValue = false;
+            serializedSettings.FindProperty("BankRefreshCooldown").intValue = -2;
+            serializedSettings.FindProperty("ShowBankRefreshWindow").boolValue = false;
+            serializedSettings.ApplyModifiedProperties();
 
-        SerializedObject serializedSettings = new SerializedObject(settings);
-        serializedSettings.FindProperty("HasSourceProject").boolValue = false;
-        serializedSettings.FindProperty("BankRefreshCooldown").intValue = -2;
-        serializedSettings.FindProperty("ShowBankRefreshWindow").boolValue = false;
-        serializedSettings.ApplyModifiedProperties();
+            DisableLiveUpdate(settings.DefaultPlatform);
+            DisableLiveUpdate(settings.PlayInEditorPlatform);
 
-        DisableLiveUpdate(settings.DefaultPlatform);
-        DisableLiveUpdate(settings.PlayInEditorPlatform);
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
 
-        EditorUtility.SetDirty(settings);
-        AssetDatabase.SaveAssets();
+        ApplySceneButtonSettings(multiplayerSettings);
+    }
+
+    private static void ApplySceneButtonSettings(FmodMultiplayerSettings multiplayerSettings)
+    {
+        bool enableMultiplayer = multiplayerSettings == null || multiplayerSettings.IsMultiplayer;
+        bool autoConfigureButtons = multiplayerSettings == null || multiplayerSettings.AutoConfigureFmodButtons;
+
+        foreach (FmodButton button in FindObjectsByType<FmodButton>(FindObjectsSortMode.None))
+        {
+            if (button == null)
+                continue;
+
+            Undo.RecordObject(button, "Apply FMOD Multiplayer Settings");
+
+            if (autoConfigureButtons)
+                button.ApplyMultiplayerDefaults(enableMultiplayer);
+            else
+                button.ValidateActions();
+
+            EditorUtility.SetDirty(button);
+        }
     }
 
     private static void DisableLiveUpdate(Platform platform)

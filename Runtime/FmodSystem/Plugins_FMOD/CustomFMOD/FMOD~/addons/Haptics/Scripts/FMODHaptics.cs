@@ -18,14 +18,14 @@ namespace FMODUnityHaptics
         BuildTargetGroups = new[] { BuildTargetGroup.Android },
         Company = "FMOD",
         Desc = "OpenXR feature to enable haptics using the fmod_haptics plugin.",
-        DocumentationLink = "https://fmod.com/docs/unity",
+        DocumentationLink = "https://FMOD.com/docs/unity",
         OpenxrExtensionStrings = "XR_FB_haptic_pcm",
         Version = "1.0.0",
         FeatureId = featureId)]
 #endif
     public class FMODHapticsFeature : OpenXRFeature
     {
-        internal const string featureId = "com.fmod.feature.haptic";
+        internal const string featureId = "com.FMOD.feature.haptic";
         internal const string displayName = "FMOD: Haptics";
         internal const string pluginName = "fmod_haptics";
 

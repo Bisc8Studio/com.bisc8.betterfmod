@@ -4,16 +4,22 @@ using UnityEngine;
 public class FmodMultiplayerSettings : MonoBehaviour
 {
     [SerializeField] private bool isMultiplayer;
+    [SerializeField] private bool autoConfigureFmodButtons = true;
+    [SerializeField] private bool playLocalWhenTransportMissing = true;
 
     /// <summary>
     /// Retorna verdadeiro quando este componente habilita o modo multiplayer do BetterFMOD.
     /// </summary>
     public bool IsMultiplayer => isMultiplayer;
 
+    public bool AutoConfigureFmodButtons => autoConfigureFmodButtons;
+
     /// <summary>
     /// Retorna verdadeiro quando o modo multiplayer do BetterFMOD esta ativo.
     /// </summary>
     public static bool MultiplayerModeEnabled { get; private set; }
+
+    public static bool PlayLocalWhenTransportMissing { get; private set; } = true;
 
     private static FmodMultiplayerSettings activeSettings;
 
@@ -49,6 +55,10 @@ public class FmodMultiplayerSettings : MonoBehaviour
     {
         activeSettings = this;
         MultiplayerModeEnabled = isMultiplayer;
+        PlayLocalWhenTransportMissing = playLocalWhenTransportMissing;
+
+        if (isMultiplayer && autoConfigureFmodButtons)
+            ApplyToSceneButtons();
     }
 
     private static void RefreshActiveSettings()
@@ -60,10 +70,23 @@ public class FmodMultiplayerSettings : MonoBehaviour
 
             activeSettings = settings;
             MultiplayerModeEnabled = settings.isMultiplayer;
+            PlayLocalWhenTransportMissing = settings.playLocalWhenTransportMissing;
             return;
         }
 
         MultiplayerModeEnabled = false;
+        PlayLocalWhenTransportMissing = true;
+    }
+
+    public void ApplyToSceneButtons()
+    {
+        foreach (FmodButton button in FindObjectsByType<FmodButton>(FindObjectsSortMode.None))
+        {
+            if (button == null)
+                continue;
+
+            button.ApplyMultiplayerDefaults(isMultiplayer);
+        }
     }
 }
 #endif

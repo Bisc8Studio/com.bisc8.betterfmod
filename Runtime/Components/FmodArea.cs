@@ -40,13 +40,13 @@ public class FmodArea : MonoBehaviour
     public void Enter()
     {
         if (!string.IsNullOrWhiteSpace(snapshot))
-            snapshotHandle = Fmod.StartSnapshot(snapshot);
+            snapshotHandle = FmodB8.StartSnapshot(snapshot);
 
         if (!string.IsNullOrWhiteSpace(music))
-            musicHandle = Fmod.Event(music).Loop().FadeIn(0.25f).Play();
+            musicHandle = FmodB8.Event(music).Loop().FadeIn(0.25f).Play();
 
         if (!string.IsNullOrWhiteSpace(parameter))
-            Fmod.SetParameter(parameterEvent, parameter, enterValue);
+            FmodB8.SetParameter(parameterEvent, parameter, enterValue);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class FmodArea : MonoBehaviour
             musicHandle.FadeOut(fadeOut);
 
         if (!string.IsNullOrWhiteSpace(parameter))
-            Fmod.SetParameter(parameterEvent, parameter, exitValue);
+            FmodB8.SetParameter(parameterEvent, parameter, exitValue);
     }
 
     private bool IsTarget(Collider other)

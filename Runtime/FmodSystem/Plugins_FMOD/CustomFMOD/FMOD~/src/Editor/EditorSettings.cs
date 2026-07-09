@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +17,7 @@ namespace FMODUnity
             Settings.EditorSettings = new EditorSettings();
         }
 
-        public const string DownloadURL = "https://www.fmod.com/download";
+        public const string DownloadURL = "https://www.FMOD.com/download";
 
         // This is used to find the platform that implements the current Unity build target.
         private Dictionary<BuildTarget, Platform> PlatformForBuildTarget = new Dictionary<BuildTarget, Platform>();
