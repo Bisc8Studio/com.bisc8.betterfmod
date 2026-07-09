@@ -25,6 +25,16 @@ namespace FMODUnity
             return GUI.skin.textField.CalcSize(GUIContent.none).y;
         }
 
+        private static float GetIconWidth(Texture icon)
+        {
+            return icon != null ? icon.width : EditorGUIUtility.singleLineHeight;
+        }
+
+        private static GUIContent IconButtonContent(Texture icon, string fallbackText, string tooltip)
+        {
+            return icon != null ? new GUIContent(icon, tooltip) : new GUIContent(fallbackText, tooltip);
+        }
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (buttonStyle == null)
@@ -54,9 +64,13 @@ namespace FMODUnity
 
                 property.isExpanded = EditorGUI.Foldout(headerRect, property.isExpanded, label, true);
 
-                Rect addRect = new Rect(position.xMax - addIcon.width - 7, position.y, addIcon.width + 7, baseHeight);
-                Rect openRect = new Rect(addRect.x - openIcon.width - 7, position.y, openIcon.width + 6, baseHeight);
-                Rect searchRect = new Rect(openRect.x - browseIcon.width - 9, position.y, browseIcon.width + 8, baseHeight);
+                float addIconWidth = GetIconWidth(addIcon);
+                float openIconWidth = GetIconWidth(openIcon);
+                float browseIconWidth = GetIconWidth(browseIcon);
+
+                Rect addRect = new Rect(position.xMax - addIconWidth - 7, position.y, addIconWidth + 7, baseHeight);
+                Rect openRect = new Rect(addRect.x - openIconWidth - 7, position.y, openIconWidth + 6, baseHeight);
+                Rect searchRect = new Rect(openRect.x - browseIconWidth - 9, position.y, browseIconWidth + 8, baseHeight);
                 Rect pathRect = position;
                 pathRect.xMin = headerRect.xMax;
                 pathRect.xMax = searchRect.x - 3;
@@ -78,7 +92,7 @@ namespace FMODUnity
                 }
 #endif
 
-                if (GUI.Button(searchRect, new GUIContent(browseIcon, L10n.Tr("Search")), buttonStyle))
+                if (GUI.Button(searchRect, IconButtonContent(browseIcon, "...", L10n.Tr("Search")), buttonStyle))
                 {
                     var eventBrowser = ScriptableObject.CreateInstance<EventBrowser>();
 
@@ -91,7 +105,7 @@ namespace FMODUnity
                     eventBrowser.ShowAsDropDown(windowRect, new Vector2(windowRect.width, 400));
 
                 }
-                if (GUI.Button(addRect, new GUIContent(addIcon, L10n.Tr("Create New Event in Studio")), buttonStyle))
+                if (GUI.Button(addRect, IconButtonContent(addIcon, "+", L10n.Tr("Create New Event in Studio")), buttonStyle))
                 {
                     var addDropdown = EditorWindow.CreateInstance<CreateEventPopup>();
 
@@ -104,7 +118,7 @@ namespace FMODUnity
                     addDropdown.ShowAsDropDown(windowRect, new Vector2(windowRect.width, 500));
 
                 }
-                if (GUI.Button(openRect, new GUIContent(openIcon, L10n.Tr("Open In Browser")), buttonStyle))
+                if (GUI.Button(openRect, IconButtonContent(openIcon, ">", L10n.Tr("Open In Browser")), buttonStyle))
                 {
                     EventBrowser.ShowWindow();
                     EventBrowser eventBrowser = EditorWindow.GetWindow<EventBrowser>();
@@ -142,7 +156,8 @@ namespace FMODUnity
 
                             Rect valueRect = labelRect;
                             valueRect.xMin = labelRect.xMax;
-                            valueRect.xMax = position.xMax - copyIcon.width - 7;
+                            float copyIconWidth = GetIconWidth(copyIcon);
+                            valueRect.xMax = position.xMax - copyIconWidth - 7;
 
                             GUI.Label(labelRect, new GUIContent("GUID"));
                             GUI.Label(valueRect, eventReference.Guid.ToString());
@@ -151,7 +166,7 @@ namespace FMODUnity
                             copyRect.xMin = valueRect.xMax;
                             copyRect.xMax = position.xMax;
 
-                            if (GUI.Button(copyRect, new GUIContent(copyIcon, L10n.Tr("Copy To Clipboard"))))
+                            if (GUI.Button(copyRect, IconButtonContent(copyIcon, "C", L10n.Tr("Copy To Clipboard"))))
                             {
                                 EditorGUIUtility.systemCopyBuffer = eventReference.Guid.ToString();
                             }
