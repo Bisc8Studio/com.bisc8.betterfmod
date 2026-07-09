@@ -65,25 +65,7 @@ public static class FMODInstaller
     [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
     public static void RunSetupFromFMODMenu()
     {
-        ResetSetup();
         RunSetup();
-    }
-
-    private static void ResetSetup()
-    {
-        // Delete existing FMOD installation so setup copies fresh
-        if (Directory.Exists(InstalledFMODPath))
-        {
-            DeleteDirectory(InstalledFMODPath);
-            string metaPath = InstalledFMODPath + ".meta";
-            if (File.Exists(metaPath))
-                File.Delete(metaPath);
-        }
-
-        // Reset state flags
-        FMODInstallerState.instance.ResetSetup();
-        EditorPrefs.DeleteKey(LegacySetupKey);
-        SessionState.SetBool(PopupShownKey, false);
     }
 
     [MenuItem("Assets/BISC8 FMOD/Create FMOD List", false, 10)]
@@ -121,8 +103,8 @@ public static class FMODInstaller
     {
         bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Move FMOD from Packages to Assets/BISC8/BetterFMOD/FMOD?",
-            "Move FMOD",
+            "Copy FMOD from Packages to Assets/BISC8/BetterFMOD/FMOD?",
+            "Copy FMOD",
             "Not now"
         );
 
@@ -138,6 +120,14 @@ public static class FMODInstaller
             return;
         }
 
+        if (File.Exists(InstalledMarkerPath))
+        {
+            EnsureFMODDefine();
+            MarkSetupComplete();
+            Debug.Log("[BISC8 FMOD] Setup already complete. Existing FMOD installation was kept.");
+            return;
+        }
+
         string hiddenSourcePath = GetHiddenFMODSourcePath();
         string activeSourcePath = GetActiveFMODSourcePath();
 
@@ -149,13 +139,22 @@ public static class FMODInstaller
 
         try
         {
-            // Always reset: remove any existing installation
+            // Remove incomplete installations before copying a fresh one.
             if (Directory.Exists(InstalledFMODPath))
             {
-                DeleteDirectory(InstalledFMODPath);
+                if (!TryDeleteDirectory(InstalledFMODPath))
+                    return;
+
                 string existingMeta = InstalledFMODPath + ".meta";
-                if (File.Exists(existingMeta))
-                    File.Delete(existingMeta);
+                if (File.Exists(existingMeta) && !TryDeleteFile(existingMeta))
+                    return;
+            }
+
+            string installedMeta = InstalledFMODPath + ".meta";
+            if (File.Exists(installedMeta))
+            {
+                if (!TryDeleteFile(installedMeta))
+                    return;
             }
 
             string sourcePath = hiddenSourcePath ?? activeSourcePath;
@@ -168,12 +167,87 @@ public static class FMODInstaller
             MarkSetupComplete();
             AssetDatabase.Refresh();
 
-            Debug.Log("[BISC8 FMOD] Setup complete. FMOD was moved to Assets/BISC8/BetterFMOD/FMOD.");
+            Debug.Log("[BISC8 FMOD] Setup complete. FMOD was copied to Assets/BISC8/BetterFMOD/FMOD.");
         }
         catch (Exception exception)
         {
             Debug.LogError("[BISC8 FMOD] Setup failed: " + exception.Message);
         }
+    }
+
+    [MenuItem("FMOD/BISC8 Better FMOD/Force Reinstall", false, 21)]
+    public static void ForceReinstallFromFMODMenu()
+    {
+        ResetSetup();
+        RunSetup();
+    }
+
+    private static void ResetSetup()
+    {
+        if (Directory.Exists(InstalledFMODPath))
+        {
+            if (!TryDeleteDirectory(InstalledFMODPath))
+            {
+                FMODInstallerState.instance.ResetSetup();
+                EditorPrefs.DeleteKey(LegacySetupKey);
+                SessionState.SetBool(PopupShownKey, false);
+                return;
+            }
+
+            string metaPath = InstalledFMODPath + ".meta";
+            if (File.Exists(metaPath))
+                TryDeleteFile(metaPath);
+        }
+
+        FMODInstallerState.instance.ResetSetup();
+        EditorPrefs.DeleteKey(LegacySetupKey);
+        SessionState.SetBool(PopupShownKey, false);
+    }
+
+    private static bool TryDeleteFile(string path)
+    {
+        try
+        {
+            File.SetAttributes(path, FileAttributes.Normal);
+            File.Delete(path);
+            return true;
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            LogLockedInstallWarning(path, exception);
+            return false;
+        }
+        catch (IOException exception)
+        {
+            LogLockedInstallWarning(path, exception);
+            return false;
+        }
+    }
+
+    private static bool TryDeleteDirectory(string path)
+    {
+        try
+        {
+            DeleteDirectory(path);
+            return true;
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            LogLockedInstallWarning(path, exception);
+            return false;
+        }
+        catch (IOException exception)
+        {
+            LogLockedInstallWarning(path, exception);
+            return false;
+        }
+    }
+
+    private static void LogLockedInstallWarning(string path, Exception exception)
+    {
+        Debug.LogWarning(
+            "[BISC8 FMOD] Could not remove '" + path + "' because Unity or the OS is still using one of the FMOD native libraries. " +
+            "Close Unity and reopen the project if you really need to force reinstall FMOD. Details: " + exception.Message);
     }
 
     private static bool IsSetupComplete()
