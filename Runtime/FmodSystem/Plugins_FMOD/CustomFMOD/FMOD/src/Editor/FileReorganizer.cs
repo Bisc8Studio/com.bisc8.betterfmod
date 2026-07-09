@@ -43,7 +43,6 @@ namespace FMODUnity
 
         private IEnumerator<string> processingState;
 
-        [MenuItem(ReorganizerMenuItemPath)]
         public static void ShowWindow()
         {
             FileReorganizer reorganizer = GetWindow<FileReorganizer>(L10n.Tr("FMOD File Reorganizer"));

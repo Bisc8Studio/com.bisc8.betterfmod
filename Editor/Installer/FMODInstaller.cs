@@ -75,7 +75,6 @@ public static class FMODInstaller
         ShowSetupDialog();
     }
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
     public static void RunSetupFromFMODMenu()
     {
         RunSetup();
@@ -186,7 +185,6 @@ public static class FMODInstaller
         }
     }
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Force Reinstall", false, 21)]
     public static void ForceReinstallFromFMODMenu()
     {
         ResetSetup();

@@ -486,8 +486,8 @@ namespace FMODUnity
                 error = string.Format(
                     "{0}:\n" +
                     "{1}\n" +
-                    "Please run the {2} menu command.\n",
-                    summary, string.Join("\n", missingPaths), FileReorganizer.ReorganizerMenuItemPath);
+                    "Please open FMOD/Setup Wizard and run the Reorganize Plugin Files update task.\n",
+                    summary, string.Join("\n", missingPaths));
                 return false;
             }
 
