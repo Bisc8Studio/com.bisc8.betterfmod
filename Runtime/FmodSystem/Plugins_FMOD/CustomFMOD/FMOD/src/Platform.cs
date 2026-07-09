@@ -934,6 +934,11 @@ namespace FMODUnity
 
         internal FMOD.OUTPUTTYPE GetOutputType()
         {
+            if (string.IsNullOrEmpty(OutputTypeName))
+            {
+                return FMOD.OUTPUTTYPE.AUTODETECT;
+            }
+
             if (Enum.IsDefined(typeof(FMOD.OUTPUTTYPE), OutputTypeName))
             {
                 return (FMOD.OUTPUTTYPE)Enum.Parse(typeof(FMOD.OUTPUTTYPE), OutputTypeName);
