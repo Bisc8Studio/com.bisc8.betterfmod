@@ -54,7 +54,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
             return;
         }
 
-        SendJson(manager.ServerClientId, json);
+        SendJson(NetworkManager.ServerClientId, json);
     }
 
     private void TryRegisterHandler()
