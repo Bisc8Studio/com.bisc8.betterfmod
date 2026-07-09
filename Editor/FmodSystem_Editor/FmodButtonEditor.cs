@@ -42,7 +42,6 @@ public class FmodButtonEditor : Editor
         SerializedProperty moment     = action.FindPropertyRelative("moment");
         SerializedProperty command    = action.FindPropertyRelative("command");
         SerializedProperty playbackScope = action.FindPropertyRelative("playbackScope");
-        SerializedProperty playLocally = action.FindPropertyRelative("playLocally");
         SerializedProperty soundId    = action.FindPropertyRelative("soundId");
         SerializedProperty fade       = action.FindPropertyRelative("fade");
         SerializedProperty floatValue  = action.FindPropertyRelative("floatValue");
@@ -80,10 +79,11 @@ public class FmodButtonEditor : Editor
 
             if (FmodButtonAction.IsNetworkableCommand(cmd))
             {
-                EditorGUILayout.PropertyField(playbackScope, new GUIContent("Playback"));
-
-                if ((FmodPlaybackScope)playbackScope.enumValueIndex == FmodPlaybackScope.Multiplayer)
-                    EditorGUILayout.PropertyField(playLocally, new GUIContent("Play On Local Client"));
+                bool isMultiplayer = (FmodPlaybackScope)playbackScope.enumValueIndex == FmodPlaybackScope.Multiplayer;
+                bool newIsMultiplayer = EditorGUILayout.Toggle(new GUIContent("Multiplayer"), isMultiplayer);
+                playbackScope.enumValueIndex = newIsMultiplayer
+                    ? (int)FmodPlaybackScope.Multiplayer
+                    : (int)FmodPlaybackScope.Local;
             }
 
             EditorGUILayout.Space(2);

@@ -8,13 +8,11 @@ public class FmodMultiplayerSettingsEditor : Editor
 {
     private SerializedProperty isMultiplayer;
     private SerializedProperty autoConfigureFmodButtons;
-    private SerializedProperty playLocalWhenTransportMissing;
 
     private void OnEnable()
     {
         isMultiplayer = serializedObject.FindProperty("isMultiplayer");
         autoConfigureFmodButtons = serializedObject.FindProperty("autoConfigureFmodButtons");
-        playLocalWhenTransportMissing = serializedObject.FindProperty("playLocalWhenTransportMissing");
     }
 
     public override void OnInspectorGUI()
@@ -24,7 +22,6 @@ public class FmodMultiplayerSettingsEditor : Editor
         EditorGUI.BeginChangeCheck();
         EditorGUILayout.PropertyField(isMultiplayer, new GUIContent("IsMultiplayer"));
         EditorGUILayout.PropertyField(autoConfigureFmodButtons, new GUIContent("Auto Configure FmodButtons"));
-        EditorGUILayout.PropertyField(playLocalWhenTransportMissing, new GUIContent("Play Local Without Transport"));
 
         if (EditorGUI.EndChangeCheck())
         {
