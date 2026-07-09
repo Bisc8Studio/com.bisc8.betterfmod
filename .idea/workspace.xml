@@ -14,42 +14,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ed20c23-0b87-4d30-ae5b-9a18941f93f7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Editor/Installer/FMODInstaller.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodArea.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodArea.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodEmitter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodParameter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodParameter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Components/FmodTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Components/FmodTrigger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/CreateFmodList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/CreateFmodList.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Runtime/Core/Fmod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/Fmod.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodBackend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodBackend.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodBusManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodBusManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodCommands.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodCommands.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodFadeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodFadeManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodHandle.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodManagedInstance.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodManagedInstance.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodParameterManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodParameterManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/Core/FmodPlaybackState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/Core/FmodPlaybackState.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/Haptics/Scripts/FMODHaptics.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/Haptics/Scripts/FMODHaptics.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/ResonanceAudio/Scripts/FmodResonanceAudio.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/addons/ResonanceAudio/Scripts/FmodResonanceAudio.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/linux/src/PlatformLinux.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/linux/src/PlatformLinux.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/win/src/PlatformWindows.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/platforms/win/src/PlatformWindows.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Editor/BoltIntegration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Editor/BoltIntegration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/EventReference.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/EventReference.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/FMODEventPlayable.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/FMODEventPlayable.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/ParamRef.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/ParamRef.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Platform.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Platform.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/PlatformPlayInEditor.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/PlatformPlayInEditor.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeUtils.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/RuntimeUtils.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Settings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/Settings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioEventEmitter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioEventEmitter.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioGlobalParameterTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioGlobalParameterTrigger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioListener.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioParameterTrigger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/StudioParameterTrigger.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_dsp.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_dsp.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_errors.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_errors.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_studio.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/src/fmod_studio.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,12 +85,12 @@
     &quot;assignee&quot;: &quot;thor-xz&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/Bisc8Studio/com.bisc8.betterfmod.git&quot;,
-    &quot;accountId&quot;: &quot;7d25fc9d-80b2-44aa-a438-1bf05d9b8ba7&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Bisc8Studio/com.bisc8.betterfmod.git",
+    "accountId": "4ac61fa3-0a88-4c9f-a058-4572ecba30d5"
   }
-}</component>
+}]]></component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodButtonEditor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Editor/FmodSystem_Editor/FmodEmitterCustomEditor.cs" root0="FORCE_HIGHLIGHTING" />
@@ -142,8 +107,24 @@
     <setting file="file://$PROJECT_DIR$/Runtime/FmodSystem/Scripts_FMOD/FmodSlider.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
-    <commands />
-    <urls />
+    <McpServerCommand sourceId="UserConfigurationSource">
+      <option name="allowedToolsNames" />
+      <option name="enabled" value="true" />
+      <option name="name" value="" />
+      <option name="programPath" value="" />
+      <option name="arguments" value="" />
+      <option name="workingDirectory" value="" />
+      <envs />
+    </McpServerCommand>
+    <McpServerCommand sourceId="UserConfigurationSource">
+      <option name="allowedToolsNames" />
+      <option name="enabled" value="true" />
+      <option name="name" value="" />
+      <option name="programPath" value="" />
+      <option name="arguments" value="" />
+      <option name="workingDirectory" value="" />
+      <envs />
+    </McpServerCommand>
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
@@ -240,14 +221,17 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "git-widget-placeholder": "available/main",
     "git.auto.fetch.suggestion.counter": "3",
+    "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "application.passwordSafe",
+    "settings.editor.selected.configurable": "ml.llm.LLMConfigurable",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -267,6 +251,7 @@
       <workItem from="1781227495222" duration="743000" />
       <workItem from="1781228429639" duration="1168000" />
       <workItem from="1781537537261" duration="6986000" />
+      <workItem from="1783609336121" duration="1515000" />
     </task>
     <task id="LOCAL-00001" summary="Testa ai">
       <option name="closed" value="true" />

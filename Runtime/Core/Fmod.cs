@@ -354,7 +354,7 @@ public static class FmodB8
     /// <summary>
     /// Recupera um handle de instancia guardado anteriormente com .Keep(key).
     /// Permite encadear operacoes sem precisar armazenar o handle em variavel.
-    /// Exemplo: FmodB8.Play("som").Keep("bgm")  ?  FmodB8.Kept("bgm").Stop(true)
+    /// Exemplo: FmodB8.Play("som").Keep("bgm") -> FmodB8.Kept("bgm").Stop(true)
     /// Retorna um handle invalido quando a chave nao existe.
     /// </summary>
     public static FmodHandle Kept(string key)
