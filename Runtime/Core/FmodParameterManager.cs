@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMODUnity;
 using UnityEngine;
 
@@ -46,4 +45,3 @@ internal sealed class FmodParameterManager
         return value;
     }
 }
-#endif

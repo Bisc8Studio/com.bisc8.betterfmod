@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using System;
 using UnityEngine;
 
@@ -122,4 +121,3 @@ public class FmodMultiplayerSettings : MonoBehaviour
         return null;
     }
 }
-#endif

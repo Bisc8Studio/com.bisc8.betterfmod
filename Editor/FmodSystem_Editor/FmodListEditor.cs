@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using UnityEditor;
 
 [CustomEditor(typeof(CreateFmodList))]
@@ -30,4 +29,3 @@ public class CreateFmodListEditor : Editor
     }
 
 }
-#endif

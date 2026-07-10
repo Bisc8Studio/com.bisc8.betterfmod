@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMODUnity;
 using UnityEditor;
 using UnityEngine;
@@ -111,4 +110,3 @@ public class FmodMultiplayerSettingsEditor : Editor
         EditorUtility.SetDirty(platform);
     }
 }
-#endif

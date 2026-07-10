@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMOD.Studio;
 
 /// <summary>
@@ -27,4 +26,3 @@ internal static class FmodStateUtility
         };
     }
 }
-#endif

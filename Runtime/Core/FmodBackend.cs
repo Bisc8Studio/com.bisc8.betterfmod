@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 
@@ -56,4 +55,3 @@ internal static class FmodBackendProvider
         return FmodMultiplayerSettings.MultiplayerModeEnabled ? Multiplayer : SinglePlayer;
     }
 }
-#endif

@@ -25,6 +25,11 @@ namespace FMODUnity
             return GUI.skin.textField.CalcSize(GUIContent.none).y;
         }
 
+        private static float IconWidth(Texture icon, float fallback = 18f)
+        {
+            return icon != null ? icon.width : fallback;
+        }
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             if (buttonStyle == null)
@@ -54,9 +59,12 @@ namespace FMODUnity
 
                 property.isExpanded = EditorGUI.Foldout(headerRect, property.isExpanded, label, true);
 
-                Rect addRect = new Rect(position.xMax - addIcon.width - 7, position.y, addIcon.width + 7, baseHeight);
-                Rect openRect = new Rect(addRect.x - openIcon.width - 7, position.y, openIcon.width + 6, baseHeight);
-                Rect searchRect = new Rect(openRect.x - browseIcon.width - 9, position.y, browseIcon.width + 8, baseHeight);
+                float addIconWidth = IconWidth(addIcon);
+                float openIconWidth = IconWidth(openIcon);
+                float browseIconWidth = IconWidth(browseIcon);
+                Rect addRect = new Rect(position.xMax - addIconWidth - 7, position.y, addIconWidth + 7, baseHeight);
+                Rect openRect = new Rect(addRect.x - openIconWidth - 7, position.y, openIconWidth + 6, baseHeight);
+                Rect searchRect = new Rect(openRect.x - browseIconWidth - 9, position.y, browseIconWidth + 8, baseHeight);
                 Rect pathRect = position;
                 pathRect.xMin = headerRect.xMax;
                 pathRect.xMax = searchRect.x - 3;
@@ -142,7 +150,7 @@ namespace FMODUnity
 
                             Rect valueRect = labelRect;
                             valueRect.xMin = labelRect.xMax;
-                            valueRect.xMax = position.xMax - copyIcon.width - 7;
+                            valueRect.xMax = position.xMax - IconWidth(copyIcon) - 7;
 
                             GUI.Label(labelRect, new GUIContent("GUID"));
                             GUI.Label(valueRect, eventReference.Guid.ToString());

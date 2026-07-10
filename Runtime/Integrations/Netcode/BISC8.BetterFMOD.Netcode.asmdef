@@ -12,7 +12,6 @@
   "precompiledReferences": [],
   "autoReferenced": true,
   "defineConstraints": [
-    "FMOD_PRESENT",
     "B8FMOD_UNITY_NETCODE"
   ],
   "versionDefines": [

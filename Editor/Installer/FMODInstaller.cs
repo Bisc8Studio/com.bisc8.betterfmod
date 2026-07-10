@@ -35,7 +35,7 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
-    private const string FMODDefine = "FMOD_PRESENT";
+    private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
 
@@ -65,22 +65,11 @@ public static class FMODInstaller
     [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
     public static void RunSetupFromFMODMenu()
     {
-        ResetSetup();
         RunSetup();
     }
 
     private static void ResetSetup()
     {
-        // Delete existing FMOD installation so setup copies fresh
-        if (Directory.Exists(InstalledFMODPath))
-        {
-            DeleteDirectory(InstalledFMODPath);
-            string metaPath = InstalledFMODPath + ".meta";
-            if (File.Exists(metaPath))
-                File.Delete(metaPath);
-        }
-
-        // Reset state flags
         FMODInstallerState.instance.ResetSetup();
         EditorPrefs.DeleteKey(LegacySetupKey);
         SessionState.SetBool(PopupShownKey, false);
@@ -121,8 +110,8 @@ public static class FMODInstaller
     {
         bool install = EditorUtility.DisplayDialog(
             "BISC8 Better FMOD",
-            "Move FMOD from Packages to Assets/BISC8/BetterFMOD/FMOD?",
-            "Move FMOD",
+            "FMOD is provided directly by the BetterFMOD package. Run setup compatibility checks?",
+            "Run Setup",
             "Not now"
         );
 
@@ -149,13 +138,12 @@ public static class FMODInstaller
 
         try
         {
-            // Always reset: remove any existing installation
-            if (Directory.Exists(InstalledFMODPath))
+            if (activeSourcePath != null)
             {
-                DeleteDirectory(InstalledFMODPath);
-                string existingMeta = InstalledFMODPath + ".meta";
-                if (File.Exists(existingMeta))
-                    File.Delete(existingMeta);
+                RemoveLegacyFMODDefine();
+                MarkSetupComplete();
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD is provided directly by the BetterFMOD package.");
+                return;
             }
 
             string sourcePath = hiddenSourcePath ?? activeSourcePath;
@@ -164,7 +152,7 @@ public static class FMODInstaller
             if (!File.Exists(InstalledMarkerPath))
                 throw new IOException("FMODUnity.asmdef was not installed in Assets.");
 
-            EnsureFMODDefine();
+            RemoveLegacyFMODDefine();
             MarkSetupComplete();
             AssetDatabase.Refresh();
 
@@ -178,10 +166,21 @@ public static class FMODInstaller
 
     private static bool IsSetupComplete()
     {
+        string activeSourcePath = GetActiveFMODSourcePath();
+        if (activeSourcePath != null && File.Exists(Path.Combine(activeSourcePath, "FMODUnity.asmdef")))
+        {
+            RemoveLegacyFMODDefine();
+
+            if (!FMODInstallerState.instance.SetupComplete)
+                MarkSetupComplete();
+
+            return true;
+        }
+
         if (!File.Exists(InstalledMarkerPath))
             return false;
 
-        EnsureFMODDefine();
+        RemoveLegacyFMODDefine();
 
         if (FMODInstallerState.instance.SetupComplete)
             return true;
@@ -203,7 +202,7 @@ public static class FMODInstaller
             AssetDatabase.CreateFolder(parent, name);
     }
 
-    private static void EnsureFMODDefine()
+    private static void RemoveLegacyFMODDefine()
     {
         BuildTargetGroup targetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
         if (targetGroup == BuildTargetGroup.Unknown)
@@ -212,18 +211,28 @@ public static class FMODInstaller
         NamedBuildTarget namedTarget = NamedBuildTarget.FromBuildTargetGroup(targetGroup);
         string defines = PlayerSettings.GetScriptingDefineSymbols(namedTarget);
         string[] symbols = defines.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+        string updatedDefines = string.Empty;
+        bool removedLegacyDefine = false;
 
         foreach (string symbol in symbols)
         {
-            if (symbol.Trim() == FMODDefine)
-                return;
+            string trimmedSymbol = symbol.Trim();
+            if (trimmedSymbol == LegacyFMODDefine)
+            {
+                removedLegacyDefine = true;
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(trimmedSymbol))
+                continue;
+
+            updatedDefines = string.IsNullOrWhiteSpace(updatedDefines)
+                ? trimmedSymbol
+                : updatedDefines + ";" + trimmedSymbol;
         }
 
-        string updatedDefines = string.IsNullOrWhiteSpace(defines)
-            ? FMODDefine
-            : defines.TrimEnd(';') + ";" + FMODDefine;
-
-        PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
+        if (removedLegacyDefine)
+            PlayerSettings.SetScriptingDefineSymbols(namedTarget, updatedDefines);
     }
 
     private static string GetHiddenFMODSourcePath()

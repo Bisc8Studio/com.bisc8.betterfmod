@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMOD.Studio;
 using System.Collections;
 using UnityEngine;
@@ -68,4 +67,3 @@ internal sealed class FmodFadeManager
             commands.ReleaseInstance(managed, FMOD.Studio.STOP_MODE.IMMEDIATE);
     }
 }
-#endif

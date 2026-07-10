@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine;
@@ -103,4 +102,3 @@ internal sealed class FmodBusManager
             Debug.LogWarning(message);
     }
 }
-#endif

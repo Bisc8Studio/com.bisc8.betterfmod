@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using UnityEngine;
 
 /// <summary>
@@ -340,4 +339,3 @@ public sealed class FmodHandle
         return this;
     }
 }
-#endif

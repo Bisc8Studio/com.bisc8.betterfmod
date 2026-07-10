@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -244,4 +243,3 @@ public class FmodEmitterCustom : MonoBehaviour
         }
     }
 }
-#endif

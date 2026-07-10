@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using UnityEngine;
 
 /// <summary>
@@ -367,4 +366,3 @@ public static class FmodB8
     /// </summary>
     public static FmodHandle GetKept(string key) => Kept(key);
 }
-#endif

@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
@@ -133,4 +132,3 @@ public enum FmodParameterSource
     Distance,
     ComponentMember
 }
-#endif

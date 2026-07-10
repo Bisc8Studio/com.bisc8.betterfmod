@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -623,4 +622,3 @@ public enum ButtonCascadeModifier
     Velocity,
     Keep
 }
-#endif

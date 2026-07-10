@@ -1,4 +1,3 @@
-#if FMOD_PRESENT
 internal sealed class FmodSnapshotManager
 {
     private readonly FmodCommands commands;
@@ -18,4 +17,3 @@ internal sealed class FmodSnapshotManager
         commands.Stop(path, true, 0.25f);
     }
 }
-#endif

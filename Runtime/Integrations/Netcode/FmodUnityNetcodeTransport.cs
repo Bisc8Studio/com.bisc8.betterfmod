@@ -1,4 +1,4 @@
-#if FMOD_PRESENT && B8FMOD_UNITY_NETCODE
+#if B8FMOD_UNITY_NETCODE
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -54,7 +54,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
             return;
         }
 
-        SendJson(manager.ServerClientId, json);
+        SendJson(NetworkManager.ServerClientId, json);
     }
 
     private void TryRegisterHandler()
