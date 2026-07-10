@@ -62,8 +62,11 @@ public static class FMODInstaller
         if (SessionState.GetBool(PopupShownKey, false))
             return;
 
-        SessionState.SetBool(PopupShownKey, true);
-        ShowSetupDialog();
+        if (!SessionState.GetBool(PopupShownKey, false))
+        {
+            SessionState.SetBool(PopupShownKey, true);
+            Debug.LogWarning("[BISC8 FMOD] FMOD source was not found. Use FMOD/BISC8 Better FMOD/Setup if this package was imported from an older hidden-FMOD layout.");
+        }
     }
 
     [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
@@ -114,19 +117,6 @@ public static class FMODInstaller
         EditorUtility.FocusProjectWindow();
         Selection.activeObject = list;
         EditorGUIUtility.PingObject(list);
-    }
-
-    private static void ShowSetupDialog()
-    {
-        bool install = EditorUtility.DisplayDialog(
-            "BISC8 Better FMOD",
-            "FMOD is provided directly by the BetterFMOD package. Run setup compatibility checks?",
-            "Run Setup",
-            "Not now"
-        );
-
-        if (install)
-            RunSetup();
     }
 
     private static bool PromptRemoveLegacyInstalledFMODCopy(bool respectSessionState)

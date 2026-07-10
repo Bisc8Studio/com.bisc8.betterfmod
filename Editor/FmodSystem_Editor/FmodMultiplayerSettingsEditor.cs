@@ -1,4 +1,3 @@
-using FMODUnity;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
@@ -53,24 +52,6 @@ public class FmodMultiplayerSettingsEditor : Editor
         if (!EnsureNoLegacyFmodPluginCopy())
             return;
 
-        Settings settings = Settings.Instance;
-        if (settings != null)
-        {
-            Undo.RecordObject(settings, "Apply FMOD Multiplayer Settings");
-
-            SerializedObject serializedSettings = new SerializedObject(settings);
-            serializedSettings.FindProperty("HasSourceProject").boolValue = false;
-            serializedSettings.FindProperty("BankRefreshCooldown").intValue = -2;
-            serializedSettings.FindProperty("ShowBankRefreshWindow").boolValue = false;
-            serializedSettings.ApplyModifiedProperties();
-
-            DisableLiveUpdate(settings.DefaultPlatform);
-            DisableLiveUpdate(settings.PlayInEditorPlatform);
-
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
-        }
-
         ApplySceneButtonSettings(multiplayerSettings);
     }
 
@@ -117,27 +98,4 @@ public class FmodMultiplayerSettingsEditor : Editor
         }
     }
 
-    private static void DisableLiveUpdate(Platform platform)
-    {
-        if (platform == null)
-            return;
-
-        Undo.RecordObject(platform, "Apply FMOD Multiplayer Settings");
-
-        SerializedObject serializedPlatform = new SerializedObject(platform);
-        SerializedProperty liveUpdate = serializedPlatform.FindProperty("Properties.LiveUpdate");
-        if (liveUpdate != null)
-        {
-            SerializedProperty value = liveUpdate.FindPropertyRelative("Value");
-            if (value.propertyType == SerializedPropertyType.Enum)
-                value.enumValueIndex = (int)TriStateBool.Disabled;
-            else
-                value.intValue = (int)TriStateBool.Disabled;
-
-            liveUpdate.FindPropertyRelative("HasValue").boolValue = true;
-        }
-
-        serializedPlatform.ApplyModifiedProperties();
-        EditorUtility.SetDirty(platform);
-    }
 }
