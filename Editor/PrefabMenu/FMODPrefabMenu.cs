@@ -55,10 +55,9 @@ public static class FMODPrefabMenu
 
     private static void EnsureNetcodeRelayComponents(GameObject gameObject)
     {
-        Type networkObjectType = FindType("Unity.Netcode.NetworkObject");
         Type transportType = FindType("FmodUnityNetcodeTransport");
 
-        if (networkObjectType == null || transportType == null)
+        if (transportType == null)
         {
             EditorUtility.DisplayDialog(
                 "BISC8 Better FMOD",
@@ -67,9 +66,6 @@ public static class FMODPrefabMenu
             );
             return;
         }
-
-        if (gameObject.GetComponent(networkObjectType) == null)
-            Undo.AddComponent(gameObject, networkObjectType);
 
         if (gameObject.GetComponent(transportType) == null)
             Undo.AddComponent(gameObject, transportType);
