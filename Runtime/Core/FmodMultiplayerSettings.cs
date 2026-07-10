@@ -4,6 +4,7 @@ public class FmodMultiplayerSettings : MonoBehaviour
 {
     [SerializeField] private bool isMultiplayer;
     [SerializeField] private bool autoConfigureFmodButtons = true;
+    [SerializeField] private bool dontDestroyOnLoad = true;
     [SerializeField, HideInInspector] private bool playLocalWhenTransportMissing;
 
     /// <summary>
@@ -24,6 +25,12 @@ public class FmodMultiplayerSettings : MonoBehaviour
 
     private void Awake()
     {
+        if (dontDestroyOnLoad)
+        {
+            transform.SetParent(null);
+            DontDestroyOnLoad(gameObject);
+        }
+
         ApplySettings();
     }
 

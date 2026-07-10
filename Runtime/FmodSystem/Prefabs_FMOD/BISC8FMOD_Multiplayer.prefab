@@ -59,4 +59,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isMultiplayer: 1
   autoConfigureFmodButtons: 1
+  dontDestroyOnLoad: 1
   playLocalWhenTransportMissing: 0
