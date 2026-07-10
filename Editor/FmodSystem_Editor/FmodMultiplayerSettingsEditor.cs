@@ -1,4 +1,5 @@
 using FMODUnity;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -49,6 +50,9 @@ public class FmodMultiplayerSettingsEditor : Editor
 
     private static void ApplyMultiplayerFmodSettings(FmodMultiplayerSettings multiplayerSettings)
     {
+        if (!EnsureNoLegacyFmodPluginCopy())
+            return;
+
         Settings settings = Settings.Instance;
         if (settings != null)
         {
@@ -68,6 +72,36 @@ public class FmodMultiplayerSettingsEditor : Editor
         }
 
         ApplySceneButtonSettings(multiplayerSettings);
+    }
+
+    private static bool EnsureNoLegacyFmodPluginCopy()
+    {
+        const string packageFmodPath = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+        const string legacyFmodPath = "Assets/BISC8/BetterFMOD/FMOD";
+        const string legacyMarkerPath = legacyFmodPath + "/FMODUnity.asmdef";
+
+        if (!Directory.Exists(packageFmodPath) || !File.Exists(legacyMarkerPath))
+            return true;
+
+        bool remove = EditorUtility.DisplayDialog(
+            "BISC8 Better FMOD",
+            "A legacy FMOD copy exists in Assets while BetterFMOD also provides FMOD from the package. Remove Assets/BISC8/BetterFMOD/FMOD to avoid duplicate native plugins?",
+            "Remove Legacy Copy",
+            "Cancel"
+        );
+
+        if (!remove)
+            return false;
+
+        bool removed = AssetDatabase.DeleteAsset(legacyFmodPath);
+        AssetDatabase.Refresh();
+
+        if (removed)
+            return true;
+
+        Debug.LogWarning(
+            "[BISC8 FMOD] Could not remove Assets/BISC8/BetterFMOD/FMOD. Close Unity if Windows is locking a native DLL, then delete that folder manually.");
+        return false;
     }
 
     private static void ApplySceneButtonSettings(FmodMultiplayerSettings multiplayerSettings)

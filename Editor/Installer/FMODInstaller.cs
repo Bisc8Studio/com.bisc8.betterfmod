@@ -37,6 +37,7 @@ public static class FMODInstaller
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
     private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
+    private const string LegacyCopyPopupShownKey = "BISC8_FMOD_LEGACY_COPY_POPUP_SHOWN_V1";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
 
     static FMODInstaller()
@@ -52,6 +53,9 @@ public static class FMODInstaller
             return;
         }
 
+        if (PromptRemoveLegacyInstalledFMODCopy(true))
+            return;
+
         if (IsSetupComplete())
             return;
 
@@ -66,6 +70,12 @@ public static class FMODInstaller
     public static void RunSetupFromFMODMenu()
     {
         RunSetup();
+    }
+
+    [MenuItem("FMOD/BISC8 Better FMOD/Remove Legacy Assets FMOD Copy", false, 21)]
+    public static void RemoveLegacyInstalledFMODCopyFromMenu()
+    {
+        RemoveLegacyInstalledFMODCopy(true);
     }
 
     private static void ResetSetup()
@@ -119,6 +129,74 @@ public static class FMODInstaller
             RunSetup();
     }
 
+    private static bool PromptRemoveLegacyInstalledFMODCopy(bool respectSessionState)
+    {
+        string activeSourcePath = GetActiveFMODSourcePath();
+        if (activeSourcePath == null || !File.Exists(Path.Combine(activeSourcePath, "FMODUnity.asmdef")))
+            return false;
+
+        if (!File.Exists(InstalledMarkerPath))
+            return false;
+
+        if (respectSessionState && SessionState.GetBool(LegacyCopyPopupShownKey, false))
+            return false;
+
+        SessionState.SetBool(LegacyCopyPopupShownKey, true);
+
+        bool remove = EditorUtility.DisplayDialog(
+            "BISC8 Better FMOD",
+            "A legacy FMOD copy exists at Assets/BISC8/BetterFMOD/FMOD while the package also provides FMOD. This causes duplicate native plugin errors. Remove the legacy Assets copy?",
+            "Remove Legacy Copy",
+            "Not now"
+        );
+
+        if (!remove)
+            return false;
+
+        RemoveLegacyInstalledFMODCopy(true);
+        return true;
+    }
+
+    private static bool RemoveLegacyInstalledFMODCopy(bool refresh)
+    {
+        if (!Directory.Exists(InstalledFMODPath) && !File.Exists(InstalledFMODPath + ".meta"))
+        {
+            Debug.Log("[BISC8 FMOD] No legacy FMOD copy found at Assets/BISC8/BetterFMOD/FMOD.");
+            return true;
+        }
+
+        bool removedFolder = !Directory.Exists(InstalledFMODPath) || AssetDatabase.DeleteAsset(InstalledFMODPath);
+        bool removedMeta = true;
+        string metaPath = InstalledFMODPath + ".meta";
+
+        if (File.Exists(metaPath))
+        {
+            try
+            {
+                File.SetAttributes(metaPath, FileAttributes.Normal);
+                File.Delete(metaPath);
+            }
+            catch (Exception exception)
+            {
+                removedMeta = false;
+                Debug.LogWarning("[BISC8 FMOD] Could not remove legacy FMOD meta file: " + exception.Message);
+            }
+        }
+
+        if (refresh)
+            AssetDatabase.Refresh();
+
+        if (removedFolder && removedMeta)
+        {
+            Debug.Log("[BISC8 FMOD] Removed legacy FMOD copy from Assets/BISC8/BetterFMOD/FMOD.");
+            return true;
+        }
+
+        Debug.LogWarning(
+            "[BISC8 FMOD] Could not fully remove the legacy FMOD copy. Close Unity if Windows is locking a native DLL, then delete Assets/BISC8/BetterFMOD/FMOD manually.");
+        return false;
+    }
+
     private static void RunSetup()
     {
         if (EditorApplication.isCompiling || EditorApplication.isUpdating)
@@ -141,9 +219,10 @@ public static class FMODInstaller
             if (activeSourcePath != null)
             {
                 RemoveLegacyFMODDefine();
+                PromptRemoveLegacyInstalledFMODCopy(false);
                 MarkSetupComplete();
                 AssetDatabase.Refresh();
-                Debug.Log("[BISC8 FMOD] Setup complete. FMOD source is active in the BetterFMOD package; Assets/BISC8/BetterFMOD/FMOD was not modified.");
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD source is active in the BetterFMOD package.");
                 return;
             }
 
