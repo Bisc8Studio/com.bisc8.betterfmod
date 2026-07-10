@@ -460,7 +460,7 @@ namespace FMODUnity
             }
 
             IEnumerable<string> missingPathsQuery = platform.GetBinaryFilePaths(target, binaryType)
-                .Where(path => !File.Exists(path) && !Directory.Exists(path));
+                .Where(path => !AssetPathExists(path));
 
             if (missingPathsQuery.Any())
             {
@@ -493,6 +493,14 @@ namespace FMODUnity
 
             error = null;
             return true;
+        }
+
+        private static bool AssetPathExists(string path)
+        {
+            if (File.Exists(path) || Directory.Exists(path))
+                return true;
+
+            return AssetImporter.GetAtPath(path) != null || AssetDatabase.IsValidFolder(path);
         }
 
         public void PreprocessBuild(BuildTarget target, Platform.BinaryType binaryType)

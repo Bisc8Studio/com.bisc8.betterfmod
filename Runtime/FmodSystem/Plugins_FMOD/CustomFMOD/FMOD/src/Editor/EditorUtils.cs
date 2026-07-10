@@ -1171,6 +1171,9 @@ namespace FMODUnity
         // the correct GUID.
         private static void CheckBaseFolderGUID()
         {
+            if (RuntimeUtils.PluginInstallPath.StartsWith("Packages/"))
+                return;
+
             if (string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(RuntimeUtils.BaseFolderGUID)))
             {
                 string folderPath = RuntimeUtils.PluginInstallPath;
