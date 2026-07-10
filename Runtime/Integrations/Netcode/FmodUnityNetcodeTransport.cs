@@ -6,6 +6,7 @@ using UnityEngine;
 public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerTransport
 {
     private const string ButtonActionMessageName = "BISC8.BetterFMOD.ButtonAction";
+    private const NetworkDelivery ButtonActionDelivery = NetworkDelivery.ReliableFragmentedSequenced;
 
     private NetworkManager registeredManager;
     private bool registered;
@@ -60,7 +61,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
         }
 
         using FastBufferWriter writer = CreateWriter(json);
-        manager.CustomMessagingManager.SendNamedMessage(ButtonActionMessageName, NetworkManager.ServerClientId, writer);
+        manager.CustomMessagingManager.SendNamedMessage(ButtonActionMessageName, NetworkManager.ServerClientId, writer, ButtonActionDelivery);
     }
 
     private void TryRegister()
@@ -124,7 +125,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
                 continue;
 
             using FastBufferWriter writer = CreateWriter(json);
-            manager.CustomMessagingManager.SendNamedMessage(ButtonActionMessageName, clientId, writer);
+            manager.CustomMessagingManager.SendNamedMessage(ButtonActionMessageName, clientId, writer, ButtonActionDelivery);
         }
     }
 
