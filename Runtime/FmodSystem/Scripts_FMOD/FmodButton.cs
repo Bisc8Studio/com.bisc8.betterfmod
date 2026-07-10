@@ -51,8 +51,8 @@ public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             if (action == null)
                 continue;
 
-            if (enableMultiplayer && FmodButtonAction.IsNetworkableCommand(action.command))
-                action.playbackScope = FmodPlaybackScope.Multiplayer;
+            if (FmodButtonAction.IsNetworkableCommand(action.command))
+                action.playbackScope = enableMultiplayer ? FmodPlaybackScope.Multiplayer : FmodPlaybackScope.Local;
 
             action.ValidateDependencies(transform);
         }
@@ -68,7 +68,6 @@ public class FmodButtonAction
     public ButtonMoment moment  = ButtonMoment.None;
     public ButtonRootCommand command = ButtonRootCommand.Play;
     public FmodPlaybackScope playbackScope = FmodPlaybackScope.Local;
-    public bool playLocally = true;
 
     // Campos do comando raiz
     public string soundId;          // Event ID, Keep Key, path de snapshot/bus/VCA
@@ -90,7 +89,7 @@ public class FmodButtonAction
 
         if (ShouldDispatchMultiplayer())
         {
-            FmodCommands.EnsureInstance().DispatchButtonAction(this, source, playLocally);
+            FmodCommands.EnsureInstance().DispatchButtonAction(this, source);
             return;
         }
 

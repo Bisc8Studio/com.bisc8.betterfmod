@@ -1,11 +1,12 @@
 #if FMOD_PRESENT
+using System;
 using UnityEngine;
 
 public class FmodMultiplayerSettings : MonoBehaviour
 {
     [SerializeField] private bool isMultiplayer;
     [SerializeField] private bool autoConfigureFmodButtons = true;
-    [SerializeField] private bool playLocalWhenTransportMissing = true;
+    [SerializeField, HideInInspector] private bool playLocalWhenTransportMissing;
 
     /// <summary>
     /// Retorna verdadeiro quando este componente habilita o modo multiplayer do BetterFMOD.
@@ -19,7 +20,7 @@ public class FmodMultiplayerSettings : MonoBehaviour
     /// </summary>
     public static bool MultiplayerModeEnabled { get; private set; }
 
-    public static bool PlayLocalWhenTransportMissing { get; private set; } = true;
+    public static bool PlayLocalWhenTransportMissing { get; private set; }
 
     private static FmodMultiplayerSettings activeSettings;
 
@@ -57,6 +58,9 @@ public class FmodMultiplayerSettings : MonoBehaviour
         MultiplayerModeEnabled = isMultiplayer;
         PlayLocalWhenTransportMissing = playLocalWhenTransportMissing;
 
+        if (isMultiplayer)
+            EnsureAutomaticTransport();
+
         if (isMultiplayer && autoConfigureFmodButtons)
             ApplyToSceneButtons();
     }
@@ -75,7 +79,7 @@ public class FmodMultiplayerSettings : MonoBehaviour
         }
 
         MultiplayerModeEnabled = false;
-        PlayLocalWhenTransportMissing = true;
+        PlayLocalWhenTransportMissing = false;
     }
 
     public void ApplyToSceneButtons()
@@ -87,6 +91,35 @@ public class FmodMultiplayerSettings : MonoBehaviour
 
             button.ApplyMultiplayerDefaults(isMultiplayer);
         }
+    }
+
+    private void EnsureAutomaticTransport()
+    {
+        if (FmodCommands.MultiplayerTransport != null)
+            return;
+
+        Type transportType = FindType("FmodUnityNetcodeTransport");
+        if (transportType == null || !typeof(Component).IsAssignableFrom(transportType))
+            return;
+
+        Component transport = GetComponent(transportType);
+        if (transport == null)
+            transport = gameObject.AddComponent(transportType);
+
+        if (transport is IFmodMultiplayerTransport fmodTransport)
+            FmodCommands.MultiplayerTransport = fmodTransport;
+    }
+
+    private static Type FindType(string typeName)
+    {
+        foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type type = assembly.GetType(typeName);
+            if (type != null)
+                return type;
+        }
+
+        return null;
     }
 }
 #endif

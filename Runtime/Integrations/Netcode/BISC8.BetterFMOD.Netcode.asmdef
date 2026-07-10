@@ -1,0 +1,26 @@
+{
+  "name": "BISC8.BetterFMOD.Netcode",
+  "rootNamespace": "",
+  "references": [
+    "BISC8.BetterFMOD.Runtime",
+    "Unity.Netcode.Runtime"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [
+    "FMOD_PRESENT",
+    "B8FMOD_UNITY_NETCODE"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.unity.netcode.gameobjects",
+      "expression": "1.0.0",
+      "define": "B8FMOD_UNITY_NETCODE"
+    }
+  ],
+  "noEngineReferences": false
+}

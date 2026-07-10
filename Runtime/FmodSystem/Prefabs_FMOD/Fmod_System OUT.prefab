@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FmodMultiplayerSettings
   isMultiplayer: 0
   autoConfigureFmodButtons: 1
-  playLocalWhenTransportMissing: 1
+  playLocalWhenTransportMissing: 0
 --- !u!114 &6214555344630993547
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,4 +1,4 @@
-#if FMOD_PRESENT
+﻿#if FMOD_PRESENT
 using FMOD.Studio;
 using FMODUnity;
 using System;
@@ -33,6 +33,7 @@ public class FmodCommands : MonoBehaviour
     private IFmodBackend backend;
     private int nextHandleId = 1;
     private bool initialized;
+    private bool missingMultiplayerTransportLogged;
 
     internal FmodBusManager BusManager => busManager;
 
@@ -112,7 +113,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Reconstr�i a tabela de eventos a partir das listas configuradas no BetterFMOD.
+    /// Reconstrói a tabela de eventos a partir das listas configuradas no BetterFMOD.
     /// </summary>
     public void RebuildEventLookup()
     {
@@ -169,19 +170,19 @@ public class FmodCommands : MonoBehaviour
     /// <summary>
     /// Envia uma acao de FmodButton para o transporte multiplayer registrado pelo projeto.
     /// </summary>
-    public void DispatchButtonAction(FmodButtonAction action, Transform source, bool playLocally)
+    public void DispatchButtonAction(FmodButtonAction action, Transform source)
     {
         if (action == null)
             return;
 
         FmodButtonActionPayload payload = action.ToPayload(source);
-        DispatchButtonAction(payload, playLocally);
+        DispatchButtonAction(payload);
     }
 
     /// <summary>
     /// Envia um payload de FmodButton para o transporte multiplayer registrado pelo projeto.
     /// </summary>
-    public void DispatchButtonAction(FmodButtonActionPayload payload, bool playLocally = true)
+    public void DispatchButtonAction(FmodButtonActionPayload payload)
     {
         if (payload == null)
             return;
@@ -202,8 +203,17 @@ public class FmodCommands : MonoBehaviour
             dispatched = true;
         }
 
-        if (playLocally || (!dispatched && FmodMultiplayerSettings.PlayLocalWhenTransportMissing))
+        if (!dispatched && FmodMultiplayerSettings.PlayLocalWhenTransportMissing)
+        {
             payload.ExecuteLocal();
+            return;
+        }
+
+        if (!dispatched && !missingMultiplayerTransportLogged)
+        {
+            missingMultiplayerTransportLogged = true;
+            Debug.LogWarning("[BetterFMOD] Multiplayer sound requested, but no active BetterFMOD multiplayer transport was found.");
+        }
     }
 
     /// <summary>
