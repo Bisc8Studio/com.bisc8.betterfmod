@@ -194,28 +194,22 @@ Assets/BISC8/BetterFMOD/FMOD/**/Info.plist text eol=lf";
                 return;
 
             Settings settings = Settings.Instance;
+            bool settingsChanged = false;
 
             if (settings.CurrentVersion != FMOD.VERSION.number)
             {
-                // We're updating an existing installation; unhide the setup wizard if needed
-
-                CheckUpdateTaskStatus();
-
-                if (settings.HideSetupWizard && updateTasks.Any(t => !t.IsComplete))
-                {
-                    settings.HideSetupWizard = false;
-                }
-
                 settings.CurrentVersion = FMOD.VERSION.number;
-                EditorUtility.SetDirty(settings);
+                settingsChanged = true;
             }
 
-            nextStagingStep = StagingSystem.Startup();
-
-            if (!settings.HideSetupWizard || IsStagingUpdateInProgress)
+            if (!settings.HideSetupWizard)
             {
-                ShowAssistant();
+                settings.HideSetupWizard = true;
+                settingsChanged = true;
             }
+
+            if (settingsChanged)
+                EditorUtility.SetDirty(settings);
         }
 
         [MenuItem("FMOD/Setup Wizard")]

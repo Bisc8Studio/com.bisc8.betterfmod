@@ -65,7 +65,7 @@ namespace FMODUnity
             bool inPackagesFolder = resourcesPath.StartsWith("Packages/");
             if (inPackagesFolder)
             {
-                resourcesPath = "Assets/BISC8/BetterFMOD/FMOD/Resources";
+                resourcesPath = "Assets/BISC8/BetterFMOD/Resources";
             }
             EditorUtils.EnsureFolderExists(resourcesPath);
             AssetDatabase.CreateAsset(RuntimeSettings, $"{resourcesPath}/{assetName}.asset");

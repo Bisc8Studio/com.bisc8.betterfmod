@@ -286,7 +286,7 @@ namespace FMODUnity
             {
                 isInitializing = true;
 
-                instance = Resources.Load(SettingsAssetName) as Settings;
+                instance = LoadSettingsAsset();
 
                 if (instance == null)
                 {
@@ -309,20 +309,79 @@ namespace FMODUnity
                     }
 #endif
                 }
-                else
-                {
-#if UNITY_EDITOR
-                    if (AssetDatabase.GetAssetPath(instance).StartsWith("Packages"))
-                    {
-                        RuntimeUtils.DebugLogError($"[FMOD] {SettingsAssetName} initialization failed. {SettingsAssetName} located in \"Packages\" folder. Please delete {SettingsAssetName} in file explorer.");
-                        instance = CreateInstance<Settings>();
-                    }
-#endif
-                }
 
                 isInitializing = false;
             }
         }
+
+        private static Settings LoadSettingsAsset()
+        {
+#if UNITY_EDITOR
+            const string stableSettingsPath = "Assets/BISC8/BetterFMOD/Resources/FMODStudioSettings.asset";
+            const string legacySettingsPath = "Assets/BISC8/BetterFMOD/FMOD/Resources/FMODStudioSettings.asset";
+
+            Settings stableSettings = AssetDatabase.LoadAssetAtPath<Settings>(stableSettingsPath);
+            if (stableSettings != null)
+                return stableSettings;
+
+            Settings legacySettings = AssetDatabase.LoadAssetAtPath<Settings>(legacySettingsPath);
+            if (legacySettings != null)
+            {
+                EnsureAssetFolder("Assets", "BISC8");
+                EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
+                EnsureAssetFolder("Assets/BISC8/BetterFMOD", "Resources");
+
+                string moveError = AssetDatabase.MoveAsset(legacySettingsPath, stableSettingsPath);
+                if (string.IsNullOrEmpty(moveError))
+                {
+                    RuntimeUtils.DebugLog("[FMOD] Moved project FMOD settings to Assets/BISC8/BetterFMOD/Resources so package updates do not delete project references.");
+                    Settings movedSettings = AssetDatabase.LoadAssetAtPath<Settings>(stableSettingsPath);
+                    if (movedSettings != null)
+                        return movedSettings;
+                }
+                else
+                {
+                    RuntimeUtils.DebugLogWarning("[FMOD] Could not move project FMOD settings out of the legacy FMOD folder: " + moveError);
+                    return legacySettings;
+                }
+            }
+
+            Settings fallback = null;
+
+            foreach (string guid in AssetDatabase.FindAssets(SettingsAssetName))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                if (Path.GetFileNameWithoutExtension(path) != SettingsAssetName)
+                    continue;
+
+                Settings settings = AssetDatabase.LoadAssetAtPath<Settings>(path);
+                if (settings == null)
+                    continue;
+
+                if (!path.StartsWith("Packages/"))
+                    return settings;
+
+                fallback = settings;
+            }
+
+            if (fallback != null)
+            {
+                RuntimeUtils.DebugLogWarning($"[FMOD] Ignoring {SettingsAssetName} located in Packages. Project-specific FMOD settings must live under Assets.");
+                return null;
+            }
+#endif
+
+            return Resources.Load(SettingsAssetName) as Settings;
+        }
+
+#if UNITY_EDITOR
+        private static void EnsureAssetFolder(string parent, string name)
+        {
+            string path = parent + "/" + name;
+            if (!AssetDatabase.IsValidFolder(path))
+                AssetDatabase.CreateFolder(parent, name);
+        }
+#endif
 
         internal static bool IsInitialized()
         {
