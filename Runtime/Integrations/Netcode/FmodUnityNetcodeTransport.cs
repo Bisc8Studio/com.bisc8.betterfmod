@@ -120,7 +120,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
 
         foreach (ulong clientId in manager.ConnectedClientsIds)
         {
-            if (clientId == manager.ServerClientId)
+            if (clientId == NetworkManager.ServerClientId)
                 continue;
 
             using FastBufferWriter writer = CreateWriter(json);
