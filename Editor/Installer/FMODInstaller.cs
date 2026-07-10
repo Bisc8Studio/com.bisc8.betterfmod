@@ -140,11 +140,10 @@ public static class FMODInstaller
         {
             if (activeSourcePath != null)
             {
-                RemoveInstalledFMODCopy();
                 RemoveLegacyFMODDefine();
                 MarkSetupComplete();
                 AssetDatabase.Refresh();
-                Debug.Log("[BISC8 FMOD] Setup complete. FMOD is provided by the BetterFMOD package.");
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD source is active in the BetterFMOD package; Assets/BISC8/BetterFMOD/FMOD was not modified.");
                 return;
             }
 
@@ -171,7 +170,6 @@ public static class FMODInstaller
         string activeSourcePath = GetActiveFMODSourcePath();
         if (activeSourcePath != null && File.Exists(Path.Combine(activeSourcePath, "FMODUnity.asmdef")))
         {
-            RemoveInstalledFMODCopy();
             RemoveLegacyFMODDefine();
 
             if (!FMODInstallerState.instance.SetupComplete)
@@ -301,25 +299,6 @@ public static class FMODInstaller
             File.SetAttributes(file, FileAttributes.Normal);
 
         Directory.Delete(path, true);
-    }
-
-    private static void RemoveInstalledFMODCopy()
-    {
-        if (!Directory.Exists(InstalledFMODPath))
-            return;
-
-        try
-        {
-            DeleteDirectory(InstalledFMODPath);
-
-            string metaPath = InstalledFMODPath + ".meta";
-            if (File.Exists(metaPath))
-                File.Delete(metaPath);
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning("[BISC8 FMOD] Could not remove the legacy FMOD copy at Assets/BISC8/BetterFMOD/FMOD. Close Unity, delete that folder manually, then reopen the project. " + exception.Message);
-        }
     }
 
     private static void CopyDirectory(string sourcePath, string destinationPath)
