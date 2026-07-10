@@ -43,7 +43,7 @@ public static class FMODPrefabMenu
             return;
         }
 
-        Object instance = PrefabUtility.InstantiatePrefab(prefab);
+        UnityEngine.Object instance = PrefabUtility.InstantiatePrefab(prefab);
         if (instance is not GameObject gameObject)
             return;
 
