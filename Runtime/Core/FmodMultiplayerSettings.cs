@@ -33,6 +33,20 @@ public class FmodMultiplayerSettings : MonoBehaviour
         ApplySettings();
     }
 
+    private void OnValidate()
+    {
+#if UNITY_EDITOR
+        if (!isMultiplayer || Application.isPlaying)
+            return;
+
+        UnityEditor.EditorApplication.delayCall += () =>
+        {
+            if (this != null)
+                EnsureAutomaticTransport();
+        };
+#endif
+    }
+
     private void OnDisable()
     {
         if (activeSettings != this)
@@ -92,6 +106,11 @@ public class FmodMultiplayerSettings : MonoBehaviour
         }
     }
 
+    public void ApplySettingsNow()
+    {
+        ApplySettings();
+    }
+
     private void EnsureAutomaticTransport()
     {
         if (FmodCommands.MultiplayerTransport != null)
@@ -101,12 +120,46 @@ public class FmodMultiplayerSettings : MonoBehaviour
         if (transportType == null || !typeof(Component).IsAssignableFrom(transportType))
             return;
 
-        Component transport = GetComponent(transportType);
+        Component existingTransport = UnityEngine.Object.FindObjectOfType(transportType) as Component;
+        if (existingTransport is IFmodMultiplayerTransport existingFmodTransport)
+        {
+            FmodCommands.MultiplayerTransport = existingFmodTransport;
+            return;
+        }
+
+        GameObject transportObject = gameObject;
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            transportObject = GameObject.Find("BetterFMOD_NetcodeRelay");
+            if (transportObject == null)
+            {
+                transportObject = new GameObject("BetterFMOD_NetcodeRelay");
+                UnityEditor.Undo.RegisterCreatedObjectUndo(transportObject, "Apply FMOD Multiplayer Settings");
+            }
+        }
+#endif
+
+        Type networkObjectType = FindType("Unity.Netcode.NetworkObject");
+        if (networkObjectType != null && typeof(Component).IsAssignableFrom(networkObjectType) && transportObject.GetComponent(networkObjectType) == null)
+            AddComponent(transportObject, networkObjectType);
+
+        Component transport = transportObject.GetComponent(transportType);
         if (transport == null)
-            transport = gameObject.AddComponent(transportType);
+            transport = AddComponent(transportObject, transportType);
 
         if (transport is IFmodMultiplayerTransport fmodTransport)
             FmodCommands.MultiplayerTransport = fmodTransport;
+    }
+
+    private static Component AddComponent(GameObject target, Type componentType)
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            return UnityEditor.Undo.AddComponent(target, componentType);
+#endif
+
+        return target.AddComponent(componentType);
     }
 
     private static Type FindType(string typeName)

@@ -44,6 +44,13 @@ public class FmodMultiplayerSettingsEditor : Editor
 
     private static void ApplyMultiplayerFmodSettings(FmodMultiplayerSettings multiplayerSettings)
     {
+        if (multiplayerSettings != null)
+        {
+            Undo.RecordObject(multiplayerSettings.gameObject, "Apply FMOD Multiplayer Settings");
+            multiplayerSettings.ApplySettingsNow();
+            EditorUtility.SetDirty(multiplayerSettings.gameObject);
+        }
+
         Settings settings = Settings.Instance;
         if (settings != null)
         {
