@@ -157,7 +157,7 @@ public static class FMODInstaller
         return true;
     }
 
-    internal static bool RemoveLegacyInstalledFMODCopy(bool refresh)
+    public static bool RemoveLegacyInstalledFMODCopy(bool refresh)
     {
         if (!Directory.Exists(InstalledFMODPath) && !File.Exists(InstalledFMODPath + ".meta"))
         {
