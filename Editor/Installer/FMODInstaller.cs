@@ -35,11 +35,6 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
-    private static readonly string[] RequiredWindowsBinaries =
-    {
-        "platforms/win/lib/arm64/fmodstudio.dll",
-        "platforms/win/lib/x86_64/fmodstudio.dll"
-    };
     private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacySetupKey = "BISC8_FMOD_SETUP_DONE";
@@ -145,11 +140,11 @@ public static class FMODInstaller
         {
             if (activeSourcePath != null)
             {
-                RepairInstalledFMODFiles(activeSourcePath);
+                RemoveInstalledFMODCopy();
                 RemoveLegacyFMODDefine();
                 MarkSetupComplete();
                 AssetDatabase.Refresh();
-                Debug.Log("[BISC8 FMOD] Setup complete. Missing FMOD files were repaired in Assets/BISC8/BetterFMOD/FMOD.");
+                Debug.Log("[BISC8 FMOD] Setup complete. FMOD is provided by the BetterFMOD package.");
                 return;
             }
 
@@ -176,9 +171,7 @@ public static class FMODInstaller
         string activeSourcePath = GetActiveFMODSourcePath();
         if (activeSourcePath != null && File.Exists(Path.Combine(activeSourcePath, "FMODUnity.asmdef")))
         {
-            if (HasMissingRequiredInstalledFiles())
-                return false;
-
+            RemoveInstalledFMODCopy();
             RemoveLegacyFMODDefine();
 
             if (!FMODInstallerState.instance.SetupComplete)
@@ -302,39 +295,31 @@ public static class FMODInstaller
         }
     }
 
-    private static bool HasMissingRequiredInstalledFiles()
-    {
-        if (!Directory.Exists(InstalledFMODPath))
-            return true;
-
-        foreach (string relativePath in RequiredWindowsBinaries)
-        {
-            string installedPath = Path.Combine(InstalledFMODPath, relativePath);
-            if (!File.Exists(installedPath))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static void RepairInstalledFMODFiles(string sourcePath)
-    {
-        EnsureAssetFolder("Assets", "BISC8");
-        EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
-        CopyMissingDirectoryFiles(sourcePath, InstalledFMODPath);
-
-        string sourceMetaPath = sourcePath + ".meta";
-        string destinationMetaPath = InstalledFMODPath + ".meta";
-        if (File.Exists(sourceMetaPath) && !File.Exists(destinationMetaPath))
-            File.Copy(sourceMetaPath, destinationMetaPath, false);
-    }
-
     private static void DeleteDirectory(string path)
     {
         foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
             File.SetAttributes(file, FileAttributes.Normal);
 
         Directory.Delete(path, true);
+    }
+
+    private static void RemoveInstalledFMODCopy()
+    {
+        if (!Directory.Exists(InstalledFMODPath))
+            return;
+
+        try
+        {
+            DeleteDirectory(InstalledFMODPath);
+
+            string metaPath = InstalledFMODPath + ".meta";
+            if (File.Exists(metaPath))
+                File.Delete(metaPath);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning("[BISC8 FMOD] Could not remove the legacy FMOD copy at Assets/BISC8/BetterFMOD/FMOD. Close Unity, delete that folder manually, then reopen the project. " + exception.Message);
+        }
     }
 
     private static void CopyDirectory(string sourcePath, string destinationPath)
@@ -354,29 +339,6 @@ public static class FMODInstaller
 
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
             File.Copy(file, destinationFile, true);
-        }
-    }
-
-    private static void CopyMissingDirectoryFiles(string sourcePath, string destinationPath)
-    {
-        Directory.CreateDirectory(destinationPath);
-
-        foreach (string directory in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
-        {
-            string relativePath = GetRelativePath(sourcePath, directory);
-            Directory.CreateDirectory(Path.Combine(destinationPath, relativePath));
-        }
-
-        foreach (string file in Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories))
-        {
-            string relativePath = GetRelativePath(sourcePath, file);
-            string destinationFile = Path.Combine(destinationPath, relativePath);
-
-            if (File.Exists(destinationFile))
-                continue;
-
-            Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
-            File.Copy(file, destinationFile, false);
         }
     }
 
