@@ -1132,6 +1132,11 @@ namespace FMODUnity
                 get
                 {
                     AffirmResources();
+                    if (arena == null)
+                    {
+                        return 128;
+                    }
+
                     return GUI.skin.label.CalcSize(new GUIContent(arena)).y;
                 }
             }
@@ -1146,16 +1151,30 @@ namespace FMODUnity
                     GUI.color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
                 }
 
-                GUILayout.Label(arena, GUILayout.ExpandWidth(false));
+                if (arena != null)
+                {
+                    GUILayout.Label(arena, GUILayout.ExpandWidth(false));
+                }
+                else
+                {
+                    GUILayout.Box(GUIContent.none, GUILayout.Width(128), GUILayout.Height(128));
+                }
 
-                if (Event.current.type == EventType.Repaint)
+                if (Event.current.type == EventType.Repaint || arenaRect.width <= 0 || arenaRect.height <= 0)
                 {
                     arenaRect = GUILayoutUtility.GetLastRect();
                 }
 
                 Vector2 center = arenaRect.center;
                 Rect rect2 = new Rect(center.x + eventPosition.x - 6, center.y + eventPosition.y - 6, 12, 12);
-                GUI.DrawTexture(rect2, emitter);
+                if (emitter != null)
+                {
+                    GUI.DrawTexture(rect2, emitter);
+                }
+                else
+                {
+                    EditorGUI.DrawRect(rect2, new Color(0.25f, 0.8f, 0.35f, 0.9f));
+                }
 
                 GUI.color = originalColour;
 
@@ -1192,7 +1211,9 @@ namespace FMODUnity
                         Vector2 newPosition = Event.current.mousePosition;
                         Vector2 delta = newPosition - center;
 
-                        float maximumDistance = (arena.width - emitter.width) / 2;
+                        float arenaWidth = arena != null ? arena.width : arenaRect.width;
+                        float emitterWidth = emitter != null ? emitter.width : rect2.width;
+                        float maximumDistance = Mathf.Max(1.0f, (arenaWidth - emitterWidth) / 2);
                         float distance = Math.Min(delta.magnitude, maximumDistance);
 
                         delta.Normalize();
@@ -1324,9 +1345,22 @@ namespace FMODUnity
                 AffirmResources();
 
                 int meterHeight = minimized ? 86 : 128;
+                if (metering == null || metering.Length == 0)
+                {
+                    GUILayoutUtility.GetRect(0, meterHeight, GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                    return;
+                }
+
+                if (!HasMeterTextures())
+                {
+                    DrawFallbackMeters(meterHeight, metering);
+                    return;
+                }
+
                 int meterWidth = (int)((128 / (float)meterOff.height) * meterOff.width);
 
                 List<float> meterPositions = meterPositionsForSpeakerMode(speakerModeForChannelCount(metering.Length), meterWidth, 2, 6);
+                EnsureMeterPositions(meterPositions, metering.Length, meterWidth, 6);
 
                 const int MeterCountMaximum = 16;
 
@@ -1360,6 +1394,44 @@ namespace FMODUnity
                     Rect levelPosRect = new Rect(meterRect.x, fullRect.height - visible + meterRect.y, meterWidth, visible);
                     Rect levelUVRect = new Rect(0, 0, 1.0f, visible / fullRect.height);
                     GUI.DrawTextureWithTexCoords(levelPosRect, meterOn, levelUVRect);
+                }
+            }
+
+            private bool HasMeterTextures()
+            {
+                return meterOn != null && meterOff != null && meterOff.width > 0 && meterOff.height > 0;
+            }
+
+            private void DrawFallbackMeters(int meterHeight, float[] metering)
+            {
+                const int meterWidth = 10;
+                const int meterGap = 4;
+
+                int minimumWidth = (meterWidth + meterGap) * metering.Length;
+                Rect fullRect = GUILayoutUtility.GetRect(minimumWidth, meterHeight,
+                    GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+
+                float totalWidth = (meterWidth * metering.Length) + (meterGap * Mathf.Max(0, metering.Length - 1));
+                float baseX = fullRect.x + (fullRect.width - totalWidth) / 2;
+
+                Color oldColor = GUI.color;
+                for (int i = 0; i < metering.Length; i++)
+                {
+                    Rect meterRect = new Rect(baseX + (i * (meterWidth + meterGap)), fullRect.y, meterWidth, fullRect.height);
+                    EditorGUI.DrawRect(meterRect, new Color(0.1f, 0.1f, 0.1f, 0.4f));
+
+                    float visible = Mathf.Clamp01(metering[i]) * fullRect.height;
+                    Rect levelRect = new Rect(meterRect.x, meterRect.yMax - visible, meterRect.width, visible);
+                    EditorGUI.DrawRect(levelRect, new Color(0.25f, 0.8f, 0.35f, 0.9f));
+                }
+                GUI.color = oldColor;
+            }
+
+            private static void EnsureMeterPositions(List<float> meterPositions, int channelCount, int meterWidth, int gap)
+            {
+                while (meterPositions.Count < channelCount)
+                {
+                    meterPositions.Add(meterPositions.Count * (meterWidth + gap));
                 }
             }
 
