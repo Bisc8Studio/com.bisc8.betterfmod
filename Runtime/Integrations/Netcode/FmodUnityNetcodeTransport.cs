@@ -2,6 +2,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
+[RequireComponent(typeof(NetworkObject))]
 public sealed class FmodUnityNetcodeTransport : NetworkBehaviour, IFmodMultiplayerTransport
 {
     public bool CanSendFmodCommands
@@ -17,7 +18,18 @@ public sealed class FmodUnityNetcodeTransport : NetworkBehaviour, IFmodMultiplay
 
     private void OnEnable()
     {
+        EnsureNetworkObject();
         FmodCommands.MultiplayerTransport = this;
+    }
+
+    private void Reset()
+    {
+        EnsureNetworkObject();
+    }
+
+    private void OnValidate()
+    {
+        EnsureNetworkObject();
     }
 
     public override void OnNetworkSpawn()
@@ -66,6 +78,26 @@ public sealed class FmodUnityNetcodeTransport : NetworkBehaviour, IFmodMultiplay
 
         FmodButtonActionPayload payload = JsonUtility.FromJson<FmodButtonActionPayload>(json);
         FmodCommands.ReceiveMultiplayerButtonAction(payload);
+    }
+
+    private void EnsureNetworkObject()
+    {
+        if (GetComponent<NetworkObject>() != null)
+            return;
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            UnityEditor.EditorApplication.delayCall += () =>
+            {
+                if (this != null && GetComponent<NetworkObject>() == null)
+                    UnityEditor.Undo.AddComponent<NetworkObject>(gameObject);
+            };
+            return;
+        }
+#endif
+
+        gameObject.AddComponent<NetworkObject>();
     }
 }
 #endif

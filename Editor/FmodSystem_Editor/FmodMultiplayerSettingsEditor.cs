@@ -19,7 +19,12 @@ public class FmodMultiplayerSettingsEditor : Editor
         serializedObject.Update();
 
         EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(isMultiplayer, new GUIContent("IsMultiplayer"));
+
+        EditorGUILayout.LabelField("Playback Mode", EditorStyles.miniBoldLabel);
+        int selectedMode = isMultiplayer.boolValue ? 1 : 0;
+        selectedMode = GUILayout.Toolbar(selectedMode, new[] { "Singleplayer", "Multiplayer" });
+        isMultiplayer.boolValue = selectedMode == 1;
+
         EditorGUILayout.PropertyField(autoConfigureFmodButtons, new GUIContent("Auto Configure FmodButtons"));
 
         if (EditorGUI.EndChangeCheck())
@@ -44,13 +49,6 @@ public class FmodMultiplayerSettingsEditor : Editor
 
     private static void ApplyMultiplayerFmodSettings(FmodMultiplayerSettings multiplayerSettings)
     {
-        if (multiplayerSettings != null)
-        {
-            Undo.RecordObject(multiplayerSettings.gameObject, "Apply FMOD Multiplayer Settings");
-            multiplayerSettings.ApplySettingsNow();
-            EditorUtility.SetDirty(multiplayerSettings.gameObject);
-        }
-
         Settings settings = Settings.Instance;
         if (settings != null)
         {
