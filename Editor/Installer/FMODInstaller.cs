@@ -157,7 +157,7 @@ public static class FMODInstaller
         return true;
     }
 
-    private static bool RemoveLegacyInstalledFMODCopy(bool refresh)
+    internal static bool RemoveLegacyInstalledFMODCopy(bool refresh)
     {
         if (!Directory.Exists(InstalledFMODPath) && !File.Exists(InstalledFMODPath + ".meta"))
         {
@@ -165,23 +165,8 @@ public static class FMODInstaller
             return true;
         }
 
-        bool removedFolder = !Directory.Exists(InstalledFMODPath) || AssetDatabase.DeleteAsset(InstalledFMODPath);
-        bool removedMeta = true;
-        string metaPath = InstalledFMODPath + ".meta";
-
-        if (File.Exists(metaPath))
-        {
-            try
-            {
-                File.SetAttributes(metaPath, FileAttributes.Normal);
-                File.Delete(metaPath);
-            }
-            catch (Exception exception)
-            {
-                removedMeta = false;
-                Debug.LogWarning("[BISC8 FMOD] Could not remove legacy FMOD meta file: " + exception.Message);
-            }
-        }
+        bool removedFolder = DeleteFileOrDirectory(InstalledFMODPath);
+        bool removedMeta = DeleteFileOrDirectory(InstalledFMODPath + ".meta");
 
         if (refresh)
             AssetDatabase.Refresh();
@@ -195,6 +180,39 @@ public static class FMODInstaller
         Debug.LogWarning(
             "[BISC8 FMOD] Could not fully remove the legacy FMOD copy. Close Unity if Windows is locking a native DLL, then delete Assets/BISC8/BetterFMOD/FMOD manually.");
         return false;
+    }
+
+    private static bool DeleteFileOrDirectory(string path)
+    {
+        if (!Directory.Exists(path) && !File.Exists(path))
+            return true;
+
+        try
+        {
+            ClearReadOnlyAttributes(path);
+            FileUtil.DeleteFileOrDirectory(path);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogWarning("[BISC8 FMOD] Could not remove '" + path + "': " + exception.Message);
+            return false;
+        }
+    }
+
+    private static void ClearReadOnlyAttributes(string path)
+    {
+        if (File.Exists(path))
+        {
+            File.SetAttributes(path, FileAttributes.Normal);
+            return;
+        }
+
+        if (!Directory.Exists(path))
+            return;
+
+        foreach (string file in Directory.GetFiles(path, "*", SearchOption.AllDirectories))
+            File.SetAttributes(file, FileAttributes.Normal);
     }
 
     private static void RunSetup()

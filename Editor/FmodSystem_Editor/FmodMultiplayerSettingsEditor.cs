@@ -93,15 +93,7 @@ public class FmodMultiplayerSettingsEditor : Editor
         if (!remove)
             return false;
 
-        bool removed = AssetDatabase.DeleteAsset(legacyFmodPath);
-        AssetDatabase.Refresh();
-
-        if (removed)
-            return true;
-
-        Debug.LogWarning(
-            "[BISC8 FMOD] Could not remove Assets/BISC8/BetterFMOD/FMOD. Close Unity if Windows is locking a native DLL, then delete that folder manually.");
-        return false;
+        return FMODInstaller.RemoveLegacyInstalledFMODCopy(true);
     }
 
     private static void ApplySceneButtonSettings(FmodMultiplayerSettings multiplayerSettings)
