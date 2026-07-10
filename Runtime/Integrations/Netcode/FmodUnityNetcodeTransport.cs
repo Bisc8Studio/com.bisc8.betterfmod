@@ -60,7 +60,7 @@ public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerT
         }
 
         using FastBufferWriter writer = CreateWriter(json);
-        manager.CustomMessagingManager.SendNamedMessageToServer(ButtonActionMessageName, writer);
+        manager.CustomMessagingManager.SendNamedMessage(ButtonActionMessageName, NetworkManager.ServerClientId, writer);
     }
 
     private void TryRegister()
