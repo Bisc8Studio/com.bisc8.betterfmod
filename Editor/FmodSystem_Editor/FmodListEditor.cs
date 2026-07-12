@@ -369,39 +369,61 @@ internal static class FmodStageInProjectSync
 
         string color = StageInProjectColors.GetFmodColorName(stage);
         int colorIndex = StageInProjectColors.GetFmodColorIndex(stage);
+        Color rgb = StageInProjectColors.GetSolidColor(stage);
         string command = string.Format(
-            @"(function(lookupKey, eventPath, color, colorIndex) {{
+            @"(function(lookupKey, eventPath, color, colorIndex, r, g, b) {{
+                function setColorValue(owner, field) {{
+                    var current = owner[field];
+
+                    if (typeof current === ""number"") {{
+                        owner[field] = colorIndex;
+                        return true;
+                    }}
+
+                    if (typeof current === ""string"") {{
+                        owner[field] = color;
+                        return true;
+                    }}
+
+                    if (current && typeof current === ""object"") {{
+                        if (current.r !== undefined && current.g !== undefined && current.b !== undefined) {{
+                            current.r = r;
+                            current.g = g;
+                            current.b = b;
+                            owner[field] = current;
+                            return true;
+                        }}
+
+                        if (current.name !== undefined) {{
+                            owner[field] = color;
+                            return true;
+                        }}
+                    }}
+
+                    return false;
+                }}
+
                 var eventRef = studio.project.lookup(lookupKey);
                 if (!eventRef && eventPath) eventRef = studio.project.lookup(eventPath);
                 if (!eventRef) return false;
                 var fields = [""color"", ""colour"", ""eventColor"", ""eventColour"", ""labelColor"", ""labelColour"", ""markerColor"", ""markerColour"", ""displayColor"", ""displayColour""];
-                var values = [color, color.charAt(0).toUpperCase() + color.slice(1), colorIndex];
                 for (var i = 0; i < fields.length; i++) {{
-                    for (var j = 0; j < values.length; j++) {{
-                        try {{
-                            if (eventRef[fields[i]] !== undefined) {{
-                                eventRef[fields[i]] = values[j];
-                                return true;
-                            }}
-                        }} catch (e) {{}}
-                    }}
+                    try {{
+                        if (eventRef[fields[i]] !== undefined && setColorValue(eventRef, fields[i])) return true;
+                    }} catch (e) {{}}
                 }}
                 try {{
-                    if (eventRef.properties && eventRef.properties.color !== undefined) {{
-                        for (var k = 0; k < values.length; k++) {{
-                            try {{
-                                eventRef.properties.color = values[k];
-                                return true;
-                            }} catch (e) {{}}
-                        }}
-                    }}
+                    if (eventRef.properties && eventRef.properties.color !== undefined && setColorValue(eventRef.properties, ""color"")) return true;
                 }} catch (e) {{}}
                 return false;
-            }})(""{0}"", ""{1}"", ""{2}"", {3});",
+            }})(""{0}"", ""{1}"", ""{2}"", {3}, {4}, {5}, {6});",
             EscapeJs(lookupKey),
             EscapeJs(eventPath),
             EscapeJs(color),
-            colorIndex);
+            colorIndex,
+            rgb.r.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            rgb.g.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            rgb.b.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         return TrySendScriptCommand(command);
     }
