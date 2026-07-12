@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6779502583474881280}
   m_Layer: 0
   m_Name: FmodEmitter_Mng
-  m_TagString: BISC8 Fmod
+  m_TagString: FMODB8
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

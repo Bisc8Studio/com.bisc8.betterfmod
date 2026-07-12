@@ -1,10 +1,10 @@
 /// <summary>
-/// Fornece ids de eventos BetterFMOD gerados automaticamente.
+/// Fornece ids de eventos FMODB8 gerados automaticamente.
 /// </summary>
 public static class FmodEvents
 {
     /// <summary>
-    /// Id de evento BetterFMOD: Test
+    /// Id de evento FMODB8: Test
     /// </summary>
     public const string Test = "Test";
 }

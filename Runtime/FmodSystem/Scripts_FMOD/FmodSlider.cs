@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Componente legado de slider que controla volumes de buses pelo BetterFMOD.
+/// Componente legado de slider que controla volumes de buses pelo FMODB8.
 /// </summary>
 public class FmodSlider : MonoBehaviour
 {

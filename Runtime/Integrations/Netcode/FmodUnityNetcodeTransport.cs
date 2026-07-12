@@ -5,7 +5,7 @@ using UnityEngine;
 
 public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerTransport
 {
-    private const string ButtonActionMessageName = "BISC8.BetterFMOD.ButtonAction";
+    private const string ButtonActionMessageName = "BISC8.FMODB8.ButtonAction";
     private const NetworkDelivery ButtonActionDelivery = NetworkDelivery.ReliableFragmentedSequenced;
 
     private NetworkManager registeredManager;

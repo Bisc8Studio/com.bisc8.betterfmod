@@ -348,7 +348,7 @@ internal static class FmodStageInProjectSync
         if (!connected && showDialog)
         {
             EditorUtility.DisplayDialog(
-                "BetterFMOD",
+                "FMODB8",
                 "Nao consegui conectar no FMOD Studio ainda. Abra o FMOD Studio com o projeto carregado e tente de novo. Se acabou de abrir, espere alguns segundos e clique novamente.",
                 "OK");
         }
@@ -450,7 +450,7 @@ internal static class FmodStageInProjectSync
         string color = TryGetScriptOutput(command);
         bool parsed = StageInProjectColors.TryGetStageFromFmodColor(color, out stage);
         if (!parsed && !string.IsNullOrWhiteSpace(color) && LoggedUnknownColorValues.Add(color))
-            Debug.LogWarning("BetterFMOD: cor do evento FMOD nao reconhecida para Stage In Project: " + color);
+            Debug.LogWarning("FMODB8: cor do evento FMOD nao reconhecida para Stage In Project: " + color);
 
         return parsed;
     }
@@ -516,7 +516,7 @@ internal static class FmodStageInProjectSync
             return;
 
         nextConnectionLogTime = EditorApplication.timeSinceStartup + 10d;
-        Debug.LogWarning("BetterFMOD: nao consegui ler/escrever a cor do evento no FMOD Studio. Verifique se o FMOD Studio esta aberto com scripting habilitado e use 'Sync Stages From FMOD' novamente.");
+        Debug.LogWarning("FMODB8: nao consegui ler/escrever a cor do evento no FMOD Studio. Verifique se o FMOD Studio esta aberto com scripting habilitado e use 'Sync Stages From FMOD' novamente.");
     }
 
     private static string EscapeJs(string value)

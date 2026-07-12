@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Toca ou para eventos BetterFMOD a partir de trigger, colisao, ciclo de vida e clique da Unity.
+/// Toca ou para eventos FMODB8 a partir de trigger, colisao, ciclo de vida e clique da Unity.
 /// </summary>
 public class FmodTrigger : MonoBehaviour, IPointerClickHandler
 {
@@ -123,7 +123,7 @@ public class FmodTrigger : MonoBehaviour, IPointerClickHandler
 }
 
 /// <summary>
-/// Define os momentos da Unity que podem disparar acoes do BetterFMOD.
+/// Define os momentos da Unity que podem disparar acoes do FMODB8.
 /// </summary>
 [Flags]
 public enum FmodTriggerMoment

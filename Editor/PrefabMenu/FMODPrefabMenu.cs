@@ -4,27 +4,27 @@ using UnityEngine;
 
 public static class FMODPrefabMenu
 {
-    private const string PackagePrefabsPath = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Prefabs_FMOD";
+    private const string PackagePrefabsPath = "Packages/com.bisc8.simplefmod/Runtime/FmodSystem/Prefabs_FMOD";
 
-    [MenuItem("GameObject/BISC8 FMOD/BISC8FMOD System", false, 8)]
-    private static void CreateBisc8FmodSystem(MenuCommand command)
+    [MenuItem("GameObject/FMODB8/FMODB8 System", false, 8)]
+    private static void CreateFMODB8System(MenuCommand command)
     {
-        CreatePrefab("BISC8FMOD_System.prefab", command);
+        CreatePrefab("FMODB8_System.prefab", command);
     }
 
-    [MenuItem("GameObject/BISC8 FMOD/BISC8FMOD Multiplayer", false, 9)]
-    private static void CreateBisc8FmodMultiplayer(MenuCommand command)
+    [MenuItem("GameObject/FMODB8/FMODB8 Multiplayer", false, 9)]
+    private static void CreateFMODB8Multiplayer(MenuCommand command)
     {
-        CreatePrefab("BISC8FMOD_Multiplayer.prefab", command, EnsureNetcodeRelayComponents);
+        CreatePrefab("FMODB8_Multiplayer.prefab", command, EnsureNetcodeRelayComponents);
     }
 
-    [MenuItem("GameObject/BISC8 FMOD/Fmod Emitter Mng", false, 10)]
+    [MenuItem("GameObject/FMODB8/Fmod Emitter Mng", false, 10)]
     private static void CreateFmodEmitter(MenuCommand command)
     {
         CreatePrefab("FmodEmitter_Mng.prefab", command);
     }
 
-    [MenuItem("GameObject/BISC8 FMOD/Fmod Slider Mng", false, 11)]
+    [MenuItem("GameObject/FMODB8/Fmod Slider Mng", false, 11)]
     private static void CreateFmodSlider(MenuCommand command)
     {
         CreatePrefab("FmodSlider_Mng.prefab", command);
@@ -36,7 +36,7 @@ public static class FMODPrefabMenu
         if (prefab == null)
         {
             EditorUtility.DisplayDialog(
-                "BISC8 Better FMOD",
+                "FMODB8",
                 $"Prefab not found: {prefabFileName}",
                 "OK"
             );
@@ -60,8 +60,8 @@ public static class FMODPrefabMenu
         if (transportType == null)
         {
             EditorUtility.DisplayDialog(
-                "BISC8 Better FMOD",
-                "BISC8FMOD_Multiplayer requires Netcode for GameObjects in this project.",
+                "FMODB8",
+                "FMODB8_Multiplayer requires Netcode for GameObjects in this project.",
                 "OK"
             );
             return;

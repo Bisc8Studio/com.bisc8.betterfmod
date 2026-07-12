@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// Componente de botao que executa acoes BetterFMOD em Canvas ou objetos 3D no mundo.
+/// Componente de botao que executa acoes FMODB8 em Canvas ou objetos 3D no mundo.
 /// </summary>
 public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {

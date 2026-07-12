@@ -1,8 +1,8 @@
 {
-  "name": "BISC8.BetterFMOD.Netcode",
+  "name": "BISC8.FMODB8.Netcode",
   "rootNamespace": "",
   "references": [
-    "BISC8.BetterFMOD.Runtime",
+    "BISC8.FMODB8.Runtime",
     "Unity.Netcode.Runtime"
   ],
   "includePlatforms": [],

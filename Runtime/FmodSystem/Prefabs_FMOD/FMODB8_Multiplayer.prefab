@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2512103047756138753}
   - component: {fileID: 2512103047756138754}
   m_Layer: 0
-  m_Name: BISC8FMOD_Multiplayer
+  m_Name: FMODB8_Multiplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,7 +7,7 @@ using UnityEngine;
 [FilePath(StatePath, FilePathAttribute.Location.ProjectFolder)]
 internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerState>
 {
-    internal const string StatePath = "UserSettings/BISC8BetterFMODInstaller.asset";
+    internal const string StatePath = "UserSettings/FMODB8Installer.asset";
 
     [SerializeField]
     private bool setupComplete;
@@ -30,9 +30,9 @@ internal sealed class FMODInstallerState : ScriptableSingleton<FMODInstallerStat
 [InitializeOnLoad]
 public static class FMODInstaller
 {
-    private const string PackagePath = "Packages/com.bisc8.betterfmod";
+    private const string PackagePath = "Packages/com.bisc8.simplefmod";
     private const string PackageFMODPath = "Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
-    private const string InstalledRootPath = "Assets/BISC8/BetterFMOD";
+    private const string InstalledRootPath = "Assets/BISC8/FMODB8";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
     private const string LegacyFMODDefine = "FMOD_PRESENT";
@@ -65,17 +65,17 @@ public static class FMODInstaller
         if (!SessionState.GetBool(PopupShownKey, false))
         {
             SessionState.SetBool(PopupShownKey, true);
-            Debug.LogWarning("[BISC8 FMOD] FMOD source was not found. Use FMOD/BISC8 Better FMOD/Setup if this package was imported from an older hidden-FMOD layout.");
+            Debug.LogWarning("[FMODB8] FMOD source was not found. Use FMOD/FMODB8/Setup if this package was imported from an older hidden-FMOD layout.");
         }
     }
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Setup", false, 20)]
+    [MenuItem("FMOD/FMODB8/Setup", false, 20)]
     public static void RunSetupFromFMODMenu()
     {
         RunSetup();
     }
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Remove Legacy Assets FMOD Copy", false, 21)]
+    [MenuItem("FMOD/FMODB8/Remove Legacy Assets FMOD Copy", false, 21)]
     public static void RemoveLegacyInstalledFMODCopyFromMenu()
     {
         RemoveLegacyInstalledFMODCopy(true);
@@ -88,23 +88,23 @@ public static class FMODInstaller
         SessionState.SetBool(PopupShownKey, false);
     }
 
-    [MenuItem("Assets/BISC8 FMOD/Create FMOD List", false, 10)]
+    [MenuItem("Assets/FMODB8/Create FMOD List", false, 10)]
     public static void CreateFMODList()
     {
-        Type listType = Type.GetType("CreateFmodList, BISC8.BetterFMOD.Runtime");
+        Type listType = Type.GetType("CreateFmodList, BISC8.FMODB8.Runtime");
         if (listType == null || !typeof(ScriptableObject).IsAssignableFrom(listType))
         {
-            Debug.LogError("[BISC8 FMOD] CreateFmodList is not available. Check the Unity Console for compilation errors.");
+            Debug.LogError("[FMODB8] CreateFmodList is not available. Check the Unity Console for compilation errors.");
             return;
         }
 
         const string rootFolder = "Assets/BISC8";
-        const string betterFmodFolder = rootFolder + "/BetterFMOD";
-        const string listFolder = betterFmodFolder + "/Lists";
+        const string fmodb8Folder = rootFolder + "/FMODB8";
+        const string listFolder = fmodb8Folder + "/Lists";
 
         EnsureAssetFolder("Assets", "BISC8");
-        EnsureAssetFolder(rootFolder, "BetterFMOD");
-        EnsureAssetFolder(betterFmodFolder, "Lists");
+        EnsureAssetFolder(rootFolder, "FMODB8");
+        EnsureAssetFolder(fmodb8Folder, "Lists");
 
         string assetPath = AssetDatabase.GenerateUniqueAssetPath(
             listFolder + "/NewFmodList.asset"
@@ -134,8 +134,8 @@ public static class FMODInstaller
         SessionState.SetBool(LegacyCopyPopupShownKey, true);
 
         bool remove = EditorUtility.DisplayDialog(
-            "BISC8 Better FMOD",
-            "A legacy FMOD copy exists at Assets/BISC8/BetterFMOD/FMOD while the package also provides FMOD. This causes duplicate native plugin errors. Remove the legacy Assets copy?",
+            "FMODB8",
+            "A legacy FMOD copy exists at Assets/BISC8/FMODB8/FMOD while the package also provides FMOD. This causes duplicate native plugin errors. Remove the legacy Assets copy?",
             "Remove Legacy Copy",
             "Not now"
         );
@@ -151,7 +151,7 @@ public static class FMODInstaller
     {
         if (!Directory.Exists(InstalledFMODPath) && !File.Exists(InstalledFMODPath + ".meta"))
         {
-            Debug.Log("[BISC8 FMOD] No legacy FMOD copy found at Assets/BISC8/BetterFMOD/FMOD.");
+            Debug.Log("[FMODB8] No legacy FMOD copy found at Assets/BISC8/FMODB8/FMOD.");
             return true;
         }
 
@@ -163,12 +163,12 @@ public static class FMODInstaller
 
         if (removedFolder && removedMeta)
         {
-            Debug.Log("[BISC8 FMOD] Removed legacy FMOD copy from Assets/BISC8/BetterFMOD/FMOD.");
+            Debug.Log("[FMODB8] Removed legacy FMOD copy from Assets/BISC8/FMODB8/FMOD.");
             return true;
         }
 
         Debug.LogWarning(
-            "[BISC8 FMOD] Could not fully remove the legacy FMOD copy. Close Unity if Windows is locking a native DLL, then delete Assets/BISC8/BetterFMOD/FMOD manually.");
+            "[FMODB8] Could not fully remove the legacy FMOD copy. Close Unity if Windows is locking a native DLL, then delete Assets/BISC8/FMODB8/FMOD manually.");
         return false;
     }
 
@@ -185,7 +185,7 @@ public static class FMODInstaller
         }
         catch (Exception exception)
         {
-            Debug.LogWarning("[BISC8 FMOD] Could not remove '" + path + "': " + exception.Message);
+            Debug.LogWarning("[FMODB8] Could not remove '" + path + "': " + exception.Message);
             return false;
         }
     }
@@ -209,7 +209,7 @@ public static class FMODInstaller
     {
         if (EditorApplication.isCompiling || EditorApplication.isUpdating)
         {
-            Debug.LogWarning("[BISC8 FMOD] Wait for Unity to finish compiling before running setup.");
+            Debug.LogWarning("[FMODB8] Wait for Unity to finish compiling before running setup.");
             return;
         }
 
@@ -218,7 +218,7 @@ public static class FMODInstaller
 
         if (hiddenSourcePath == null && activeSourcePath == null)
         {
-            Debug.LogError("[BISC8 FMOD] FMOD source folder was not found in the package. Package root: " + GetPackageRootPath());
+            Debug.LogError("[FMODB8] FMOD source folder was not found in the package. Package root: " + GetPackageRootPath());
             return;
         }
 
@@ -230,7 +230,7 @@ public static class FMODInstaller
                 PromptRemoveLegacyInstalledFMODCopy(false);
                 MarkSetupComplete();
                 AssetDatabase.Refresh();
-                Debug.Log("[BISC8 FMOD] Setup complete. FMOD source is active in the BetterFMOD package.");
+                Debug.Log("[FMODB8] Setup complete. FMOD source is active in the FMODB8 package.");
                 return;
             }
 
@@ -244,11 +244,11 @@ public static class FMODInstaller
             MarkSetupComplete();
             AssetDatabase.Refresh();
 
-            Debug.Log("[BISC8 FMOD] Setup complete. FMOD was moved to Assets/BISC8/BetterFMOD/FMOD.");
+            Debug.Log("[FMODB8] Setup complete. FMOD was moved to Assets/BISC8/FMODB8/FMOD.");
         }
         catch (Exception exception)
         {
-            Debug.LogError("[BISC8 FMOD] Setup failed: " + exception.Message);
+            Debug.LogError("[FMODB8] Setup failed: " + exception.Message);
         }
     }
 
@@ -343,7 +343,7 @@ public static class FMODInstaller
     {
         // Try with package.json which is more reliable than the bare folder path
         var packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(
-            "Packages/com.bisc8.betterfmod/package.json");
+            "Packages/com.bisc8.simplefmod/package.json");
 
         if (packageInfo == null)
             packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssetPath(PackagePath);
@@ -356,7 +356,7 @@ public static class FMODInstaller
         string packageCacheDir = Path.Combine(projectRoot, "Library", "PackageCache");
         if (Directory.Exists(packageCacheDir))
         {
-            foreach (string dir in Directory.GetDirectories(packageCacheDir, "com.bisc8.betterfmod*"))
+            foreach (string dir in Directory.GetDirectories(packageCacheDir, "com.bisc8.simplefmod*"))
                 return dir;
         }
 
@@ -366,7 +366,7 @@ public static class FMODInstaller
     private static void MoveFMODToAssets(string sourcePath)
     {
         EnsureAssetFolder("Assets", "BISC8");
-        EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
+        EnsureAssetFolder("Assets/BISC8", "FMODB8");
 
         // Always copy (never move) so the package cache source stays intact for future setups
         CopyDirectory(sourcePath, InstalledFMODPath);

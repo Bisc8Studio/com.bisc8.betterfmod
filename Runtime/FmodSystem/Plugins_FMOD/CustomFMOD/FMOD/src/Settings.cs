@@ -317,8 +317,8 @@ namespace FMODUnity
         private static Settings LoadSettingsAsset()
         {
 #if UNITY_EDITOR
-            const string stableSettingsPath = "Assets/BISC8/BetterFMOD/Resources/FMODStudioSettings.asset";
-            const string legacySettingsPath = "Assets/BISC8/BetterFMOD/FMOD/Resources/FMODStudioSettings.asset";
+            const string stableSettingsPath = "Assets/BISC8/FMODB8/Resources/FMODStudioSettings.asset";
+            const string legacySettingsPath = "Assets/BISC8/FMODB8/FMOD/Resources/FMODStudioSettings.asset";
 
             Settings stableSettings = AssetDatabase.LoadAssetAtPath<Settings>(stableSettingsPath);
             if (stableSettings != null)
@@ -328,13 +328,13 @@ namespace FMODUnity
             if (legacySettings != null)
             {
                 EnsureAssetFolder("Assets", "BISC8");
-                EnsureAssetFolder("Assets/BISC8", "BetterFMOD");
-                EnsureAssetFolder("Assets/BISC8/BetterFMOD", "Resources");
+                EnsureAssetFolder("Assets/BISC8", "FMODB8");
+                EnsureAssetFolder("Assets/BISC8/FMODB8", "Resources");
 
                 string moveError = AssetDatabase.MoveAsset(legacySettingsPath, stableSettingsPath);
                 if (string.IsNullOrEmpty(moveError))
                 {
-                    RuntimeUtils.DebugLog("[FMOD] Moved project FMOD settings to Assets/BISC8/BetterFMOD/Resources so package updates do not delete project references.");
+                    RuntimeUtils.DebugLog("[FMOD] Moved project FMOD settings to Assets/BISC8/FMODB8/Resources so package updates do not delete project references.");
                     Settings movedSettings = AssetDatabase.LoadAssetAtPath<Settings>(stableSettingsPath);
                     if (movedSettings != null)
                         return movedSettings;
@@ -694,7 +694,7 @@ namespace FMODUnity
 
                 // Remove the FMODStudioCache if in the old location
                 string oldCache1 = "Assets/Plugins/FMOD/Resources/FMODStudioCache.asset";
-                string oldCache2 = "Assets/BISC8/BetterFMOD/Resources/FMODStudioCache.asset";
+                string oldCache2 = "Assets/BISC8/FMODB8/Resources/FMODStudioCache.asset";
 
                 if (File.Exists(oldCache1))
                 {
@@ -791,7 +791,7 @@ namespace FMODUnity
     {
 #if UNITY_EDITOR
         private const string RegisterStaticPluginsAssetPathRelative =
-        "/BISC8/BetterFMOD/FMOD/Cache/fmod_register_static_plugins.cpp";
+        "/BISC8/FMODB8/FMOD/Cache/fmod_register_static_plugins.cpp";
 
         private const string RegisterStaticPluginsAssetPathFull =
             "Assets" + RegisterStaticPluginsAssetPathRelative;
@@ -807,7 +807,7 @@ namespace FMODUnity
             yield return Application.dataPath + RegisterStaticPluginsAssetPathRelative;
 
             yield return Application.dataPath +
-                "/BISC8/BetterFMOD/FMOD/src/Runtime/fmod_static_plugin_support.h";
+                "/BISC8/FMODB8/FMOD/src/Runtime/fmod_static_plugin_support.h";
         }
 
         public static void CleanIl2CppArgs()

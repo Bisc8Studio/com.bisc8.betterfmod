@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Emissor do BetterFMOD configurado por funcoes da cascata.
+/// Emissor do FMODB8 configurado por funcoes da cascata.
 /// </summary>
 public class FmodEmitterCustom : MonoBehaviour
 {

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// API publica principal do BetterFMOD para tocar eventos, controlar instancias, parametros, buses, VCAs e snapshots.
+/// API publica principal do FMODB8 para tocar eventos, controlar instancias, parametros, buses, VCAs e snapshots.
 /// </summary>
 public static class FmodB8
 {
@@ -47,7 +47,7 @@ public static class FmodB8
     }
 
     /// <summary>
-    /// Para todas as instancias ativas controladas pelo BetterFMOD.
+    /// Para todas as instancias ativas controladas pelo FMODB8.
     /// </summary>
     public static void StopAll()
     {
@@ -55,7 +55,7 @@ public static class FmodB8
     }
 
     /// <summary>
-    /// Para todas as instancias ativas controladas pelo BetterFMOD, com fade opcional.
+    /// Para todas as instancias ativas controladas pelo FMODB8, com fade opcional.
     /// </summary>
     public static void StopAll(bool fade, float fadeTime = 1f)
     {

@@ -10,7 +10,7 @@ internal static class FmodEventsGenerator
     private const string RelativeOutputPath = "Runtime/Core/FmodEvents.Generated.cs";
     private static readonly Regex InvalidCharacters = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
 
-    [MenuItem("FMOD/BISC8 Better FMOD/Generate FmodEvents", false, 21)]
+    [MenuItem("FMOD/FMODB8/Generate FmodEvents", false, 21)]
     private static void GenerateFromMenu()
     {
         Generate();
@@ -122,7 +122,7 @@ internal static class FmodEventsGenerator
     {
         StringBuilder builder = new();
         builder.AppendLine("/// <summary>");
-        builder.AppendLine("/// Fornece ids de eventos BetterFMOD gerados automaticamente.");
+        builder.AppendLine("/// Fornece ids de eventos FMODB8 gerados automaticamente.");
         builder.AppendLine("/// </summary>");
         builder.AppendLine("public static class FmodEvents");
         builder.AppendLine("{");
@@ -130,7 +130,7 @@ internal static class FmodEventsGenerator
         foreach (KeyValuePair<string, string> entry in events)
         {
             builder.AppendLine("    /// <summary>");
-            builder.AppendLine("    /// Id de evento BetterFMOD: " + EscapeForXml(entry.Value));
+            builder.AppendLine("    /// Id de evento FMODB8: " + EscapeForXml(entry.Value));
             builder.AppendLine("    /// </summary>");
             builder.AppendLine("    public const string " + entry.Key + " = \"" + EscapeForCSharp(entry.Value) + "\";");
         }

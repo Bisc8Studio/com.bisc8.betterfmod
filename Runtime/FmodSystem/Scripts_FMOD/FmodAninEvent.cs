@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Ponte legado de Animation Event para comandos BetterFMOD.
+/// Ponte legado de Animation Event para comandos FMODB8.
 /// </summary>
 public class FmodAninEvent : MonoBehaviour
 {

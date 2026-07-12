@@ -8,14 +8,14 @@ public class FmodMultiplayerSettings : MonoBehaviour
     [SerializeField, HideInInspector] private bool playLocalWhenTransportMissing;
 
     /// <summary>
-    /// Retorna verdadeiro quando este componente habilita o modo multiplayer do BetterFMOD.
+    /// Retorna verdadeiro quando este componente habilita o modo multiplayer do FMODB8.
     /// </summary>
     public bool IsMultiplayer => isMultiplayer;
 
     public bool AutoConfigureFmodButtons => autoConfigureFmodButtons;
 
     /// <summary>
-    /// Retorna verdadeiro quando o modo multiplayer do BetterFMOD esta ativo.
+    /// Retorna verdadeiro quando o modo multiplayer do FMODB8 esta ativo.
     /// </summary>
     public static bool MultiplayerModeEnabled { get; private set; }
 

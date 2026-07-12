@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Configura um evento BetterFMOD antes de criar a instância de áudio.
+/// Configura um evento FMODB8 antes de criar a instância de áudio.
 /// </summary>
 public sealed class FmodEventBuilder
 {

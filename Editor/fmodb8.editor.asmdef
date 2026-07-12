@@ -1,12 +1,12 @@
 {
-  "name": "BISC8.BetterFMOD.Editor",
+  "name": "BISC8.FMODB8.Editor",
   "autoReferenced": true,
   "includePlatforms": [
     "Editor"
   ],
   "references": [
-    "BISC8.BetterFMOD.Runtime",
-    "BISC8.BetterFMOD.Installer.Editor",
+    "BISC8.FMODB8.Runtime",
+    "BISC8.FMODB8.Installer.Editor",
     "FMODUnity",
     "FMODUnityEditor"
   ],

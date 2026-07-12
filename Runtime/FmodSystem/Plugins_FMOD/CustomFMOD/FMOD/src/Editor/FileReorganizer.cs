@@ -925,7 +925,7 @@ namespace FMODUnity
         private struct TaskGenerator
         {
             private const string AssetsFolder = "Assets";
-            private const string FMODRoot = "Assets/BISC8/BetterFMOD/FMOD";
+            private const string FMODRoot = "Assets/BISC8/FMODB8/FMOD";
             private const string FMODSource = FMODRoot + "/src";
 
             private static readonly string[] BaseFolders = {
@@ -962,8 +962,8 @@ namespace FMODUnity
         };
 
             private static readonly string[] fmodFoldersToCleanUp = {
-        "Assets/BISC8/BetterFMOD/FMOD/Runtime",
-        "Assets/BISC8/BetterFMOD/FMOD/lib",
+        "Assets/BISC8/FMODB8/FMOD/Runtime",
+        "Assets/BISC8/FMODB8/FMOD/lib",
         };
 
             private static readonly string[] publicFoldersToCleanUp = {

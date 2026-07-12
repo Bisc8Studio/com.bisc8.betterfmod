@@ -12,7 +12,7 @@ public interface IFmodMultiplayerTransport
 }
 
 /// <summary>
-/// Servico central interno do BetterFMOD que controla eventos, instancias e comunicacao com o FmodB8.
+/// Servico central interno do FMODB8 que controla eventos, instancias e comunicacao com o FmodB8.
 /// </summary>
 public class FmodCommands : MonoBehaviour
 {
@@ -43,7 +43,7 @@ public class FmodCommands : MonoBehaviour
     public static event Action<FmodButtonActionPayload> MultiplayerButtonActionRequested;
 
     /// <summary>
-    /// Retorna o servico ativo, criando um objeto BetterFMOD quando a cena ainda nao possui um.
+    /// Retorna o servico ativo, criando um objeto FMODB8 quando a cena ainda nao possui um.
     /// </summary>
     public static FmodCommands EnsureInstance()
     {
@@ -61,7 +61,7 @@ public class FmodCommands : MonoBehaviour
             return instance;
         }
 
-        GameObject system = new GameObject("BetterFMOD");
+        GameObject system = new GameObject("FMODB8");
         instance = system.AddComponent<FmodCommands>();
         instance.Initialize();
         DontDestroyOnLoad(system);
@@ -112,7 +112,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Reconstrói a tabela de eventos a partir das listas configuradas no BetterFMOD.
+    /// Reconstrï¿½i a tabela de eventos a partir das listas configuradas no FMODB8.
     /// </summary>
     public void RebuildEventLookup()
     {
@@ -134,7 +134,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Le a referencia FMOD registrada para um id de evento do BetterFMOD.
+    /// Le a referencia FMOD registrada para um id de evento do FMODB8.
     /// </summary>
     public EventReference GetEvent(string id)
     {
@@ -211,7 +211,7 @@ public class FmodCommands : MonoBehaviour
         if (!dispatched && !missingMultiplayerTransportLogged)
         {
             missingMultiplayerTransportLogged = true;
-            Debug.LogWarning("[BetterFMOD] Multiplayer sound requested, but no active BetterFMOD multiplayer transport was found.");
+            Debug.LogWarning("[FMODB8] Multiplayer sound requested, but no active FMODB8 multiplayer transport was found.");
         }
     }
 
@@ -245,7 +245,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Para todas as instancias ativas gerenciadas pelo BetterFMOD.
+    /// Para todas as instancias ativas gerenciadas pelo FMODB8.
     /// </summary>
     public void StopAll(bool fade = false, float fadeTime = 1f)
     {
@@ -421,7 +421,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Le o estado BetterFMOD da instancia ativa mais recente de um evento.
+    /// Le o estado FMODB8 da instancia ativa mais recente de um evento.
     /// </summary>
     public FmodPlaybackState GetBetterState(string id)
     {
@@ -486,7 +486,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Registra um handle no dicionario de instancias mantidas pelo BetterFMOD.
+    /// Registra um handle no dicionario de instancias mantidas pelo FMODB8.
     /// </summary>
     internal void KeepHandle(FmodHandle handle, string key)
     {
@@ -497,7 +497,7 @@ public class FmodCommands : MonoBehaviour
     }
 
     /// <summary>
-    /// Recupera um handle mantido pelo BetterFMOD a partir de uma chave.
+    /// Recupera um handle mantido pelo FMODB8 a partir de uma chave.
     /// </summary>
     internal FmodHandle GetKeptHandle(string key)
     {

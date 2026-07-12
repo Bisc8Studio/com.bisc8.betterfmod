@@ -57,16 +57,16 @@ public class FmodMultiplayerSettingsEditor : Editor
 
     private static bool EnsureNoLegacyFmodPluginCopy()
     {
-        const string packageFmodPath = "Packages/com.bisc8.betterfmod/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
-        const string legacyFmodPath = "Assets/BISC8/BetterFMOD/FMOD";
+        const string packageFmodPath = "Packages/com.bisc8.simplefmod/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
+        const string legacyFmodPath = "Assets/BISC8/FMODB8/FMOD";
         const string legacyMarkerPath = legacyFmodPath + "/FMODUnity.asmdef";
 
         if (!Directory.Exists(packageFmodPath) || !File.Exists(legacyMarkerPath))
             return true;
 
         bool remove = EditorUtility.DisplayDialog(
-            "BISC8 Better FMOD",
-            "A legacy FMOD copy exists in Assets while BetterFMOD also provides FMOD from the package. Remove Assets/BISC8/BetterFMOD/FMOD to avoid duplicate native plugins?",
+            "FMODB8",
+            "A legacy FMOD copy exists in Assets while FMODB8 also provides FMOD from the package. Remove Assets/BISC8/FMODB8/FMOD to avoid duplicate native plugins?",
             "Remove Legacy Copy",
             "Cancel"
         );

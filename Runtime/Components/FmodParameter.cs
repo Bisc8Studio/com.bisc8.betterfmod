@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// Liga um parametro BetterFMOD a uma fonte de valor sem codigo de gameplay customizado.
+/// Liga um parametro FMODB8 a uma fonte de valor sem codigo de gameplay customizado.
 /// </summary>
 public class FmodParameter : MonoBehaviour
 {
@@ -29,7 +29,7 @@ public class FmodParameter : MonoBehaviour
     }
 
     /// <summary>
-    /// Aplica o valor atual da fonte ao parametro BetterFMOD configurado.
+    /// Aplica o valor atual da fonte ao parametro FMODB8 configurado.
     /// </summary>
     public void Apply()
     {
@@ -120,7 +120,7 @@ public class FmodParameter : MonoBehaviour
 }
 
 /// <summary>
-/// Define uma fonte de valor para vinculo de parametros BetterFMOD.
+/// Define uma fonte de valor para vinculo de parametros FMODB8.
 /// </summary>
 public enum FmodParameterSource
 {

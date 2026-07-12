@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Toca e controla um evento BetterFMOD a partir de um GameObject.
+/// Toca e controla um evento FMODB8 a partir de um GameObject.
 /// </summary>
 public class FmodEmitter : MonoBehaviour
 {
@@ -37,7 +37,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Toca o evento BetterFMOD configurado.
+    /// Toca o evento FMODB8 configurado.
     /// </summary>
     public FmodHandle Play()
     {
@@ -66,7 +66,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Para a instancia BetterFMOD ativa.
+    /// Para a instancia FMODB8 ativa.
     /// </summary>
     public void Stop()
     {
@@ -75,7 +75,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Pausa a instancia BetterFMOD ativa.
+    /// Pausa a instancia FMODB8 ativa.
     /// </summary>
     public void Pause()
     {
@@ -83,7 +83,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Retoma a instancia BetterFMOD ativa.
+    /// Retoma a instancia FMODB8 ativa.
     /// </summary>
     public void Resume()
     {
@@ -91,7 +91,7 @@ public class FmodEmitter : MonoBehaviour
     }
 
     /// <summary>
-    /// Define um parametro na instancia BetterFMOD ativa.
+    /// Define um parametro na instancia FMODB8 ativa.
     /// </summary>
     public void SetParameter(string parameter, float value)
     {

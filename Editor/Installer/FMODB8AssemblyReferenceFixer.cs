@@ -3,10 +3,10 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-public static class BetterFmodAssemblyReferenceFixer
+public static class FMODB8AssemblyReferenceFixer
 {
-    private const string RuntimeAssemblyName = "BISC8.BetterFMOD.Runtime";
-    private const string MenuPath = "FMOD/BISC8 Better FMOD/Fix Project Assembly References";
+    private const string RuntimeAssemblyName = "BISC8.FMODB8.Runtime";
+    private const string MenuPath = "FMOD/FMODB8/Fix Project Assembly References";
 
     [MenuItem(MenuPath, false, 22)]
     public static void FixProjectAssemblyReferences()
@@ -35,11 +35,11 @@ public static class BetterFmodAssemblyReferenceFixer
         if (changedCount > 0)
         {
             AssetDatabase.Refresh();
-            Debug.Log("[BISC8 FMOD] Added " + RuntimeAssemblyName + " reference to " + changedCount + " project assembly definition(s).");
+            Debug.Log("[FMODB8] Added " + RuntimeAssemblyName + " reference to " + changedCount + " project assembly definition(s).");
             return;
         }
 
-        Debug.Log("[BISC8 FMOD] No project assembly definition needed a " + RuntimeAssemblyName + " reference.");
+        Debug.Log("[FMODB8] No project assembly definition needed a " + RuntimeAssemblyName + " reference.");
     }
 
     private static string AddRuntimeReference(string json)

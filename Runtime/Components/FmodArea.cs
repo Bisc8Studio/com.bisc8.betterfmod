@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Aplica snapshot, musica e parametros BetterFMOD enquanto um alvo esta dentro de uma area.
+/// Aplica snapshot, musica e parametros FMODB8 enquanto um alvo esta dentro de uma area.
 /// </summary>
 public class FmodArea : MonoBehaviour
 {
