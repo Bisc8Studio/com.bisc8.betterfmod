@@ -152,10 +152,33 @@ internal static class FmodEventsGenerator
 
 internal sealed class FmodEventsAssetPostprocessor : AssetPostprocessor
 {
+    private static bool generateQueued;
+
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        if (ShouldGenerate(importedAssets) || ShouldGenerate(deletedAssets) || ShouldGenerate(movedAssets) || ShouldGenerate(movedFromAssetPaths))
-            EditorApplication.delayCall += FmodEventsGenerator.Generate;
+        if (AssetDatabase.IsAssetImportWorkerProcess())
+            return;
+
+        if (generateQueued)
+            return;
+
+        if (!ShouldGenerate(importedAssets) && !ShouldGenerate(deletedAssets) && !ShouldGenerate(movedAssets) && !ShouldGenerate(movedFromAssetPaths))
+            return;
+
+        generateQueued = true;
+        EditorApplication.delayCall += GenerateWhenEditorIsReady;
+    }
+
+    private static void GenerateWhenEditorIsReady()
+    {
+        if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+        {
+            EditorApplication.delayCall += GenerateWhenEditorIsReady;
+            return;
+        }
+
+        generateQueued = false;
+        FmodEventsGenerator.Generate();
     }
 
     private static bool ShouldGenerate(string[] paths)
