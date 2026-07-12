@@ -113,15 +113,9 @@ public class CreateFmodListEditor : Editor
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         GUI.backgroundColor = oldBackground;
 
-        Rect colorRect = GUILayoutUtility.GetLastRect();
-        colorRect.width = 5f;
-        colorRect.x += 1f;
-        colorRect.y += 1f;
-        colorRect.height -= 2f;
-        EditorGUI.DrawRect(colorRect, StageInProjectColors.GetSolidColor(currentStage));
-
         EditorGUI.indentLevel++;
 
+        bool removeRequested = false;
         EditorGUILayout.BeginHorizontal();
         entry.isExpanded = EditorGUILayout.Foldout(entry.isExpanded, string.IsNullOrEmpty(id.stringValue) ? "Event" : id.stringValue, true, EditorStyles.boldLabel);
 
@@ -136,40 +130,52 @@ public class CreateFmodListEditor : Editor
         GUI.enabled = true;
         if (GUILayout.Button("-", EditorStyles.miniButtonRight, GUILayout.Width(24)))
         {
-            eventsProp.DeleteArrayElementAtIndex(index);
-            EditorGUILayout.EndHorizontal();
-            EditorGUI.indentLevel--;
-            EditorGUILayout.EndVertical();
-            return;
+            removeRequested = true;
         }
         EditorGUILayout.EndHorizontal();
 
-        if (entry.isExpanded)
+        if (!removeRequested)
         {
-            EditorGUILayout.PropertyField(id, new GUIContent("ID"));
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(reference, new GUIContent("Reference"));
-            EditorGUI.EndChangeCheck();
+            if (entry.isExpanded)
+            {
+                EditorGUILayout.PropertyField(id, new GUIContent("ID"));
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(reference, new GUIContent("Reference"));
+                EditorGUI.EndChangeCheck();
 
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(stage, new GUIContent("Stage In Project"));
-            if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
-                SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
-        }
-        else
-        {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUI.BeginChangeCheck();
-            EditorGUILayout.PropertyField(stage, GUIContent.none, GUILayout.MaxWidth(160f));
-            if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
-                SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(stage, new GUIContent("Stage In Project"));
+                if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
+                    SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
+            }
+            else
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUI.BeginChangeCheck();
+                EditorGUILayout.PropertyField(stage, GUIContent.none, GUILayout.MaxWidth(160f));
+                if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
+                    SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
 
-            GUILayout.Label(reference.GetEventReferencePath(), EditorStyles.miniLabel);
-            EditorGUILayout.EndHorizontal();
+                GUILayout.Label(reference.GetEventReferencePath(), EditorStyles.miniLabel);
+                EditorGUILayout.EndHorizontal();
+            }
         }
 
         EditorGUI.indentLevel--;
         EditorGUILayout.EndVertical();
+
+        if (Event.current.type == EventType.Repaint)
+        {
+            Rect colorRect = GUILayoutUtility.GetLastRect();
+            colorRect.width = 5f;
+            colorRect.x += 1f;
+            colorRect.y += 1f;
+            colorRect.height -= 2f;
+            EditorGUI.DrawRect(colorRect, StageInProjectColors.GetSolidColor(currentStage));
+        }
+
+        if (removeRequested)
+            eventsProp.DeleteArrayElementAtIndex(index);
     }
 
     private static void SyncStageToFmod(SerializedProperty reference, StageInProject stage)
