@@ -7,7 +7,8 @@
   "references": [
     "BISC8.BetterFMOD.Runtime",
     "BISC8.BetterFMOD.Installer.Editor",
-    "FMODUnity"
+    "FMODUnity",
+    "FMODUnityEditor"
   ],
   "allowUnsafeCode": false,
   "overrideReferences": false,
