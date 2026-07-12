@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Componente de botao que executa acoes FMODB8 em Canvas ou objetos 3D no mundo.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Button")]
 public class FmodButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private List<FmodButtonAction> actions = new();

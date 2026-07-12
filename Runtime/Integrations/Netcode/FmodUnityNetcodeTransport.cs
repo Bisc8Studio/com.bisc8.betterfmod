@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
+[AddComponentMenu("FMODB8/FMODB8 Netcode Transport")]
 public sealed class FmodUnityNetcodeTransport : MonoBehaviour, IFmodMultiplayerTransport
 {
     private const string ButtonActionMessageName = "BISC8.FMODB8.ButtonAction";

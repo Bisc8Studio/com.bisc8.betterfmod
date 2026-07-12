@@ -17,7 +17,7 @@ public class FmodButtonEditor : Editor
     {
         serializedObject.Update();
 
-        EditorGUILayout.LabelField("FmodButton Actions", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("FMODB8 Button Actions", EditorStyles.boldLabel);
         EditorGUILayout.Space(4);
 
         for (int i = 0; i < actions.arraySize; i++)

@@ -14,6 +14,7 @@ public interface IFmodMultiplayerTransport
 /// <summary>
 /// Servico central interno do FMODB8 que controla eventos, instancias e comunicacao com o FmodB8.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Commands")]
 public class FmodCommands : MonoBehaviour
 {
     private static FmodCommands instance;

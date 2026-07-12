@@ -25,7 +25,7 @@ public class FmodMultiplayerSettingsEditor : Editor
         selectedMode = GUILayout.Toolbar(selectedMode, new[] { "Singleplayer", "Multiplayer" });
         isMultiplayer.boolValue = selectedMode == 1;
 
-        EditorGUILayout.PropertyField(autoConfigureFmodButtons, new GUIContent("Auto Configure FmodButtons"));
+        EditorGUILayout.PropertyField(autoConfigureFmodButtons, new GUIContent("Auto Configure FMODB8 Buttons"));
 
         if (EditorGUI.EndChangeCheck())
         {

@@ -75,7 +75,7 @@ public static class FMODInstaller
         RunSetup();
     }
 
-    [MenuItem("FMOD/FMODB8/Remove Legacy Assets FMOD Copy", false, 21)]
+    [MenuItem("FMOD/FMODB8/Remove Outdated", false, 21)]
     public static void RemoveLegacyInstalledFMODCopyFromMenu()
     {
         RemoveLegacyInstalledFMODCopy(true);
@@ -88,7 +88,7 @@ public static class FMODInstaller
         SessionState.SetBool(PopupShownKey, false);
     }
 
-    [MenuItem("Assets/FMODB8/Create FMOD List", false, 10)]
+    [MenuItem("Assets/FMODB8/Create Event List", false, 10)]
     public static void CreateFMODList()
     {
         Type listType = Type.GetType("CreateFmodList, BISC8.FMODB8.Runtime");

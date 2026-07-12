@@ -6,9 +6,9 @@ using UnityEngine;
 public static class FMODB8AssemblyReferenceFixer
 {
     private const string RuntimeAssemblyName = "BISC8.FMODB8.Runtime";
-    private const string MenuPath = "FMOD/FMODB8/Fix Project Assembly References";
+    private const string MenuPath = "FMOD/FMODB8/Fix Commands";
 
-    [MenuItem(MenuPath, false, 22)]
+    [MenuItem(MenuPath, false, 23)]
     public static void FixProjectAssemblyReferences()
     {
         string[] guids = AssetDatabase.FindAssets("t:AssemblyDefinitionAsset", new[] { "Assets" });

@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Toca e controla um evento FMODB8 a partir de um GameObject.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Emitter")]
 public class FmodEmitter : MonoBehaviour
 {
     [SerializeField] private string eventId;

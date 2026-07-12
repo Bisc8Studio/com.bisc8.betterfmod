@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[AddComponentMenu("FMODB8/FMODB8 Multiplayer Settings")]
 public class FmodMultiplayerSettings : MonoBehaviour
 {
     [SerializeField] private bool isMultiplayer;

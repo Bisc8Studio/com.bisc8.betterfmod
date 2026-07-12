@@ -3,6 +3,7 @@ using UnityEngine;
 /// <summary>
 /// Ponte legado de Animation Event para comandos FMODB8.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Event Anin")]
 public class FmodAninEvent : MonoBehaviour
 {
     /// <summary>

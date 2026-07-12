@@ -37,10 +37,10 @@ public class CreateFmodListEditor : Editor
         EditorGUILayout.Space(4);
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Events", EditorStyles.boldLabel);
-        if (GUILayout.Button("Sync Stages From FMOD", EditorStyles.miniButton, GUILayout.Width(150f)))
+        if (GUILayout.Button("Get To FMOD", EditorStyles.miniButton, GUILayout.Width(150f)))
             SyncAllStagesFromFmod(eventsProp);
 
-        if (GUILayout.Button("Apply Stages To FMOD", EditorStyles.miniButton, GUILayout.Width(135f)))
+        if (GUILayout.Button("Send To FMOD", EditorStyles.miniButton, GUILayout.Width(135f)))
             SyncAllStagesToFmod(eventsProp);
         EditorGUILayout.EndHorizontal();
 
@@ -522,7 +522,7 @@ internal static class FmodStageInProjectSync
             return;
 
         nextConnectionLogTime = EditorApplication.timeSinceStartup + 10d;
-        Debug.LogWarning("FMODB8: nao consegui ler/escrever a cor do evento no FMOD Studio. Verifique se o FMOD Studio esta aberto com scripting habilitado e use 'Sync Stages From FMOD' novamente.");
+        Debug.LogWarning("FMODB8: nao consegui ler/escrever a cor do evento no FMOD Studio. Verifique se o FMOD Studio esta aberto com scripting habilitado e use 'Get To FMOD' novamente.");
     }
 
     private static string EscapeJs(string value)
