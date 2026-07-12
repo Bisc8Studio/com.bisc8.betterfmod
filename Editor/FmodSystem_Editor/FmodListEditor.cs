@@ -88,6 +88,13 @@ public class CreateFmodListEditor : Editor
         {
             SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
             SerializedProperty reference = entry.FindPropertyRelative("reference");
+            FmodStageInProjectSync.LearnColorFromFmod(reference.GetEventReference(), true);
+        }
+
+        for (int i = 0; i < eventsProp.arraySize; i++)
+        {
+            SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
+            SerializedProperty reference = entry.FindPropertyRelative("reference");
             SerializedProperty stage = entry.FindPropertyRelative("stageInProject");
             SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
         }
@@ -330,6 +337,7 @@ internal static class FmodStageInProjectSync
 {
     private static readonly System.Collections.Generic.Dictionary<string, double> NextStudioReadTimeByEvent = new();
     private static readonly System.Collections.Generic.Dictionary<string, FmodColorBinding> ColorBindingByEvent = new();
+    private static readonly System.Collections.Generic.Dictionary<StageInProject, FmodColorWriteValue> WriteValueByStage = new();
     private static readonly System.Collections.Generic.HashSet<string> LoggedUnknownColorValues = new();
     private static double nextConnectionLogTime;
 
@@ -364,15 +372,24 @@ internal static class FmodStageInProjectSync
 
         if (!ColorBindingByEvent.TryGetValue(lookupKey, out FmodColorBinding binding))
         {
-            Debug.LogWarning("FMODB8: use 'Get To FMOD' antes de 'Send To FMOD' para eu descobrir o campo/tipo de cor usado pelo FMOD neste projeto.");
+            LearnColorFromFmod(eventReference, true);
+            ColorBindingByEvent.TryGetValue(lookupKey, out binding);
+        }
+
+        if (string.IsNullOrEmpty(binding.Field))
+        {
+            Debug.LogWarning("FMODB8: nao consegui descobrir o campo de cor deste evento no FMOD. Send ignorado para evitar limpar a cor.");
             return false;
         }
 
-        string color = StageInProjectColors.GetFmodColorName(stage);
-        int colorIndex = StageInProjectColors.GetFmodColorIndex(stage);
-        Color rgb = StageInProjectColors.GetSolidColor(stage);
+        if (!TryGetWriteValue(stage, binding.ValueKind, out FmodColorWriteValue writeValue))
+        {
+            Debug.LogWarning("FMODB8: ainda nao sei o valor real do FMOD para '" + stage + "' no formato '" + binding.ValueKind + "'. Use Get To FMOD em pelo menos um evento com essa cor, ou altere esse stage no FMOD uma vez, antes de mandar pela Unity.");
+            return false;
+        }
+
         string command = string.Format(
-            @"(function(lookupKey, eventPath, ownerName, field, valueKind, color, colorIndex, r, g, b) {{
+            @"(function(lookupKey, eventPath, ownerName, field, valueKind, stringValue, numberValue, r, g, b) {{
                 function capture(value) {{
                     if (value === undefined || value === null) return {{ kind: ""null"", value: null }};
                     if (typeof value === ""number"") return {{ kind: ""number"", value: value }};
@@ -402,12 +419,12 @@ internal static class FmodStageInProjectSync
                     if (!owner || owner[field] === undefined || owner[field] === null) return false;
 
                     if (valueKind === ""number"") {{
-                        owner[field] = colorIndex;
+                        owner[field] = numberValue;
                         return true;
                     }}
 
                     if (valueKind === ""string"") {{
-                        owner[field] = color;
+                        owner[field] = stringValue;
                         return true;
                     }}
 
@@ -428,10 +445,10 @@ internal static class FmodStageInProjectSync
                 function verify(owner) {{
                     var current = owner[field];
 
-                    if (valueKind === ""number"") return current === colorIndex;
+                    if (valueKind === ""number"") return current === numberValue;
 
                     if (valueKind === ""string"") {{
-                        return String(current).toLowerCase() === String(color).toLowerCase();
+                        return String(current) === String(stringValue);
                     }}
 
                     if (valueKind === ""rgb"") {{
@@ -470,17 +487,22 @@ internal static class FmodStageInProjectSync
             EscapeJs(binding.Owner),
             EscapeJs(binding.Field),
             EscapeJs(binding.ValueKind),
-            EscapeJs(color),
-            colorIndex,
-            rgb.r.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            rgb.g.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            rgb.b.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            EscapeJs(writeValue.StringValue),
+            writeValue.NumberValue.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            writeValue.R.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            writeValue.G.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            writeValue.B.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
         bool sent = TrySendScriptCommand(command);
         if (!sent)
             Debug.LogWarning("FMODB8: Send To FMOD falhou e tentei preservar a cor original. Use 'Get To FMOD' novamente; se ainda ler a cor, nada foi perdido.");
 
         return sent;
+    }
+
+    public static bool LearnColorFromFmod(EventReference eventReference, bool force = false)
+    {
+        return TryGetStage(eventReference, out _, force);
     }
 
     public static bool TryGetStage(EventReference eventReference, out StageInProject stage, bool force = false)
@@ -532,9 +554,14 @@ internal static class FmodStageInProjectSync
 
         string color = TryGetScriptOutput(command);
         if (TryParseColorBinding(color, out FmodColorBinding binding, out string colorValue))
+        {
             ColorBindingByEvent[lookupKey] = binding;
+        }
 
         bool parsed = StageInProjectColors.TryGetStageFromFmodColor(colorValue, out stage);
+        if (parsed && binding.IsValid)
+            LearnWriteValue(stage, binding, colorValue);
+
         if (!parsed && !string.IsNullOrWhiteSpace(colorValue) && LoggedUnknownColorValues.Add(colorValue))
             Debug.LogWarning("FMODB8: cor do evento FMOD nao reconhecida para Stage In Project: " + colorValue);
 
@@ -562,6 +589,67 @@ internal static class FmodStageInProjectSync
 
         colorValue = parts[2] + ":" + parts[3];
         return true;
+    }
+
+    private static void LearnWriteValue(StageInProject stage, FmodColorBinding binding, string colorValue)
+    {
+        FmodColorWriteValue value = new FmodColorWriteValue
+        {
+            ValueKind = binding.ValueKind
+        };
+
+        if (binding.ValueKind == "number")
+        {
+            string rawNumber = colorValue.Replace("number:", string.Empty).Trim();
+            if (!float.TryParse(rawNumber, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float numberValue))
+                return;
+
+            value.NumberValue = numberValue;
+        }
+        else if (binding.ValueKind == "rgb")
+        {
+            string[] parts = colorValue.Replace("rgb:", string.Empty).Split(',');
+            if (parts.Length < 3
+                || !float.TryParse(parts[0], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float r)
+                || !float.TryParse(parts[1], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float g)
+                || !float.TryParse(parts[2], System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float b))
+            {
+                return;
+            }
+
+            value.R = r;
+            value.G = g;
+            value.B = b;
+        }
+        else
+        {
+            int separatorIndex = colorValue.IndexOf(':');
+            value.StringValue = separatorIndex >= 0 ? colorValue.Substring(separatorIndex + 1) : colorValue;
+        }
+
+        WriteValueByStage[stage] = value;
+    }
+
+    private static bool TryGetWriteValue(StageInProject stage, string valueKind, out FmodColorWriteValue value)
+    {
+        if (WriteValueByStage.TryGetValue(stage, out value) && value.ValueKind == valueKind)
+            return true;
+
+        if (valueKind == "rgb")
+        {
+            Color color = StageInProjectColors.GetSolidColor(stage);
+            value = new FmodColorWriteValue
+            {
+                ValueKind = "rgb",
+                R = color.r,
+                G = color.g,
+                B = color.b
+            };
+            return true;
+        }
+
+        value = default;
+        return false;
     }
 
     private static bool TryGetLookupKeys(EventReference eventReference, out string lookupKey, out string eventPath)
@@ -638,5 +726,17 @@ internal static class FmodStageInProjectSync
         public string Owner;
         public string Field;
         public string ValueKind;
+
+        public bool IsValid => !string.IsNullOrEmpty(Field) && !string.IsNullOrEmpty(ValueKind);
+    }
+
+    private struct FmodColorWriteValue
+    {
+        public string ValueKind;
+        public string StringValue;
+        public float NumberValue;
+        public float R;
+        public float G;
+        public float B;
     }
 }
