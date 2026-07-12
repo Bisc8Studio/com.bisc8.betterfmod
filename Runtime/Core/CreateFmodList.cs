@@ -21,6 +21,18 @@ public class FMODListEntry
 {
     public string id;
     public EventReference reference;
+    public StageInProject stageInProject = StageInProject.Undone;
+}
+
+/// <summary>
+/// Define o estado de implementacao de um evento entre Unity e FMOD Studio.
+/// </summary>
+public enum StageInProject
+{
+    Undone,
+    InProcess,
+    Done,
+    Implemented
 }
 
 /// <summary>
