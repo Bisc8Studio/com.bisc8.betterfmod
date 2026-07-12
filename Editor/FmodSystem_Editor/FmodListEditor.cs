@@ -73,9 +73,6 @@ public class CreateFmodListEditor : Editor
 
     private void SyncAllStagesFromFmod(SerializedProperty eventsProp)
     {
-        if (!FmodStageInProjectSync.CanUseStudio())
-            return;
-
         for (int i = 0; i < eventsProp.arraySize; i++)
         {
             SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
@@ -87,9 +84,6 @@ public class CreateFmodListEditor : Editor
 
     private void SyncAllStagesToFmod(SerializedProperty eventsProp)
     {
-        if (!FmodStageInProjectSync.CanUseStudio())
-            return;
-
         for (int i = 0; i < eventsProp.arraySize; i++)
         {
             SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
@@ -335,6 +329,7 @@ internal static class StageInProjectColors
 internal static class FmodStageInProjectSync
 {
     private static readonly System.Collections.Generic.Dictionary<string, double> NextStudioReadTimeByEvent = new();
+    private static readonly System.Collections.Generic.Dictionary<string, FmodColorBinding> ColorBindingByEvent = new();
     private static readonly System.Collections.Generic.HashSet<string> LoggedUnknownColorValues = new();
     private static double nextConnectionLogTime;
 
@@ -367,25 +362,57 @@ internal static class FmodStageInProjectSync
         if (!TryGetLookupKeys(eventReference, out string lookupKey, out string eventPath))
             return false;
 
+        if (!ColorBindingByEvent.TryGetValue(lookupKey, out FmodColorBinding binding))
+        {
+            Debug.LogWarning("FMODB8: use 'Get To FMOD' antes de 'Send To FMOD' para eu descobrir o campo/tipo de cor usado pelo FMOD neste projeto.");
+            return false;
+        }
+
         string color = StageInProjectColors.GetFmodColorName(stage);
         int colorIndex = StageInProjectColors.GetFmodColorIndex(stage);
         Color rgb = StageInProjectColors.GetSolidColor(stage);
         string command = string.Format(
-            @"(function(lookupKey, eventPath, color, colorIndex, r, g, b) {{
-                function setColorValue(owner, field) {{
-                    var current = owner[field];
+            @"(function(lookupKey, eventPath, ownerName, field, valueKind, color, colorIndex, r, g, b) {{
+                function capture(value) {{
+                    if (value === undefined || value === null) return {{ kind: ""null"", value: null }};
+                    if (typeof value === ""number"") return {{ kind: ""number"", value: value }};
+                    if (typeof value === ""string"") return {{ kind: ""string"", value: value }};
+                    if (value && typeof value === ""object"" && value.r !== undefined && value.g !== undefined && value.b !== undefined) {{
+                        return {{ kind: ""rgb"", value: {{ r: value.r, g: value.g, b: value.b }} }};
+                    }}
+                    return {{ kind: ""object"", value: value }};
+                }}
 
-                    if (typeof current === ""number"") {{
+                function restore(owner, previous) {{
+                    if (previous.kind === ""rgb"") {{
+                        var current = owner[field];
+                        if (current && current.r !== undefined && current.g !== undefined && current.b !== undefined) {{
+                            current.r = previous.value.r;
+                            current.g = previous.value.g;
+                            current.b = previous.value.b;
+                            owner[field] = current;
+                            return;
+                        }}
+                    }}
+
+                    owner[field] = previous.value;
+                }}
+
+                function assign(owner) {{
+                    if (!owner || owner[field] === undefined || owner[field] === null) return false;
+
+                    if (valueKind === ""number"") {{
                         owner[field] = colorIndex;
                         return true;
                     }}
 
-                    if (typeof current === ""string"") {{
+                    if (valueKind === ""string"") {{
                         owner[field] = color;
                         return true;
                     }}
 
-                    if (current && typeof current === ""object"") {{
+                    if (valueKind === ""rgb"") {{
+                        var current = owner[field];
                         if (current.r !== undefined && current.g !== undefined && current.b !== undefined) {{
                             current.r = r;
                             current.g = g;
@@ -393,11 +420,26 @@ internal static class FmodStageInProjectSync
                             owner[field] = current;
                             return true;
                         }}
+                    }}
 
-                        if (current.name !== undefined) {{
-                            owner[field] = color;
-                            return true;
-                        }}
+                    return false;
+                }}
+
+                function verify(owner) {{
+                    var current = owner[field];
+
+                    if (valueKind === ""number"") return current === colorIndex;
+
+                    if (valueKind === ""string"") {{
+                        return String(current).toLowerCase() === String(color).toLowerCase();
+                    }}
+
+                    if (valueKind === ""rgb"") {{
+                        return current
+                            && current.r !== undefined
+                            && Math.abs(current.r - r) < 0.001
+                            && Math.abs(current.g - g) < 0.001
+                            && Math.abs(current.b - b) < 0.001;
                     }}
 
                     return false;
@@ -406,26 +448,39 @@ internal static class FmodStageInProjectSync
                 var eventRef = studio.project.lookup(lookupKey);
                 if (!eventRef && eventPath) eventRef = studio.project.lookup(eventPath);
                 if (!eventRef) return false;
-                var fields = [""color"", ""colour"", ""eventColor"", ""eventColour"", ""labelColor"", ""labelColour"", ""markerColor"", ""markerColour"", ""displayColor"", ""displayColour""];
-                for (var i = 0; i < fields.length; i++) {{
-                    try {{
-                        if (eventRef[fields[i]] !== undefined && setColorValue(eventRef, fields[i])) return true;
-                    }} catch (e) {{}}
-                }}
+                var owner = ownerName === ""properties"" ? eventRef.properties : eventRef;
+                if (!owner || owner[field] === undefined || owner[field] === null) return false;
+
+                var previous = capture(owner[field]);
+
                 try {{
-                    if (eventRef.properties && eventRef.properties.color !== undefined && setColorValue(eventRef.properties, ""color"")) return true;
-                }} catch (e) {{}}
-                return false;
-            }})(""{0}"", ""{1}"", ""{2}"", {3}, {4}, {5}, {6});",
+                    if (!assign(owner)) return false;
+                    if (verify(owner)) return true;
+                    restore(owner, previous);
+                    return false;
+                }} catch (e) {{
+                    try {{
+                        restore(owner, previous);
+                    }} catch (restoreError) {{}}
+                    return false;
+                }}
+            }})(""{0}"", ""{1}"", ""{2}"", ""{3}"", ""{4}"", ""{5}"", {6}, {7}, {8}, {9});",
             EscapeJs(lookupKey),
             EscapeJs(eventPath),
+            EscapeJs(binding.Owner),
+            EscapeJs(binding.Field),
+            EscapeJs(binding.ValueKind),
             EscapeJs(color),
             colorIndex,
             rgb.r.ToString(System.Globalization.CultureInfo.InvariantCulture),
             rgb.g.ToString(System.Globalization.CultureInfo.InvariantCulture),
             rgb.b.ToString(System.Globalization.CultureInfo.InvariantCulture));
 
-        return TrySendScriptCommand(command);
+        bool sent = TrySendScriptCommand(command);
+        if (!sent)
+            Debug.LogWarning("FMODB8: Send To FMOD falhou e tentei preservar a cor original. Use 'Get To FMOD' novamente; se ainda ler a cor, nada foi perdido.");
+
+        return sent;
     }
 
     public static bool TryGetStage(EventReference eventReference, out StageInProject stage, bool force = false)
@@ -446,14 +501,14 @@ internal static class FmodStageInProjectSync
 
         string command = string.Format(
             @"(function(lookupKey, eventPath) {{
-                function stringifyColor(value) {{
+                function stringifyColor(ownerName, field, value) {{
                     if (value === undefined || value === null) return """";
-                    if (typeof value === ""string"") return value;
-                    if (typeof value === ""number"") return ""number:"" + value;
-                    if (value.name !== undefined) return String(value.name);
-                    if (value.displayName !== undefined) return String(value.displayName);
-                    if (value.r !== undefined && value.g !== undefined && value.b !== undefined) return ""rgb:"" + value.r + "","" + value.g + "","" + value.b;
-                    return String(value);
+                    if (typeof value === ""string"") return ownerName + ""|"" + field + ""|string|"" + value;
+                    if (typeof value === ""number"") return ownerName + ""|"" + field + ""|number|"" + value;
+                    if (value.r !== undefined && value.g !== undefined && value.b !== undefined) return ownerName + ""|"" + field + ""|rgb|"" + value.r + "","" + value.g + "","" + value.b;
+                    if (value.name !== undefined) return ownerName + ""|"" + field + ""|string|"" + String(value.name);
+                    if (value.displayName !== undefined) return ownerName + ""|"" + field + ""|string|"" + String(value.displayName);
+                    return ownerName + ""|"" + field + ""|string|"" + String(value);
                 }}
 
                 var eventRef = studio.project.lookup(lookupKey);
@@ -463,12 +518,12 @@ internal static class FmodStageInProjectSync
                 for (var i = 0; i < fields.length; i++) {{
                     try {{
                         if (eventRef[fields[i]] !== undefined && eventRef[fields[i]] !== null) {{
-                            return stringifyColor(eventRef[fields[i]]);
+                            return stringifyColor(""event"", fields[i], eventRef[fields[i]]);
                         }}
                     }} catch (e) {{}}
                 }}
                 try {{
-                    if (eventRef.properties && eventRef.properties.color !== undefined) return stringifyColor(eventRef.properties.color);
+                    if (eventRef.properties && eventRef.properties.color !== undefined && eventRef.properties.color !== null) return stringifyColor(""properties"", ""color"", eventRef.properties.color);
                 }} catch (e) {{}}
                 return """";
             }})(""{0}"", ""{1}"");",
@@ -476,11 +531,37 @@ internal static class FmodStageInProjectSync
             EscapeJs(eventPath));
 
         string color = TryGetScriptOutput(command);
-        bool parsed = StageInProjectColors.TryGetStageFromFmodColor(color, out stage);
-        if (!parsed && !string.IsNullOrWhiteSpace(color) && LoggedUnknownColorValues.Add(color))
-            Debug.LogWarning("FMODB8: cor do evento FMOD nao reconhecida para Stage In Project: " + color);
+        if (TryParseColorBinding(color, out FmodColorBinding binding, out string colorValue))
+            ColorBindingByEvent[lookupKey] = binding;
+
+        bool parsed = StageInProjectColors.TryGetStageFromFmodColor(colorValue, out stage);
+        if (!parsed && !string.IsNullOrWhiteSpace(colorValue) && LoggedUnknownColorValues.Add(colorValue))
+            Debug.LogWarning("FMODB8: cor do evento FMOD nao reconhecida para Stage In Project: " + colorValue);
 
         return parsed;
+    }
+
+    private static bool TryParseColorBinding(string rawValue, out FmodColorBinding binding, out string colorValue)
+    {
+        binding = default;
+        colorValue = rawValue;
+
+        if (string.IsNullOrWhiteSpace(rawValue))
+            return false;
+
+        string[] parts = rawValue.Split(new[] { '|' }, 4);
+        if (parts.Length != 4)
+            return false;
+
+        binding = new FmodColorBinding
+        {
+            Owner = parts[0],
+            Field = parts[1],
+            ValueKind = parts[2]
+        };
+
+        colorValue = parts[2] + ":" + parts[3];
+        return true;
     }
 
     private static bool TryGetLookupKeys(EventReference eventReference, out string lookupKey, out string eventPath)
@@ -550,5 +631,12 @@ internal static class FmodStageInProjectSync
     private static string EscapeJs(string value)
     {
         return value?.Replace("\\", "\\\\").Replace("\"", "\\\"") ?? string.Empty;
+    }
+
+    private struct FmodColorBinding
+    {
+        public string Owner;
+        public string Field;
+        public string ValueKind;
     }
 }
