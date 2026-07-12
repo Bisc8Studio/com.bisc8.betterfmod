@@ -213,6 +213,21 @@ internal static class StageInProjectColors
         }
     }
 
+    public static string GetFmodColorDisplayName(StageInProject stage)
+    {
+        switch (stage)
+        {
+            case StageInProject.InProcess:
+                return "Yellow";
+            case StageInProject.Done:
+                return "Green";
+            case StageInProject.Implemented:
+                return "Blue";
+            default:
+                return "Red";
+        }
+    }
+
     public static int GetFmodColorIndex(StageInProject stage)
     {
         switch (stage)
@@ -634,6 +649,26 @@ internal static class FmodStageInProjectSync
     {
         if (WriteValueByStage.TryGetValue(stage, out value) && value.ValueKind == valueKind)
             return true;
+
+        if (valueKind == "number")
+        {
+            value = new FmodColorWriteValue
+            {
+                ValueKind = "number",
+                NumberValue = StageInProjectColors.GetFmodColorIndex(stage)
+            };
+            return true;
+        }
+
+        if (valueKind == "string")
+        {
+            value = new FmodColorWriteValue
+            {
+                ValueKind = "string",
+                StringValue = StageInProjectColors.GetFmodColorDisplayName(stage)
+            };
+            return true;
+        }
 
         if (valueKind == "rgb")
         {
