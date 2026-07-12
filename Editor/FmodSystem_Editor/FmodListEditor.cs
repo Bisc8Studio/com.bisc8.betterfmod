@@ -73,6 +73,9 @@ public class CreateFmodListEditor : Editor
 
     private void SyncAllStagesFromFmod(SerializedProperty eventsProp)
     {
+        if (!FmodStageInProjectSync.CanUseStudio())
+            return;
+
         for (int i = 0; i < eventsProp.arraySize; i++)
         {
             SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
@@ -84,6 +87,9 @@ public class CreateFmodListEditor : Editor
 
     private void SyncAllStagesToFmod(SerializedProperty eventsProp)
     {
+        if (!FmodStageInProjectSync.CanUseStudio())
+            return;
+
         for (int i = 0; i < eventsProp.arraySize; i++)
         {
             SerializedProperty entry = eventsProp.GetArrayElementAtIndex(i);
@@ -98,8 +104,6 @@ public class CreateFmodListEditor : Editor
         SerializedProperty id = entry.FindPropertyRelative("id");
         SerializedProperty reference = entry.FindPropertyRelative("reference");
         SerializedProperty stage = entry.FindPropertyRelative("stageInProject");
-
-        SyncStageFromFmod(reference, stage);
 
         StageInProject currentStage = (StageInProject)stage.enumValueIndex;
         Color stageColor = StageInProjectColors.GetEditorColor(currentStage);
@@ -145,12 +149,11 @@ public class CreateFmodListEditor : Editor
             EditorGUILayout.PropertyField(id, new GUIContent("ID"));
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(reference, new GUIContent("Reference"));
-            if (EditorGUI.EndChangeCheck())
-                SyncStageFromFmod(reference, stage, true);
+            EditorGUI.EndChangeCheck();
 
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(stage, new GUIContent("Stage In Project"));
-            if (EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
                 SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
         }
         else
@@ -158,7 +161,7 @@ public class CreateFmodListEditor : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(stage, GUIContent.none, GUILayout.MaxWidth(160f));
-            if (EditorGUI.EndChangeCheck())
+            if (EditorGUI.EndChangeCheck() && FmodStageInProjectSync.CanUseStudio(false))
                 SyncStageToFmod(reference, (StageInProject)stage.enumValueIndex);
 
             GUILayout.Label(reference.GetEventReferencePath(), EditorStyles.miniLabel);
@@ -328,6 +331,30 @@ internal static class FmodStageInProjectSync
     private static readonly System.Collections.Generic.Dictionary<string, double> NextStudioReadTimeByEvent = new();
     private static readonly System.Collections.Generic.HashSet<string> LoggedUnknownColorValues = new();
     private static double nextConnectionLogTime;
+
+    public static bool CanUseStudio(bool showDialog = true)
+    {
+        bool connected = false;
+
+        try
+        {
+            connected = EditorUtils.IsConnectedToStudio();
+        }
+        catch
+        {
+            connected = false;
+        }
+
+        if (!connected && showDialog)
+        {
+            EditorUtility.DisplayDialog(
+                "BetterFMOD",
+                "Nao consegui conectar no FMOD Studio ainda. Abra o FMOD Studio com o projeto carregado e tente de novo. Se acabou de abrir, espere alguns segundos e clique novamente.",
+                "OK");
+        }
+
+        return connected;
+    }
 
     public static bool TrySetStage(EventReference eventReference, StageInProject stage)
     {
