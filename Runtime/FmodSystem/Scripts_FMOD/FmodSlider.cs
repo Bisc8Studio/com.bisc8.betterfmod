@@ -5,6 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Componente legado de slider que controla volumes de buses pelo FMODB8.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Slider Set")]
 public class FmodSlider : MonoBehaviour
 {
     [Header("Mains Sliders")]

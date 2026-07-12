@@ -18,16 +18,16 @@ public static class FMODPrefabMenu
         CreatePrefab("FMODB8_Multiplayer.prefab", command, EnsureNetcodeRelayComponents);
     }
 
-    [MenuItem("GameObject/FMODB8/Fmod Emitter Mng", false, 10)]
+    [MenuItem("GameObject/FMODB8/FMODB8 Empty Emmiter", false, 10)]
     private static void CreateFmodEmitter(MenuCommand command)
     {
-        CreatePrefab("FmodEmitter_Mng.prefab", command);
+        CreatePrefab("FMODB8 Empty Emmiter.prefab", command);
     }
 
-    [MenuItem("GameObject/FMODB8/Fmod Slider Mng", false, 11)]
+    [MenuItem("GameObject/FMODB8/FMODB8 Slider Config", false, 11)]
     private static void CreateFmodSlider(MenuCommand command)
     {
-        CreatePrefab("FmodSlider_Mng.prefab", command);
+        CreatePrefab("FMODB8 Slider Config.prefab", command);
     }
 
     private static void CreatePrefab(string prefabFileName, MenuCommand command, Action<GameObject> configure = null)

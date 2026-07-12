@@ -5,6 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Emissor do FMODB8 configurado por funcoes da cascata.
 /// </summary>
+[AddComponentMenu("FMODB8/FMODB8 Emmiter")]
 public class FmodEmitterCustom : MonoBehaviour
 {
     /// <summary>
