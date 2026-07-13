@@ -4,9 +4,7 @@ using UnityEngine;
 [CustomEditor(typeof(FmodAninEvent))]
 public class FmodAninEventEditor : Editor
 {
-    private static readonly string[] Tabs = { "Event", "Emitter", "Condition" };
-    private static int selectedTab;
-
+    private SerializedProperty script;
     private SerializedProperty defaultEventId;
     private SerializedProperty defaultParameter;
     private SerializedProperty defaultLabel;
@@ -19,6 +17,7 @@ public class FmodAninEventEditor : Editor
 
     private void OnEnable()
     {
+        script = serializedObject.FindProperty("m_Script");
         defaultEventId = serializedObject.FindProperty("defaultEventId");
         defaultParameter = serializedObject.FindProperty("defaultParameter");
         defaultLabel = serializedObject.FindProperty("defaultLabel");
@@ -34,49 +33,46 @@ public class FmodAninEventEditor : Editor
     {
         serializedObject.Update();
 
-        selectedTab = GUILayout.Toolbar(selectedTab, Tabs);
-        EditorGUILayout.Space(8);
+        GUI.enabled = false;
+        EditorGUILayout.PropertyField(script);
+        GUI.enabled = true;
 
-        switch (selectedTab)
-        {
-            case 0:
-                DrawEventTab();
-                break;
-            case 1:
-                DrawEmitterTab();
-                break;
-            case 2:
-                DrawConditionTab();
-                break;
-        }
+        EditorGUILayout.Space(6);
+        DrawEventDefaults();
+
+        EditorGUILayout.Space(8);
+        DrawEmitterDefaults();
+
+        EditorGUILayout.Space(8);
+        DrawConditions();
 
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void DrawEventTab()
+    private void DrawEventDefaults()
     {
-        EditorGUILayout.LabelField("Animation Event Defaults", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(defaultEventId, new GUIContent("Event ID"));
-        EditorGUILayout.PropertyField(defaultParameter, new GUIContent("Parameter"));
-        EditorGUILayout.PropertyField(defaultLabel, new GUIContent("Label"));
-        EditorGUILayout.PropertyField(defaultTarget, new GUIContent("Target"));
-        EditorGUILayout.PropertyField(defaultRadius, new GUIContent("Radius"));
-        EditorGUILayout.PropertyField(defaultFadeTime, new GUIContent("Fade Time"));
+        EditorGUILayout.LabelField("Animation Event", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(defaultEventId, new GUIContent("Default Event ID"));
+        EditorGUILayout.PropertyField(defaultParameter, new GUIContent("Default Parameter"));
+        EditorGUILayout.PropertyField(defaultLabel, new GUIContent("Default Label"));
+        EditorGUILayout.PropertyField(defaultTarget, new GUIContent("Default Target"));
+        EditorGUILayout.PropertyField(defaultRadius, new GUIContent("Default Radius"));
+        EditorGUILayout.PropertyField(defaultFadeTime, new GUIContent("Default Fade Time"));
         EditorGUILayout.PropertyField(warnWhenMissing, new GUIContent("Warnings"));
     }
 
-    private void DrawEmitterTab()
+    private void DrawEmitterDefaults()
     {
         EditorGUILayout.LabelField("Emitter", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(defaultEmitter, new GUIContent("Default Emitter"));
     }
 
-    private void DrawConditionTab()
+    private void DrawConditions()
     {
         EditorGUILayout.LabelField("Conditions", EditorStyles.boldLabel);
 
         if (conditions.arraySize == 0)
-            EditorGUILayout.HelpBox("Condition None: all animation events execute.", MessageType.Info);
+            EditorGUILayout.HelpBox("Condition None: animation events always execute.", MessageType.Info);
 
         for (int i = 0; i < conditions.arraySize; i++)
         {
@@ -87,7 +83,7 @@ public class FmodAninEventEditor : Editor
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Condition " + i, EditorStyles.boldLabel);
 
-            if (GUILayout.Button("-", EditorStyles.miniButton, GUILayout.Width(24)))
+            if (GUILayout.Button("Remove", EditorStyles.miniButton, GUILayout.Width(64)))
             {
                 conditions.DeleteArrayElementAtIndex(i);
                 EditorGUILayout.EndHorizontal();
@@ -97,21 +93,16 @@ public class FmodAninEventEditor : Editor
 
             EditorGUILayout.EndHorizontal();
 
-            if (entries.arraySize == 0)
-                EditorGUILayout.HelpBox("Empty condition is treated as None.", MessageType.None);
-
             for (int j = 0; j < entries.arraySize; j++)
-            {
                 DrawConditionEntry(entries, j);
-            }
 
-            if (GUILayout.Button("+ Add Option", EditorStyles.miniButton))
+            if (GUILayout.Button("+ Add OR Option", EditorStyles.miniButton))
                 AddConditionEntry(entries);
 
             EditorGUILayout.EndVertical();
         }
 
-        if (GUILayout.Button("+ Add Condition", EditorStyles.miniButton))
+        if (GUILayout.Button("+ Add AND Condition", EditorStyles.miniButton))
             AddConditionGroup();
     }
 

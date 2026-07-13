@@ -32,7 +32,7 @@ public class FmodAninEvent : MonoBehaviour
     [System.Serializable]
     public sealed class ConditionGroup
     {
-        public List<ConditionEntry> entries = new();
+        public List<ConditionEntry> entries = new List<ConditionEntry>();
     }
 
     [Header("Defaults")]
@@ -48,13 +48,23 @@ public class FmodAninEvent : MonoBehaviour
     [SerializeField] private FmodEmitterCustom defaultEmitter;
 
     [Header("Conditions")]
-    [SerializeField] private List<ConditionGroup> conditions = new();
+    [SerializeField] private List<ConditionGroup> conditions = new List<ConditionGroup>();
 
     private FmodHandle lastHandle;
 
     public void Play()
     {
         PlayOneShot(defaultEventId);
+    }
+
+    public void PlayEvent()
+    {
+        PlayOneShot(defaultEventId);
+    }
+
+    public void PlayEvent(string id)
+    {
+        PlayOneShot(id);
     }
 
     /// <summary>
@@ -117,6 +127,11 @@ public class FmodAninEvent : MonoBehaviour
         Play3D(defaultEventId);
     }
 
+    public void PlayEvent3D(string id)
+    {
+        Play3D(id);
+    }
+
     public void PlayAttached(string id)
     {
         if (!CanExecute())
@@ -135,6 +150,11 @@ public class FmodAninEvent : MonoBehaviour
     public void PlayAttached()
     {
         PlayAttached(defaultEventId);
+    }
+
+    public void PlayEventAttached(string id)
+    {
+        PlayAttached(id);
     }
 
     public void PlayAttachedRadius(string id)
@@ -258,6 +278,11 @@ public class FmodAninEvent : MonoBehaviour
     }
 
     public void Stop(string id)
+    {
+        StopFadeOn(id);
+    }
+
+    public void StopEvent(string id)
     {
         StopFadeOn(id);
     }
@@ -435,6 +460,21 @@ public class FmodAninEvent : MonoBehaviour
             emitter.Play();
     }
 
+    public void PlayEmitterByKey(string emitterKey)
+    {
+        PlayEmitter(emitterKey);
+    }
+
+    public void PlayEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterReference);
+        if (emitter != null)
+            emitter.Play();
+    }
+
     public void StopEmitter(FmodEmitterCustom emitterObj)
     {
         if (!CanExecute())
@@ -456,6 +496,21 @@ public class FmodAninEvent : MonoBehaviour
             return;
 
         FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
+        if (emitter != null)
+            emitter.Stop(defaultFadeTime > 0f);
+    }
+
+    public void StopEmitterByKey(string emitterKey)
+    {
+        StopEmitter(emitterKey);
+    }
+
+    public void StopEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterReference);
         if (emitter != null)
             emitter.Stop(defaultFadeTime > 0f);
     }
@@ -485,6 +540,21 @@ public class FmodAninEvent : MonoBehaviour
             emitter.Pause(true);
     }
 
+    public void PauseEmitterByKey(string emitterKey)
+    {
+        PauseEmitter(emitterKey);
+    }
+
+    public void PauseEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterReference);
+        if (emitter != null)
+            emitter.Pause(true);
+    }
+
     public void ResumeEmitter(FmodEmitterCustom emitterObj)
     {
         if (!CanExecute())
@@ -506,6 +576,21 @@ public class FmodAninEvent : MonoBehaviour
             return;
 
         FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
+        if (emitter != null)
+            emitter.Pause(false);
+    }
+
+    public void ResumeEmitterByKey(string emitterKey)
+    {
+        ResumeEmitter(emitterKey);
+    }
+
+    public void ResumeEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterReference);
         if (emitter != null)
             emitter.Pause(false);
     }
@@ -537,6 +622,19 @@ public class FmodAninEvent : MonoBehaviour
         SetEmitterEnabled(ResolveEmitter(emitterKey), true);
     }
 
+    public void AddEmitterByKey(string emitterKey)
+    {
+        AddEmitter(emitterKey);
+    }
+
+    public void AddEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        SetEmitterEnabled(ResolveEmitter(emitterReference), true);
+    }
+
     /// <summary>
     /// Desativa um componente de emissor legado.
     /// </summary>
@@ -562,6 +660,19 @@ public class FmodAninEvent : MonoBehaviour
             return;
 
         SetEmitterEnabled(ResolveEmitter(emitterKey), false);
+    }
+
+    public void RemoveEmitterByKey(string emitterKey)
+    {
+        RemoveEmitter(emitterKey);
+    }
+
+    public void RemoveEmitterByReference(UnityEngine.Object emitterReference)
+    {
+        if (!CanExecute())
+            return;
+
+        SetEmitterEnabled(ResolveEmitter(emitterReference), false);
     }
 
     private void SetEmitterEnabled(FmodEmitterCustom emitterObj, bool enabled)
@@ -595,6 +706,34 @@ public class FmodAninEvent : MonoBehaviour
 
         if (warnWhenMissing)
             Debug.LogWarning("[FMODB8] Emitter key not found for animation event: " + emitterKey, this);
+
+        return null;
+    }
+
+    private FmodEmitterCustom ResolveEmitter(UnityEngine.Object emitterReference)
+    {
+        if (emitterReference == null)
+            return ResolveEmitter(defaultEmitter);
+
+        if (emitterReference is FmodEmitterCustom directEmitter)
+            return directEmitter;
+
+        if (emitterReference is FmodB8EmitterKey emitterKey)
+            return emitterKey.Emitter;
+
+        if (emitterReference is GameObject emitterObject)
+        {
+            FmodB8EmitterKey keyComponent = emitterObject.GetComponent<FmodB8EmitterKey>();
+            if (keyComponent != null)
+                return keyComponent.Emitter;
+
+            FmodEmitterCustom emitterComponent = emitterObject.GetComponent<FmodEmitterCustom>();
+            if (emitterComponent != null)
+                return emitterComponent;
+        }
+
+        if (warnWhenMissing)
+            Debug.LogWarning("[FMODB8] Object reference is not a FMODB8 emitter key or emitter.", this);
 
         return null;
     }

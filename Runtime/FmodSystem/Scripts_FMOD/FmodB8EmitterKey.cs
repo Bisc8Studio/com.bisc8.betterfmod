@@ -9,7 +9,7 @@ using UnityEngine;
 [AddComponentMenu("FMODB8/FMODB8 Emmiter Key")]
 public class FmodB8EmitterKey : MonoBehaviour
 {
-    private static readonly Dictionary<string, FmodB8EmitterKey> Registry = new();
+    private static readonly Dictionary<string, FmodB8EmitterKey> Registry = new Dictionary<string, FmodB8EmitterKey>();
 
     [SerializeField] private string key;
 
