@@ -26,12 +26,13 @@ public class FmodEmitterCustomEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
+        EditorGUI.BeginChangeCheck();
 
         EditorGUILayout.PropertyField(mode);
 
         if ((FmodEmitterCustom.EmitterMode)mode.enumValueIndex == FmodEmitterCustom.EmitterMode.None)
         {
-            serializedObject.ApplyModifiedProperties();
+            ApplyModifiedPropertiesAndValidate();
             return;
         }
 
@@ -53,7 +54,7 @@ public class FmodEmitterCustomEditor : Editor
 
         EditorGUILayout.Space();
 
-        serializedObject.ApplyModifiedProperties();
+        ApplyModifiedPropertiesAndValidate();
     }
 
     void DrawBasic()
@@ -88,6 +89,8 @@ public class FmodEmitterCustomEditor : Editor
         SerializedProperty transform = step.FindPropertyRelative("transform");
         SerializedProperty vectorValue = step.FindPropertyRelative("vectorValue");
         SerializedProperty floatValue = step.FindPropertyRelative("floatValue");
+        SerializedProperty floatValue2 = step.FindPropertyRelative("floatValue2");
+        SerializedProperty boolValue = step.FindPropertyRelative("boolValue");
         SerializedProperty intValue = step.FindPropertyRelative("intValue");
         SerializedProperty parameter = step.FindPropertyRelative("parameter");
         SerializedProperty label = step.FindPropertyRelative("label");
@@ -132,6 +135,18 @@ public class FmodEmitterCustomEditor : Editor
             case FmodEmitterCustom.CascadeFunction.FadeIn:
                 EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
                 break;
+            case FmodEmitterCustom.CascadeFunction.FadeOut:
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Duration"));
+                break;
+            case FmodEmitterCustom.CascadeFunction.FadeTo:
+                EditorGUILayout.PropertyField(floatValue, new GUIContent("Volume"));
+                EditorGUILayout.PropertyField(floatValue2, new GUIContent("Duration"));
+                break;
+            case FmodEmitterCustom.CascadeFunction.Stop:
+                EditorGUILayout.PropertyField(boolValue, new GUIContent("Fade"));
+                if (boolValue.boolValue)
+                    EditorGUILayout.PropertyField(floatValue, new GUIContent("Fade Time"));
+                break;
             case FmodEmitterCustom.CascadeFunction.Parameter:
                 EditorGUILayout.PropertyField(parameter, new GUIContent("Parameter"));
                 EditorGUILayout.PropertyField(floatValue, new GUIContent("Value"));
@@ -142,6 +157,9 @@ public class FmodEmitterCustomEditor : Editor
                 break;
             case FmodEmitterCustom.CascadeFunction.TimelinePosition:
                 EditorGUILayout.PropertyField(intValue, new GUIContent("Milliseconds"));
+                break;
+            case FmodEmitterCustom.CascadeFunction.Keep:
+                EditorGUILayout.PropertyField(parameter, new GUIContent("Key (optional)"));
                 break;
         }
 
@@ -170,11 +188,14 @@ public class FmodEmitterCustomEditor : Editor
         step.FindPropertyRelative("transform").objectReferenceValue = null;
         step.FindPropertyRelative("vectorValue").vector3Value = Vector3.zero;
         step.FindPropertyRelative("floatValue").floatValue = 1f;
+        step.FindPropertyRelative("floatValue2").floatValue = 1f;
+        step.FindPropertyRelative("boolValue").boolValue = false;
         step.FindPropertyRelative("intValue").intValue = 0;
         step.FindPropertyRelative("parameter").stringValue = string.Empty;
         step.FindPropertyRelative("label").stringValue = string.Empty;
 
         serializedObject.ApplyModifiedProperties();
+        ValidateTarget();
     }
 
     void DrawTriggers()
@@ -183,5 +204,27 @@ public class FmodEmitterCustomEditor : Editor
 
         EditorGUILayout.PropertyField(playEvent);
         EditorGUILayout.PropertyField(stopEvent);
+    }
+
+    void ApplyModifiedPropertiesAndValidate()
+    {
+        bool changed = EditorGUI.EndChangeCheck();
+        serializedObject.ApplyModifiedProperties();
+
+        if (changed)
+            ValidateTarget();
+    }
+
+    void ValidateTarget()
+    {
+        foreach (UnityEngine.Object item in targets)
+        {
+            if (item is not FmodEmitterCustom emitter)
+                continue;
+
+            Undo.RecordObject(emitter, "Validate FMODB8 Emitter Cascade");
+            emitter.ValidateCascadeDependencies();
+            EditorUtility.SetDirty(emitter);
+        }
     }
 }

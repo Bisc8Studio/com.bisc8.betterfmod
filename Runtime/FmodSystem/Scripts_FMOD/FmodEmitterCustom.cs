@@ -41,17 +41,25 @@ public class FmodEmitterCustom : MonoBehaviour
 
     public enum CascadeFunction
     {
-        As3D,
-        Attach,
-        Position,
-        Velocity,
-        Radius,
-        Volume,
-        Pitch,
-        FadeIn,
-        Parameter,
-        ParameterLabel,
-        TimelinePosition
+        As3D = 0,
+        Attach = 1,
+        Position = 2,
+        Velocity = 3,
+        Radius = 4,
+        Volume = 5,
+        Pitch = 6,
+        FadeIn = 7,
+        Parameter = 8,
+        ParameterLabel = 9,
+        TimelinePosition = 10,
+        FadeOut = 11,
+        FadeTo = 12,
+        Stop = 13,
+        Pause = 14,
+        Resume = 15,
+        TogglePause = 16,
+        Detach = 17,
+        Keep = 18
     }
 
     [System.Serializable]
@@ -61,6 +69,8 @@ public class FmodEmitterCustom : MonoBehaviour
         public Transform transform;
         public Vector3 vectorValue;
         public float floatValue = 1f;
+        public float floatValue2 = 1f;
+        public bool boolValue;
         public int intValue;
         public string parameter;
         public string label;
@@ -125,8 +135,8 @@ public class FmodEmitterCustom : MonoBehaviour
         if (!oneShot)
             builder.Loop();
 
-        ApplyCascade(builder);
         handle = builder.Play();
+        ApplyCascade(handle);
     }
 
     /// <summary>
@@ -161,10 +171,12 @@ public class FmodEmitterCustom : MonoBehaviour
             FmodB8.Resume(eventId);
     }
 
-    private void ApplyCascade(FmodEventBuilder builder)
+    private void ApplyCascade(FmodHandle targetHandle)
     {
-        if (builder == null || cascade == null)
+        if (targetHandle == null || !targetHandle.IsValid || cascade == null)
             return;
+
+        ValidateCascadeDependencies();
 
         foreach (CascadeStep step in cascade)
         {
@@ -174,37 +186,61 @@ public class FmodEmitterCustom : MonoBehaviour
             switch (step.function)
             {
                 case CascadeFunction.As3D:
-                    builder.As3D();
+                    targetHandle.As3D();
                     break;
                 case CascadeFunction.Attach:
-                    builder.FollowTransform(step.transform != null ? step.transform : transform);
+                    targetHandle.FollowTransform(step.transform != null ? step.transform : transform);
                     break;
                 case CascadeFunction.Position:
-                    builder.Position(step.vectorValue);
+                    targetHandle.Position(step.vectorValue);
                     break;
                 case CascadeFunction.Velocity:
-                    builder.Velocity(step.vectorValue);
+                    targetHandle.Velocity(step.vectorValue);
                     break;
                 case CascadeFunction.Radius:
-                    builder.Radius(Mathf.Max(0.01f, step.floatValue));
+                    targetHandle.Radius(Mathf.Max(0.01f, step.floatValue));
                     break;
                 case CascadeFunction.Volume:
-                    builder.Volume(step.floatValue);
+                    targetHandle.Volume(step.floatValue);
                     break;
                 case CascadeFunction.Pitch:
-                    builder.Pitch(step.floatValue);
+                    targetHandle.Pitch(step.floatValue);
                     break;
                 case CascadeFunction.FadeIn:
-                    builder.FadeIn(Mathf.Max(0f, step.floatValue));
+                    targetHandle.FadeIn(Mathf.Max(0f, step.floatValue));
+                    break;
+                case CascadeFunction.FadeOut:
+                    targetHandle.FadeOut(Mathf.Max(0f, step.floatValue));
+                    break;
+                case CascadeFunction.FadeTo:
+                    targetHandle.FadeTo(step.floatValue, Mathf.Max(0f, step.floatValue2));
+                    break;
+                case CascadeFunction.Stop:
+                    targetHandle.Stop(step.boolValue, Mathf.Max(0f, step.floatValue));
+                    break;
+                case CascadeFunction.Pause:
+                    targetHandle.Pause();
+                    break;
+                case CascadeFunction.Resume:
+                    targetHandle.Resume();
+                    break;
+                case CascadeFunction.TogglePause:
+                    targetHandle.TogglePause();
                     break;
                 case CascadeFunction.Parameter:
-                    builder.Parameter(step.parameter, step.floatValue);
+                    targetHandle.Parameter(step.parameter, step.floatValue);
                     break;
                 case CascadeFunction.ParameterLabel:
-                    builder.ParameterLabel(step.parameter, step.label);
+                    targetHandle.SetParameterLabel(step.parameter, step.label);
                     break;
                 case CascadeFunction.TimelinePosition:
-                    builder.TimelinePosition(Mathf.Max(0, step.intValue));
+                    targetHandle.SetTimelinePosition(Mathf.Max(0, step.intValue));
+                    break;
+                case CascadeFunction.Detach:
+                    targetHandle.Detach();
+                    break;
+                case CascadeFunction.Keep:
+                    targetHandle.Keep(step.parameter);
                     break;
             }
         }
@@ -227,8 +263,34 @@ public class FmodEmitterCustom : MonoBehaviour
 
     private void OnValidate()
     {
+        ValidateCascadeDependencies();
+    }
+
+    public void ValidateCascadeDependencies()
+    {
         if (cascade == null)
             return;
+
+        bool requires3D = HasFunction(CascadeFunction.As3D)
+                       || HasFunction(CascadeFunction.Radius)
+                       || HasFunction(CascadeFunction.Attach)
+                       || HasFunction(CascadeFunction.Position)
+                       || HasFunction(CascadeFunction.Velocity);
+
+        if (requires3D && !HasFunction(CascadeFunction.As3D))
+            cascade.Insert(0, new CascadeStep { function = CascadeFunction.As3D });
+
+        bool hasSpatialAnchor = HasFunction(CascadeFunction.Attach)
+                             || HasFunction(CascadeFunction.Position);
+
+        if (requires3D && !hasSpatialAnchor)
+        {
+            cascade.Add(new CascadeStep
+            {
+                function = CascadeFunction.Attach,
+                transform = transform
+            });
+        }
 
         foreach (CascadeStep step in cascade)
         {
@@ -237,10 +299,31 @@ public class FmodEmitterCustom : MonoBehaviour
 
             if (step.function == CascadeFunction.Radius)
                 step.floatValue = Mathf.Max(0.01f, step.floatValue);
-            else if (step.function == CascadeFunction.FadeIn)
+            else if (step.function == CascadeFunction.FadeIn
+                  || step.function == CascadeFunction.FadeOut
+                  || step.function == CascadeFunction.Stop)
                 step.floatValue = Mathf.Max(0f, step.floatValue);
+            else if (step.function == CascadeFunction.FadeTo)
+                step.floatValue2 = Mathf.Max(0f, step.floatValue2);
             else if (step.function == CascadeFunction.TimelinePosition)
                 step.intValue = Mathf.Max(0, step.intValue);
+
+            if (step.function == CascadeFunction.Attach && step.transform == null)
+                step.transform = transform;
         }
+    }
+
+    private bool HasFunction(CascadeFunction function)
+    {
+        if (cascade == null)
+            return false;
+
+        foreach (CascadeStep step in cascade)
+        {
+            if (step != null && step.function == function)
+                return true;
+        }
+
+        return false;
     }
 }
