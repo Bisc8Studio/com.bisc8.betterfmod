@@ -376,7 +376,7 @@ public static class FMODInstaller
         if (File.Exists(sourceMetaPath))
         {
             string destinationMetaPath = InstalledFMODPath + ".meta";
-            File.Copy(sourceMetaPath, destinationMetaPath, true);
+            CopyFileIfChanged(sourceMetaPath, destinationMetaPath);
         }
     }
 
@@ -404,8 +404,104 @@ public static class FMODInstaller
             string destinationFile = Path.Combine(destinationPath, relativePath);
 
             Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
-            File.Copy(file, destinationFile, true);
+            CopyFileIfChanged(file, destinationFile);
         }
+    }
+
+    private static bool CopyFileIfChanged(string sourcePath, string destinationPath)
+    {
+        if (File.Exists(destinationPath) && FilesHaveSameContent(sourcePath, destinationPath))
+            return false;
+
+        File.Copy(sourcePath, destinationPath, true);
+        return true;
+    }
+
+    private static bool FilesHaveSameContent(string firstPath, string secondPath)
+    {
+        if (FilesAreByteIdentical(firstPath, secondPath))
+            return true;
+
+        if (!IsTextFile(firstPath) || !IsTextFile(secondPath))
+            return false;
+
+        string firstContent = NormalizeLineEndings(File.ReadAllText(firstPath));
+        string secondContent = NormalizeLineEndings(File.ReadAllText(secondPath));
+        return string.Equals(firstContent, secondContent, StringComparison.Ordinal);
+    }
+
+    private static bool FilesAreByteIdentical(string firstPath, string secondPath)
+    {
+        FileInfo firstInfo = new FileInfo(firstPath);
+        FileInfo secondInfo = new FileInfo(secondPath);
+
+        if (firstInfo.Length != secondInfo.Length)
+            return false;
+
+        const int bufferSize = 81920;
+        byte[] firstBuffer = new byte[bufferSize];
+        byte[] secondBuffer = new byte[bufferSize];
+
+        using (FileStream firstStream = File.OpenRead(firstPath))
+        using (FileStream secondStream = File.OpenRead(secondPath))
+        {
+            while (true)
+            {
+                int firstRead = firstStream.Read(firstBuffer, 0, firstBuffer.Length);
+                int secondRead = secondStream.Read(secondBuffer, 0, secondBuffer.Length);
+
+                if (firstRead != secondRead)
+                    return false;
+
+                if (firstRead == 0)
+                    return true;
+
+                for (int index = 0; index < firstRead; index++)
+                {
+                    if (firstBuffer[index] != secondBuffer[index])
+                        return false;
+                }
+            }
+        }
+    }
+
+    private static bool IsTextFile(string path)
+    {
+        switch (Path.GetExtension(path).ToLowerInvariant())
+        {
+            case ".asmdef":
+            case ".asmref":
+            case ".asset":
+            case ".cginc":
+            case ".compute":
+            case ".config":
+            case ".cs":
+            case ".gradle":
+            case ".h":
+            case ".html":
+            case ".java":
+            case ".json":
+            case ".m":
+            case ".md":
+            case ".meta":
+            case ".mm":
+            case ".plist":
+            case ".props":
+            case ".rsp":
+            case ".shader":
+            case ".targets":
+            case ".txt":
+            case ".uxml":
+            case ".xml":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static string NormalizeLineEndings(string content)
+    {
+        return content.Replace("\r\n", "\n").Replace('\r', '\n');
     }
 
     private static string GetRelativePath(string rootPath, string path)
