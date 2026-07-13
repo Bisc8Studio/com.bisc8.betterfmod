@@ -56,6 +56,17 @@ public static class FMODInstaller
         if (PromptRemoveLegacyInstalledFMODCopy(true))
             return;
 
+        // Native FMOD libraries must not be imported from Library/PackageCache.
+        // Windows keeps loaded DLLs locked and UPM then leaves .del--* folders
+        // behind whenever the Git package is refreshed. The source is hidden in
+        // the package and copied once to Assets, where package updates do not try
+        // to delete loaded native plugins.
+        if (GetHiddenFMODSourcePath() != null && !File.Exists(InstalledMarkerPath))
+        {
+            RunSetup();
+            return;
+        }
+
         if (IsSetupComplete())
             return;
 
@@ -149,6 +160,14 @@ public static class FMODInstaller
 
     public static bool RemoveLegacyInstalledFMODCopy(bool refresh)
     {
+        if (GetHiddenFMODSourcePath() != null && GetActiveFMODSourcePath() == null)
+        {
+            Debug.LogWarning(
+                "[FMODB8] Assets/BISC8/FMODB8/FMOD is the active FMOD installation. " +
+                "It cannot be removed while FMOD is stored as a hidden package source.");
+            return false;
+        }
+
         if (!Directory.Exists(InstalledFMODPath) && !File.Exists(InstalledFMODPath + ".meta"))
         {
             Debug.Log("[FMODB8] No legacy FMOD copy found at Assets/BISC8/FMODB8/FMOD.");
@@ -244,7 +263,7 @@ public static class FMODInstaller
             MarkSetupComplete();
             AssetDatabase.Refresh();
 
-            Debug.Log("[FMODB8] Setup complete. FMOD was moved to Assets/BISC8/FMODB8/FMOD.");
+            Debug.Log("[FMODB8] Setup complete. FMOD was installed in Assets/BISC8/FMODB8/FMOD.");
         }
         catch (Exception exception)
         {

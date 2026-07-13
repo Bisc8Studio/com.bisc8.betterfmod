@@ -25,11 +25,15 @@
 
 ## Plugins ou assemblies FMOD duplicados
 
-O package atual já inclui FMOD. Remova integrações adicionais. Se existir a cópia legada `Assets/BISC8/FMODB8/FMOD`, use **FMOD > FMODB8 > Remove Outdated**. Se o Windows estiver bloqueando uma DLL, feche o Unity e apague essa pasta manualmente.
+O package atual já inclui FMOD e instala a integração ativa em `Assets/BISC8/FMODB8/FMOD`. Remova outras integrações FMOD, mas preserve essa pasta. Se o Windows estiver bloqueando uma DLL durante um reparo, feche o Unity antes de executar a instalação novamente.
 
 ## O menu `Setup` informa que a fonte não foi encontrada
 
-Confirme que o package está instalado com o nome `com.bisc8.simplefmod` e que existe `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/FMODUnity.asmdef`. Reinstale o package se a estrutura estiver incompleta.
+Confirme que o package está instalado com o nome `com.bisc8.simplefmod` e que a fonte contém `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/FMODUnity.asmdef`. Reinstale o package se a estrutura estiver incompleta.
+
+## Pastas `.del--*` no PackageCache
+
+Versões até 1.3.0 carregavam as DLLs FMOD diretamente do cache. No Windows, o Unity não conseguia apagar a versão anterior durante uma atualização e deixava diretórios `.del--*`. A partir da 1.3.1, as DLLs são instaladas em `Assets`, evitando novos resíduos desse package. Para remover resíduos antigos, feche o projeto Unity e apague somente as pastas `.del--*` na raiz de `Library/PackageCache`.
 
 ## Erros de referência de assembly
 
@@ -40,7 +44,7 @@ Use **FMOD > FMODB8 > Fix Commands** após mover scripts ou migrar uma versão a
 1. Salve os assets de lista.
 2. Execute **FMOD > FMODB8 > Generate Events**.
 3. Confira o Console e aguarde a recompilação.
-4. Em packages instalados no cache, use uma instalação local/embedded editável; o arquivo gerado fica dentro do package.
+4. Confirme a criação de `Assets/BISC8/FMODB8/Generated/FmodEvents.Generated.cs` e do respectivo `.asmref`.
 
 ## O botão multiplayer não toca
 

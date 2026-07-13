@@ -1,5 +1,11 @@
 # BISC8 Simple FMOD
 
+**Versão atual:** 1.3.1
+
+**Unity mínima:** 6000.3
+
+**FMOD incluído:** 2.03.19
+
 O BISC8 Simple FMOD oferece uma camada de alto nível sobre o FMOD for Unity para tocar e controlar áudio com menos código. O package inclui uma API estática, configuração fluente por instância, componentes para uso pelo Inspector, listas de eventos, prefabs e transporte opcional para Netcode for GameObjects.
 
 ## Recursos
@@ -33,7 +39,7 @@ O BISC8 Simple FMOD oferece uma camada de alto nível sobre o FMOD for Unity par
 3. Para instalação local, selecione este `package.json`.
 4. Aguarde a importação e a compilação.
 
-O FMOD já está ativo dentro do package. O comando **FMOD > FMODB8 > Setup** existe para compatibilidade com versões antigas que usavam uma pasta FMOD oculta. Se houver uma cópia antiga em `Assets/BISC8/FMODB8/FMOD`, use **FMOD > FMODB8 > Remove Outdated** para evitar plugins duplicados.
+Para impedir que DLLs carregadas bloqueiem atualizações do `Library/PackageCache` no Windows, a fonte FMOD fica oculta dentro do package e é instalada automaticamente em `Assets/BISC8/FMODB8/FMOD`. O comando **FMOD > FMODB8 > Setup** permite repetir ou reparar essa instalação manualmente.
 
 ## Início rápido
 
@@ -90,4 +96,4 @@ FmodHandle engine = FmodB8.Event("Engine")
 
 ## Licenças
 
-O código e os binários do FMOD incluídos em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD` permanecem sujeitos à licença da Firelight Technologies disponível em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/LICENSE.txt`. Confirme que o projeto possui uma licença FMOD adequada ao seu uso e distribuição.
+O código e os binários do FMOD incluídos em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~` permanecem sujeitos à licença da Firelight Technologies disponível em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/LICENSE.txt`. Confirme que o projeto possui uma licença FMOD adequada ao seu uso e distribuição.

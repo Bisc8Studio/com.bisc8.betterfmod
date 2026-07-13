@@ -7,7 +7,10 @@ using UnityEngine;
 
 internal static class FmodEventsGenerator
 {
-    private const string RelativeOutputPath = "Runtime/Core/FmodEvents.Generated.cs";
+    private const string OutputFolder = "Assets/BISC8/FMODB8/Generated";
+    private const string OutputAssetPath = OutputFolder + "/FmodEvents.Generated.cs";
+    private const string AssemblyReferencePath = OutputFolder + "/BISC8.FMODB8.Generated.asmref";
+    private const string AssemblyReferenceContent = "{\n  \"reference\": \"GUID:a684a620fa772e14c926ef1b853f01b6\"\n}\n";
     private static readonly Regex InvalidCharacters = new("[^a-zA-Z0-9_]", RegexOptions.Compiled);
 
     [MenuItem("FMOD/FMODB8/Generate Events", false, 22)]
@@ -19,12 +22,13 @@ internal static class FmodEventsGenerator
     internal static void Generate()
     {
         Dictionary<string, string> events = CollectEvents();
-        string outputAssetPath = GetOutputAssetPath();
-        string absolutePath = Path.GetFullPath(outputAssetPath);
+        string absolutePath = Path.GetFullPath(OutputAssetPath);
         string directory = Path.GetDirectoryName(absolutePath);
 
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
+
+        EnsureAssemblyReference();
 
         string content = BuildSource(events);
 
@@ -32,25 +36,17 @@ internal static class FmodEventsGenerator
             return;
 
         File.WriteAllText(absolutePath, content, Encoding.UTF8);
-        AssetDatabase.ImportAsset(outputAssetPath);
+        AssetDatabase.ImportAsset(OutputAssetPath);
     }
 
-    private static string GetOutputAssetPath()
+    private static void EnsureAssemblyReference()
     {
-        string[] guids = AssetDatabase.FindAssets("FmodEventsGenerator t:Script");
+        string absolutePath = Path.GetFullPath(AssemblyReferencePath);
+        if (File.Exists(absolutePath) && File.ReadAllText(absolutePath) == AssemblyReferenceContent)
+            return;
 
-        foreach (string guid in guids)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guid).Replace("\\", "/");
-
-            if (!path.EndsWith("Editor/FmodEventsGenerator.cs"))
-                continue;
-
-            string packageRoot = path.Substring(0, path.Length - "Editor/FmodEventsGenerator.cs".Length).TrimEnd('/');
-            return packageRoot + "/" + RelativeOutputPath;
-        }
-
-        return RelativeOutputPath;
+        File.WriteAllText(absolutePath, AssemblyReferenceContent, Encoding.UTF8);
+        AssetDatabase.ImportAsset(AssemblyReferencePath);
     }
 
     private static Dictionary<string, string> CollectEvents()

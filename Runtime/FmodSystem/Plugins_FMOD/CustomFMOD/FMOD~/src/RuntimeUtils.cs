@@ -309,8 +309,8 @@ namespace FMODUnity
     {
 #if UNITY_EDITOR
         public const string BaseFolderGUID = "06ae579381df01a4a87bb149dec89954";
-        public const string PluginInstallPath = "Packages/com.bisc8.simplefmod/Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD";
-        public const string LegacyPluginInstallPath = "Assets/BISC8/FMODB8/FMOD";
+        public const string PluginInstallPath = "Assets/BISC8/FMODB8/FMOD";
+        public const string LegacyPluginInstallPath = PluginInstallPath;
         public const string PluginBasePathDefault = PluginInstallPath;
 
         public static string PluginBasePath

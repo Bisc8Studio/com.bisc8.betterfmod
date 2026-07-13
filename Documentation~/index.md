@@ -1,5 +1,7 @@
 # Manual do BISC8 Simple FMOD
 
+**Documentação da versão 1.3.1** — Unity 6000.3 ou posterior — FMOD 2.03.19
+
 ## Visão geral
 
 O BISC8 Simple FMOD centraliza a criação e o gerenciamento de instâncias FMOD. A classe `FmodCommands` mantém as referências de eventos e acompanha cada instância criada. A API `FmodB8` expõe os controles mais usados, enquanto `FmodHandle` permite alterar somente uma reprodução específica.
@@ -17,7 +19,7 @@ Use uma das três formas de trabalho:
 - Binários nativos incluídos para Windows (x86, x86_64 e ARM64) e Linux (x86_64).
 - Netcode for GameObjects 1.0.0 ou posterior somente para a integração multiplayer pronta.
 
-O package referencia `FMODUnity` em runtime e `FMODUnityEditor` no Editor. Não instale uma segunda integração FMOD no mesmo projeto.
+O package instala `FMODUnity` em `Assets/BISC8/FMODB8/FMOD` e o referencia em runtime e no Editor. Não instale uma segunda integração FMOD no mesmo projeto.
 
 ## Configuração inicial
 
@@ -29,7 +31,7 @@ Use **GameObject > FMODB8 > FMODB8 System**. O prefab contém `FmodCommands`, qu
 
 Configure banks e paths em **FMOD > Edit Settings**, conforme o fluxo normal do FMOD for Unity. Adicione `StudioListener` à câmera ou ao objeto que representa o ouvinte.
 
-O menu **FMOD > FMODB8 > Setup** é destinado principalmente à migração do layout antigo. No layout atual, ele apenas valida a fonte FMOD incluída. Caso exista `Assets/BISC8/FMODB8/FMOD`, remova a cópia por **FMOD > FMODB8 > Remove Outdated**.
+A fonte FMOD fica em uma pasta oculta do package para que DLLs carregadas não bloqueiem atualizações do cache. Na primeira importação, o instalador copia automaticamente a integração para `Assets/BISC8/FMODB8/FMOD`. Use **FMOD > FMODB8 > Setup** para reparar a instalação manualmente. Não remova essa pasta enquanto o package usar a fonte oculta.
 
 ### 3. Cadastre eventos por ID
 
@@ -55,13 +57,13 @@ Com o FMOD Studio aberto, conectado e com o mesmo projeto carregado, **Get To FM
 
 ### 4. Gere IDs fortemente tipados
 
-Use **FMOD > FMODB8 > Generate Events**. O gerador lê todos os assets `CreateFmodList` e atualiza `Runtime/Core/FmodEvents.Generated.cs`.
+Use **FMOD > FMODB8 > Generate Events**. O gerador lê todos os assets `CreateFmodList` e atualiza `Assets/BISC8/FMODB8/Generated/FmodEvents.Generated.cs`. Um `BISC8.FMODB8.Generated.asmref` no mesmo diretório mantém a classe gerada dentro do assembly de runtime do FMODB8.
 
 ```csharp
 FmodB8.Play(FmodEvents.PlayerJump);
 ```
 
-Nomes inválidos para C# são normalizados. Em caso de colisão, o gerador cria um sufixo numérico. O arquivo gerado pertence ao package; portanto a instalação precisa ser editável para persistir a geração.
+Nomes inválidos para C# são normalizados. Em caso de colisão, o gerador cria um sufixo numérico. O arquivo pertence ao projeto e pode ser versionado normalmente; o gerador nunca escreve em `Library/PackageCache`.
 
 ## Formas de reprodução
 
