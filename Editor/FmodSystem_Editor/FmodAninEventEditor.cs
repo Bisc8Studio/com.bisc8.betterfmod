@@ -6,26 +6,24 @@ public class FmodAninEventEditor : Editor
 {
     private SerializedProperty script;
     private SerializedProperty defaultEventId;
+    private SerializedProperty defaultEmitterKey;
     private SerializedProperty defaultParameter;
     private SerializedProperty defaultLabel;
-    private SerializedProperty defaultTarget;
     private SerializedProperty defaultRadius;
     private SerializedProperty defaultFadeTime;
     private SerializedProperty warnWhenMissing;
-    private SerializedProperty defaultEmitter;
     private SerializedProperty conditions;
 
     private void OnEnable()
     {
         script = serializedObject.FindProperty("m_Script");
         defaultEventId = serializedObject.FindProperty("defaultEventId");
+        defaultEmitterKey = serializedObject.FindProperty("defaultEmitterKey");
         defaultParameter = serializedObject.FindProperty("defaultParameter");
         defaultLabel = serializedObject.FindProperty("defaultLabel");
-        defaultTarget = serializedObject.FindProperty("defaultTarget");
         defaultRadius = serializedObject.FindProperty("defaultRadius");
         defaultFadeTime = serializedObject.FindProperty("defaultFadeTime");
         warnWhenMissing = serializedObject.FindProperty("warnWhenMissing");
-        defaultEmitter = serializedObject.FindProperty("defaultEmitter");
         conditions = serializedObject.FindProperty("conditions");
     }
 
@@ -38,10 +36,10 @@ public class FmodAninEventEditor : Editor
         GUI.enabled = true;
 
         EditorGUILayout.Space(6);
-        DrawEventDefaults();
+        DrawDefaults();
 
         EditorGUILayout.Space(8);
-        DrawEmitterDefaults();
+        DrawAnimationMethods();
 
         EditorGUILayout.Space(8);
         DrawConditions();
@@ -49,22 +47,24 @@ public class FmodAninEventEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void DrawEventDefaults()
+    private void DrawDefaults()
     {
-        EditorGUILayout.LabelField("Animation Event", EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("Animation Event Defaults", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(defaultEventId, new GUIContent("Default Event ID"));
+        EditorGUILayout.PropertyField(defaultEmitterKey, new GUIContent("Default Emitter Key"));
         EditorGUILayout.PropertyField(defaultParameter, new GUIContent("Default Parameter"));
         EditorGUILayout.PropertyField(defaultLabel, new GUIContent("Default Label"));
-        EditorGUILayout.PropertyField(defaultTarget, new GUIContent("Default Target"));
         EditorGUILayout.PropertyField(defaultRadius, new GUIContent("Default Radius"));
         EditorGUILayout.PropertyField(defaultFadeTime, new GUIContent("Default Fade Time"));
         EditorGUILayout.PropertyField(warnWhenMissing, new GUIContent("Warnings"));
     }
 
-    private void DrawEmitterDefaults()
+    private void DrawAnimationMethods()
     {
-        EditorGUILayout.LabelField("Emitter", EditorStyles.boldLabel);
-        EditorGUILayout.PropertyField(defaultEmitter, new GUIContent("Default Emitter"));
+        EditorGUILayout.LabelField("Animation Event Calls", EditorStyles.boldLabel);
+        EditorGUILayout.HelpBox(
+            "Use void methods for defaults, or string methods with the Animation Event String field. Emitter methods use only the FMODB8 Emmiter Key.",
+            MessageType.Info);
     }
 
     private void DrawConditions()
@@ -81,7 +81,7 @@ public class FmodAninEventEditor : Editor
 
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Condition " + i, EditorStyles.boldLabel);
+            EditorGUILayout.LabelField("Condition " + i + " (AND)", EditorStyles.boldLabel);
 
             if (GUILayout.Button("Remove", EditorStyles.miniButton, GUILayout.Width(64)))
             {
@@ -111,10 +111,7 @@ public class FmodAninEventEditor : Editor
         SerializedProperty entry = entries.GetArrayElementAtIndex(index);
         SerializedProperty type = entry.FindPropertyRelative("type");
         SerializedProperty invert = entry.FindPropertyRelative("invert");
-        SerializedProperty intValue = entry.FindPropertyRelative("intValue");
-        SerializedProperty stringValue = entry.FindPropertyRelative("stringValue");
-        SerializedProperty gameObject = entry.FindPropertyRelative("gameObject");
-        SerializedProperty behaviour = entry.FindPropertyRelative("behaviour");
+        SerializedProperty value = entry.FindPropertyRelative("value");
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.BeginHorizontal();
@@ -132,21 +129,8 @@ public class FmodAninEventEditor : Editor
 
         FmodAninEvent.ConditionType selectedType = (FmodAninEvent.ConditionType)type.enumValueIndex;
 
-        switch (selectedType)
-        {
-            case FmodAninEvent.ConditionType.InSceneBuildIndex:
-                EditorGUILayout.PropertyField(intValue, new GUIContent("Scene Build Index"));
-                break;
-            case FmodAninEvent.ConditionType.InSceneName:
-                EditorGUILayout.PropertyField(stringValue, new GUIContent("Scene Name"));
-                break;
-            case FmodAninEvent.ConditionType.GameObjectActive:
-                EditorGUILayout.PropertyField(gameObject, new GUIContent("GameObject"));
-                break;
-            case FmodAninEvent.ConditionType.BehaviourEnabled:
-                EditorGUILayout.PropertyField(behaviour, new GUIContent("Behaviour"));
-                break;
-        }
+        if (selectedType == FmodAninEvent.ConditionType.InScene)
+            EditorGUILayout.PropertyField(value, new GUIContent("Scene Name or Build Index"));
 
         if (selectedType != FmodAninEvent.ConditionType.None)
             EditorGUILayout.PropertyField(invert, new GUIContent("Invert"));
@@ -173,9 +157,6 @@ public class FmodAninEventEditor : Editor
         SerializedProperty entry = entries.GetArrayElementAtIndex(index);
         entry.FindPropertyRelative("type").enumValueIndex = (int)FmodAninEvent.ConditionType.None;
         entry.FindPropertyRelative("invert").boolValue = false;
-        entry.FindPropertyRelative("intValue").intValue = 0;
-        entry.FindPropertyRelative("stringValue").stringValue = string.Empty;
-        entry.FindPropertyRelative("gameObject").objectReferenceValue = null;
-        entry.FindPropertyRelative("behaviour").objectReferenceValue = null;
+        entry.FindPropertyRelative("value").stringValue = string.Empty;
     }
 }
