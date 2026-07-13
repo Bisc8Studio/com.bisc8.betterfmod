@@ -78,7 +78,7 @@ namespace FMODUnity
 #if UNITY_EDITOR
         internal override string GetPluginPath(string pluginName)
         {
-            string platformsFolder = Path.GetFullPath($"{RuntimeUtils.PluginBasePath}/platforms");
+            string platformsFolder = Path.GetFullPath($"{RuntimeUtils.NativePluginPath}/platforms");
 #if UNITY_EDITOR_WIN
             return string.Format("{0}/win/lib/{1}/{2}.dll", platformsFolder, RuntimeUtils.GetPluginArchitectureFolder(), pluginName);
 #elif UNITY_EDITOR_OSX

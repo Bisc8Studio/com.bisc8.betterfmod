@@ -1,6 +1,6 @@
 # BISC8 Simple FMOD
 
-**Versão atual:** 1.3.1
+**Versão atual:** 1.3.2
 
 **Unity mínima:** 6000.3
 
@@ -28,6 +28,8 @@ O BISC8 Simple FMOD oferece uma camada de alto nível sobre o FMOD for Unity par
 | Plataformas nativas incluídas | Windows (x86, x86_64 e ARM64) e Linux (x86_64) |
 | Multiplayer | Opcional: Netcode for GameObjects 1.0.0 ou posterior |
 
+As dependências Unity UI, IMGUI, Timeline, Animation, Physics e Physics 2D são resolvidas automaticamente pelo Package Manager.
+
 > Para publicar em outra plataforma, adicione os binários nativos compatíveis fornecidos pelo FMOD e valide a configuração de importação dos plugins antes do build.
 
 ## Instalação
@@ -39,7 +41,7 @@ O BISC8 Simple FMOD oferece uma camada de alto nível sobre o FMOD for Unity par
 3. Para instalação local, selecione este `package.json`.
 4. Aguarde a importação e a compilação.
 
-Para impedir que DLLs carregadas bloqueiem atualizações do `Library/PackageCache` no Windows, a fonte FMOD fica oculta dentro do package e é instalada automaticamente em `Assets/BISC8/FMODB8/FMOD`. O comando **FMOD > FMODB8 > Setup** permite repetir ou reparar essa instalação manualmente.
+Os scripts e assemblies FMOD permanecem visíveis no package para permitir a primeira compilação. Somente as bibliotecas nativas ficam ocultas do `Library/PackageCache` e são instaladas automaticamente em `Assets/BISC8/FMODB8/FMODNative`. Isso impede que DLLs carregadas bloqueiem atualizações do package no Windows. O comando **FMOD > FMODB8 > Setup** permite repetir ou reparar a instalação manualmente.
 
 ## Início rápido
 
@@ -96,4 +98,4 @@ FmodHandle engine = FmodB8.Event("Engine")
 
 ## Licenças
 
-O código e os binários do FMOD incluídos em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~` permanecem sujeitos à licença da Firelight Technologies disponível em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/LICENSE.txt`. Confirme que o projeto possui uma licença FMOD adequada ao seu uso e distribuição.
+O código e os binários do FMOD incluídos em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD` permanecem sujeitos à licença da Firelight Technologies disponível em `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/LICENSE.txt`. Confirme que o projeto possui uma licença FMOD adequada ao seu uso e distribuição.

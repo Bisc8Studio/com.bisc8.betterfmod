@@ -1396,7 +1396,7 @@ namespace FMODUnity
 
     public class StagingSystem
     {
-        private static string PlatformsFolder => $"{RuntimeUtils.PluginInstallPath}/platforms";
+        private static string PlatformsFolder => $"{RuntimeUtils.NativePluginPath}/platforms";
         private static string StagingFolder => $"{RuntimeUtils.PluginInstallPath}/staging";
         private const string AnyCPU = "AnyCPU";
 

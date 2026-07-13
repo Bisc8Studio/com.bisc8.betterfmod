@@ -1,6 +1,6 @@
 # Manual do BISC8 Simple FMOD
 
-**Documentação da versão 1.3.1** — Unity 6000.3 ou posterior — FMOD 2.03.19
+**Documentação da versão 1.3.2** — Unity 6000.3 ou posterior — FMOD 2.03.19
 
 ## Visão geral
 
@@ -19,7 +19,9 @@ Use uma das três formas de trabalho:
 - Binários nativos incluídos para Windows (x86, x86_64 e ARM64) e Linux (x86_64).
 - Netcode for GameObjects 1.0.0 ou posterior somente para a integração multiplayer pronta.
 
-O package instala `FMODUnity` em `Assets/BISC8/FMODB8/FMOD` e o referencia em runtime e no Editor. Não instale uma segunda integração FMOD no mesmo projeto.
+Unity UI, IMGUI, Timeline, Animation, Physics e Physics 2D são dependências declaradas e instaladas pelo Package Manager.
+
+O package mantém `FMODUnity` visível no próprio package e instala somente as bibliotecas nativas em `Assets/BISC8/FMODB8/FMODNative`. Não instale uma segunda integração FMOD no mesmo projeto.
 
 ## Configuração inicial
 
@@ -31,7 +33,7 @@ Use **GameObject > FMODB8 > FMODB8 System**. O prefab contém `FmodCommands`, qu
 
 Configure banks e paths em **FMOD > Edit Settings**, conforme o fluxo normal do FMOD for Unity. Adicione `StudioListener` à câmera ou ao objeto que representa o ouvinte.
 
-A fonte FMOD fica em uma pasta oculta do package para que DLLs carregadas não bloqueiem atualizações do cache. Na primeira importação, o instalador copia automaticamente a integração para `Assets/BISC8/FMODB8/FMOD`. Use **FMOD > FMODB8 > Setup** para reparar a instalação manualmente. Não remova essa pasta enquanto o package usar a fonte oculta.
+Os scripts FMOD permanecem ativos no package para que os assemblies compilem imediatamente. As pastas de bibliotecas nativas ficam ocultas e, na primeira importação, o instalador as copia automaticamente para `Assets/BISC8/FMODB8/FMODNative`. Use **FMOD > FMODB8 > Setup** para reparar essa instalação manualmente. Não remova `FMODNative` enquanto o package estiver instalado.
 
 ### 3. Cadastre eventos por ID
 

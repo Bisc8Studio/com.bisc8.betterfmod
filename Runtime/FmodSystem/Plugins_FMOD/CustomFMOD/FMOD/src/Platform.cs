@@ -251,7 +251,7 @@ namespace FMODUnity
                         return string.Format("Assets/Plugins/FMOD/lib/{0}", info.baseName);
                     case FileLayout.Release_2_1:
                     case FileLayout.Release_2_2:
-                        return $"{RuntimeUtils.PluginBasePath}/platforms/{info.baseName}/lib";
+                        return $"{RuntimeUtils.NativePluginPath}/platforms/{info.baseName}/lib";
                     default:
                         throw new ArgumentException("Unrecognised file layout: " + layout);
                 }

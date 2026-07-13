@@ -35,6 +35,8 @@ public static class FMODInstaller
     private const string InstalledRootPath = "Assets/BISC8/FMODB8";
     private const string InstalledFMODPath = InstalledRootPath + "/FMOD";
     private const string InstalledMarkerPath = InstalledFMODPath + "/FMODUnity.asmdef";
+    private const string InstalledNativePath = InstalledRootPath + "/FMODNative";
+    private const string InstalledNativeMarkerPath = InstalledNativePath + "/platforms/win/lib/x86_64/fmodstudio.dll";
     private const string LegacyFMODDefine = "FMOD_PRESENT";
     private const string PopupShownKey = "BISC8_FMOD_POPUP_SHOWN_V2";
     private const string LegacyCopyPopupShownKey = "BISC8_FMOD_LEGACY_COPY_POPUP_SHOWN_V1";
@@ -56,12 +58,11 @@ public static class FMODInstaller
         if (PromptRemoveLegacyInstalledFMODCopy(true))
             return;
 
-        // Native FMOD libraries must not be imported from Library/PackageCache.
-        // Windows keeps loaded DLLs locked and UPM then leaves .del--* folders
-        // behind whenever the Git package is refreshed. The source is hidden in
-        // the package and copied once to Assets, where package updates do not try
-        // to delete loaded native plugins.
-        if (GetHiddenFMODSourcePath() != null && !File.Exists(InstalledMarkerPath))
+        // Keep FMOD C# assemblies visible so the package compiles on first import,
+        // but install the hidden native libraries under Assets. Windows locks loaded
+        // DLLs and UPM otherwise leaves .del--* folders when refreshing a Git package.
+        string activeSourcePath = GetActiveFMODSourcePath();
+        if (HasHiddenNativeLibraries(activeSourcePath) && !File.Exists(InstalledNativeMarkerPath))
         {
             RunSetup();
             return;
@@ -245,11 +246,16 @@ public static class FMODInstaller
         {
             if (activeSourcePath != null)
             {
+                InstallNativeLibraries(activeSourcePath);
+
+                if (HasHiddenNativeLibraries(activeSourcePath) && !File.Exists(InstalledNativeMarkerPath))
+                    throw new IOException("FMOD native libraries were not installed in Assets.");
+
                 RemoveLegacyFMODDefine();
                 PromptRemoveLegacyInstalledFMODCopy(false);
                 MarkSetupComplete();
                 AssetDatabase.Refresh();
-                Debug.Log("[FMODB8] Setup complete. FMOD source is active in the FMODB8 package.");
+                Debug.Log("[FMODB8] Setup complete. FMOD assemblies are active in the package and native libraries are installed in Assets.");
                 return;
             }
 
@@ -358,6 +364,15 @@ public static class FMODInstaller
         return Directory.Exists(currentSource) ? currentSource : null;
     }
 
+    private static bool HasHiddenNativeLibraries(string activeSourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(activeSourcePath))
+            return false;
+
+        return Directory.Exists(Path.Combine(activeSourcePath, "platforms/win/lib~"))
+            || Directory.Exists(Path.Combine(activeSourcePath, "platforms/linux/lib~"));
+    }
+
     private static string GetPackageRootPath()
     {
         // Try with package.json which is more reliable than the bare folder path
@@ -397,6 +412,28 @@ public static class FMODInstaller
             string destinationMetaPath = InstalledFMODPath + ".meta";
             CopyFileIfChanged(sourceMetaPath, destinationMetaPath);
         }
+    }
+
+    private static void InstallNativeLibraries(string activeSourcePath)
+    {
+        if (string.IsNullOrWhiteSpace(activeSourcePath))
+            return;
+
+        EnsureAssetFolder("Assets", "BISC8");
+        EnsureAssetFolder("Assets/BISC8", "FMODB8");
+
+        InstallNativeLibraryFolder(activeSourcePath, "win");
+        InstallNativeLibraryFolder(activeSourcePath, "linux");
+    }
+
+    private static void InstallNativeLibraryFolder(string activeSourcePath, string platform)
+    {
+        string sourcePath = Path.Combine(activeSourcePath, "platforms", platform, "lib~");
+        if (!Directory.Exists(sourcePath))
+            return;
+
+        string destinationPath = Path.Combine(InstalledNativePath, "platforms", platform, "lib");
+        CopyDirectory(sourcePath, destinationPath);
     }
 
     private static void DeleteDirectory(string path)

@@ -2,14 +2,27 @@
 
 Todas as alterações relevantes deste package serão documentadas neste arquivo. O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).
 
-## [1.3.1] - 2026-07-13
+## [1.3.2] - 2026-07-13
 
 ### Corrigido
 
-- FMOD passou a ser armazenado em uma pasta oculta do package e instalado automaticamente em `Assets/BISC8/FMODB8/FMOD`.
-- Evitado o carregamento de DLLs nativas diretamente de `Library/PackageCache`, que fazia o Unity acumular diretórios `.del--*` ao atualizar o package Git no Windows.
+- Corrigida a primeira compilação da 1.3.1, que não encontrava os namespaces `FMOD` e `FMODUnity` enquanto toda a integração estava oculta.
+- Scripts e assemblies FMOD voltaram a permanecer visíveis no package; somente as bibliotecas nativas ficam ocultas.
+- Bibliotecas nativas são instaladas automaticamente em `Assets/BISC8/FMODB8/FMODNative`, evitando DLLs bloqueadas e diretórios `.del--*` no cache.
+- Paths usados pelo Play Mode e pela seleção de binários FMOD agora apontam para a instalação nativa em `Assets`.
+- Pastas nativas instaladas recebem GUIDs próprios no projeto, evitando conflitos de metadados com a fonte oculta.
+- Dependências de UI, IMGUI, Timeline, Animation e física usadas pelo package agora são declaradas no `package.json`.
+
+## [1.3.1] - 2026-07-13
+
+### Alterado
+
+- A integração FMOD inteira foi movida temporariamente para uma pasta oculta como tentativa de evitar DLLs bloqueadas no cache.
 - A geração de `FmodEvents` foi movida do cache do package para `Assets/BISC8/FMODB8/Generated`, impedindo alterações locais dentro de packages Git.
-- A remoção de cópias antigas agora protege a instalação ativa quando o package usa a fonte FMOD oculta.
+
+### Problema conhecido
+
+- A integração inteira oculta impedia que `BISC8.FMODB8.Runtime` encontrasse `FMOD` e `FMODUnity` na primeira compilação. Corrigido na 1.3.2.
 
 ## [1.3.0] - 2026-07-13
 

@@ -25,15 +25,19 @@
 
 ## Plugins ou assemblies FMOD duplicados
 
-O package atual já inclui FMOD e instala a integração ativa em `Assets/BISC8/FMODB8/FMOD`. Remova outras integrações FMOD, mas preserve essa pasta. Se o Windows estiver bloqueando uma DLL durante um reparo, feche o Unity antes de executar a instalação novamente.
+O package atual já inclui os assemblies FMOD e instala as bibliotecas nativas em `Assets/BISC8/FMODB8/FMODNative`. Remova outras integrações FMOD, mas preserve `FMODNative`. Se o Windows estiver bloqueando uma DLL durante um reparo, feche o Unity antes de executar a instalação novamente.
 
 ## O menu `Setup` informa que a fonte não foi encontrada
 
-Confirme que o package está instalado com o nome `com.bisc8.simplefmod` e que a fonte contém `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD~/FMODUnity.asmdef`. Reinstale o package se a estrutura estiver incompleta.
+Confirme que o package está instalado com o nome `com.bisc8.simplefmod` e que contém `Runtime/FmodSystem/Plugins_FMOD/CustomFMOD/FMOD/FMODUnity.asmdef`. Reinstale o package se a estrutura estiver incompleta.
 
 ## Pastas `.del--*` no PackageCache
 
-Versões até 1.3.0 carregavam as DLLs FMOD diretamente do cache. No Windows, o Unity não conseguia apagar a versão anterior durante uma atualização e deixava diretórios `.del--*`. A partir da 1.3.1, as DLLs são instaladas em `Assets`, evitando novos resíduos desse package. Para remover resíduos antigos, feche o projeto Unity e apague somente as pastas `.del--*` na raiz de `Library/PackageCache`.
+Versões até 1.3.0 carregavam as DLLs FMOD diretamente do cache. No Windows, o Unity não conseguia apagar a versão anterior durante uma atualização e deixava diretórios `.del--*`. A versão 1.3.2 mantém apenas os assemblies no package e instala os binários em `Assets`, evitando novos resíduos. Para remover resíduos antigos, feche o projeto Unity e apague somente as pastas `.del--*` na raiz de `Library/PackageCache`.
+
+## Erros `FMODUnity could not be found` na versão 1.3.1
+
+A versão 1.3.1 ocultava toda a integração antes da primeira compilação. Atualize para 1.3.2 ou posterior. A versão atual mantém `FMODUnity.asmdef` visível e oculta somente as bibliotecas nativas.
 
 ## Erros de referência de assembly
 
