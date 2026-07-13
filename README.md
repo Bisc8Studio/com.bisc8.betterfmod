@@ -6,18 +6,26 @@
 
 **FMOD incluído:** 2.03.19
 
-O BISC8 Simple FMOD oferece uma camada de alto nível sobre o FMOD for Unity para tocar e controlar áudio com menos código. O package inclui uma API estática, configuração fluente por instância, componentes para uso pelo Inspector, listas de eventos, prefabs e transporte opcional para Netcode for GameObjects.
+O BISC8 Simple FMOD é um toolkit de implementação de áudio para Unity. Seu foco são os componentes, prefabs, listas e comandos do FMODB8 que permitem configurar o comportamento do áudio no Inspector ou por uma API simplificada. A integração FMOD incluída é a base de reprodução, não o assunto principal do package.
 
-## Recursos
+## Recursos do FMODB8
 
-- Reprodução por ID cadastrado ou path FMOD (`event:/...` e `snapshot:/...`).
-- Controle individual por `FmodHandle` ou coletivo por ID.
-- Áudio 3D, follow de `Transform`, parâmetros, timeline, volume, pitch e fades.
-- Controle de buses, VCAs e snapshots.
-- Componentes para emissores, triggers, áreas, botões, sliders e Animation Events.
-- Geração de constantes C# a partir das listas de eventos.
-- Ações multiplayer opcionais com Netcode for GameObjects.
-- FMOD for Unity 2.03.19 incluído no package.
+| Recurso | Quando usar |
+|---|---|
+| `FmodEmitter` | Emissor simples configurado no Inspector, com follow, raio, loop e fades. |
+| `FmodEmitterCustom` | Emissor avançado com cascata ordenada de modificadores. No menu aparece como **FMODB8 Emmiter**. |
+| `FmodButton` | Executar uma ou várias ações de áudio em cliques e hover de UI ou objetos 3D. |
+| `FmodTrigger` | Tocar ou parar eventos por trigger, colisão, clique e ciclo de vida. |
+| `FmodArea` | Aplicar música, snapshot ou parâmetro enquanto o Player está em uma área. |
+| `FmodParameter` | Vincular automaticamente um parâmetro a Slider, velocidade, Animator, distância ou outro componente. |
+| `FmodSlider` | Controlar e salvar volumes de Master, Music, SFX e outros buses. |
+| `FmodAninEvent` | Chamar comandos FMODB8 por Animation Events. |
+| `CreateFmodList` | Organizar IDs, referências e estágio de implementação dos eventos. |
+| `FmodEvents` | Usar IDs gerados como constantes C# em vez de strings espalhadas pelo projeto. |
+| `FmodB8` / `FmodHandle` | Controlar áudio por código, coletivamente por ID ou por instância. |
+| Multiplayer | Replicar ações configuradas em `FmodButton` pelo Netcode for GameObjects. |
+
+Veja [Componentes e prefabs](Documentation~/components.md) para a descrição de cada campo do Inspector e exemplos completos.
 
 ## Requisitos
 

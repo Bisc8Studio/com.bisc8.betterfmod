@@ -12,6 +12,7 @@ Todas as alterações relevantes deste package serão documentadas neste arquivo
 - Paths usados pelo Play Mode e pela seleção de binários FMOD agora apontam para a instalação nativa em `Assets`.
 - Pastas nativas instaladas recebem GUIDs próprios no projeto, evitando conflitos de metadados com a fonte oculta.
 - Dependências de UI, IMGUI, Timeline, Animation e física usadas pelo package agora são declaradas no `package.json`.
+- Documentação reorganizada para priorizar os componentes, prefabs e fluxos próprios do FMODB8.
 
 ## [1.3.1] - 2026-07-13
 

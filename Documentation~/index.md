@@ -4,13 +4,28 @@
 
 ## Visão geral
 
-O BISC8 Simple FMOD centraliza a criação e o gerenciamento de instâncias FMOD. A classe `FmodCommands` mantém as referências de eventos e acompanha cada instância criada. A API `FmodB8` expõe os controles mais usados, enquanto `FmodHandle` permite alterar somente uma reprodução específica.
+O BISC8 Simple FMOD centraliza a implementação do áudio do jogo. O fluxo principal usa componentes próprios do FMODB8 no Inspector; a API `FmodB8` existe para os casos que precisam de código. `FmodCommands` mantém as referências de eventos e acompanha cada instância criada.
 
 Use uma das três formas de trabalho:
 
-- **API estática:** comandos rápidos ou aplicados a todas as instâncias ativas de um ID.
+- **Componentes:** fluxo recomendado para emissores, UI, triggers, áreas, parâmetros e animações.
+- **API estática:** comandos rápidos aplicados às instâncias ativas de um ID.
 - **Builder e handle:** configuração encadeada e controle de uma instância específica.
-- **Componentes:** configuração pelo Inspector, Unity Events, colliders, UI e Animation Events.
+
+## Qual componente usar?
+
+| Necessidade | Componente do package |
+|---|---|
+| Som simples em um GameObject | `FmodEmitter` |
+| Som com vários modificadores ordenados | `FmodEmitterCustom` |
+| Botão ou hover de UI/mundo | `FmodButton` |
+| Trigger, colisão, enable ou destroy | `FmodTrigger` |
+| Música/snapshot por região | `FmodArea` |
+| Parâmetro atualizado por valor de gameplay | `FmodParameter` |
+| Sliders de volume | `FmodSlider` |
+| Evento chamado por Animation Clip | `FmodAninEvent` |
+
+O guia [Componentes e prefabs](components.md) documenta todos os campos, modos, comandos e cascatas desses componentes.
 
 ## Requisitos e compatibilidade
 
