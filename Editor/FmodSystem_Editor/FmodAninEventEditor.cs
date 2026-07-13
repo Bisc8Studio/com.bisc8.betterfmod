@@ -63,7 +63,7 @@ public class FmodAninEventEditor : Editor
     {
         EditorGUILayout.LabelField("Animation Event Calls", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
-            "Use void methods for defaults, or string methods with the Animation Event String field. Emitter methods use only the FMODB8 Emmiter Key.",
+            "Use *Default methods with the Inspector defaults. Use *ById or *ByKey methods with the Animation Event String field. No method is overloaded.",
             MessageType.Info);
     }
 

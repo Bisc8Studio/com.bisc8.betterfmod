@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Ponte simples para chamar FMODB8 por Animation Events.
-/// Os metodos publicos usam apenas void ou string para evitar parametros
-/// aleatorios de int/float/Object na janela de Animation Event.
+/// Ponte simples para Animation Events. Os metodos publicos nao usam overload,
+/// para evitar o aviso do Unity sobre funcoes duplicadas no MonoBehaviour.
 /// </summary>
 [AddComponentMenu("FMODB8/FMODB8 Event Anin")]
 public class FmodAninEvent : MonoBehaviour
@@ -30,7 +29,7 @@ public class FmodAninEvent : MonoBehaviour
         public List<ConditionEntry> entries = new List<ConditionEntry>();
     }
 
-    [Header("Animation Defaults")]
+    [Header("Defaults")]
     [SerializeField] private string defaultEventId;
     [SerializeField] private string defaultEmitterKey;
     [SerializeField] private string defaultParameter;
@@ -44,107 +43,71 @@ public class FmodAninEvent : MonoBehaviour
 
     private FmodHandle lastHandle;
 
-    public void Play()
+    public void PlayDefault()
     {
-        Play(defaultEventId);
+        PlayEvent(defaultEventId, false, false, false);
     }
 
-    public void Play(string eventId)
+    public void PlayById(string eventId)
+    {
+        PlayEvent(eventId, false, false, false);
+    }
+
+    public void PlayLoopDefault()
+    {
+        PlayEvent(defaultEventId, true, false, false);
+    }
+
+    public void PlayLoopById(string eventId)
+    {
+        PlayEvent(eventId, true, false, false);
+    }
+
+    public void Play3DDefault()
+    {
+        PlayEvent(defaultEventId, false, true, false);
+    }
+
+    public void Play3DById(string eventId)
+    {
+        PlayEvent(eventId, false, true, false);
+    }
+
+    public void PlayAttachedDefault()
+    {
+        PlayEvent(defaultEventId, false, true, true);
+    }
+
+    public void PlayAttachedById(string eventId)
+    {
+        PlayEvent(eventId, false, true, true);
+    }
+
+    public void PlayAttachedRadiusDefault()
+    {
+        PlayEvent(defaultEventId, false, true, true, true);
+    }
+
+    public void PlayAttachedRadiusById(string eventId)
+    {
+        PlayEvent(eventId, false, true, true, true);
+    }
+
+    public void PlayFadeInDefault()
     {
         if (!CanExecute())
             return;
 
-        string resolvedId = ResolveEventId(eventId);
-        if (string.IsNullOrWhiteSpace(resolvedId))
+        string eventId = ResolveEventId(defaultEventId);
+        if (string.IsNullOrWhiteSpace(eventId))
             return;
 
-        lastHandle = FmodB8.Play(resolvedId);
-    }
-
-    public void PlayLoop()
-    {
-        PlayLoop(defaultEventId);
-    }
-
-    public void PlayLoop(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        string resolvedId = ResolveEventId(eventId);
-        if (string.IsNullOrWhiteSpace(resolvedId))
-            return;
-
-        lastHandle = FmodB8.PlayLoop(resolvedId);
-    }
-
-    public void Play3D()
-    {
-        Play3D(defaultEventId);
-    }
-
-    public void Play3D(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        string resolvedId = ResolveEventId(eventId);
-        if (string.IsNullOrWhiteSpace(resolvedId))
-            return;
-
-        lastHandle = FmodB8.Event(resolvedId)
-            .As3D()
-            .Position(transform.position)
+        lastHandle = FmodB8.Event(eventId)
+            .FadeIn(Mathf.Max(0f, defaultFadeTime))
             .Play();
     }
 
-    public void PlayAttached()
-    {
-        PlayAttached(defaultEventId);
-    }
-
-    public void PlayAttached(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        string resolvedId = ResolveEventId(eventId);
-        if (string.IsNullOrWhiteSpace(resolvedId))
-            return;
-
-        lastHandle = FmodB8.Event(resolvedId)
-            .As3D()
-            .FollowTransform(transform)
-            .Play();
-    }
-
-    public void PlayAttachedRadius()
-    {
-        PlayAttachedRadius(defaultEventId);
-    }
-
-    public void PlayAttachedRadius(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        string resolvedId = ResolveEventId(eventId);
-        if (string.IsNullOrWhiteSpace(resolvedId))
-            return;
-
-        lastHandle = FmodB8.Event(resolvedId)
-            .As3D()
-            .FollowTransform(transform)
-            .Radius(Mathf.Max(0.01f, defaultRadius))
-            .Play();
-    }
-
-    public void PlayFadeIn()
-    {
-        PlayFadeIn(defaultEventId);
-    }
-
-    public void PlayFadeIn(string eventId)
+    public void PlayFadeInById(string eventId)
     {
         if (!CanExecute())
             return;
@@ -158,59 +121,27 @@ public class FmodAninEvent : MonoBehaviour
             .Play();
     }
 
-    public void Stop()
+    public void StopReleaseDefault()
     {
-        StopRelease(defaultEventId);
+        StopEvent(defaultEventId, true);
     }
 
-    public void Stop(string eventId)
+    public void StopReleaseById(string eventId)
     {
-        StopRelease(eventId);
+        StopEvent(eventId, true);
     }
 
-    public void StopRelease()
+    public void StopImmediateDefault()
     {
-        StopRelease(defaultEventId);
+        StopEvent(defaultEventId, false);
     }
 
-    public void StopRelease(string eventId)
+    public void StopImmediateById(string eventId)
     {
-        if (!CanExecute())
-            return;
-
-        if (lastHandle != null && lastHandle.IsValid && IsDefaultOrEmpty(eventId))
-        {
-            lastHandle.Stop(true, Mathf.Max(0f, defaultFadeTime));
-            return;
-        }
-
-        string resolvedId = ResolveEventId(eventId);
-        if (!string.IsNullOrWhiteSpace(resolvedId))
-            FmodB8.Stop(resolvedId, true, Mathf.Max(0f, defaultFadeTime));
+        StopEvent(eventId, false);
     }
 
-    public void StopImmediate()
-    {
-        StopImmediate(defaultEventId);
-    }
-
-    public void StopImmediate(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        if (lastHandle != null && lastHandle.IsValid && IsDefaultOrEmpty(eventId))
-        {
-            lastHandle.Stop(false);
-            return;
-        }
-
-        string resolvedId = ResolveEventId(eventId);
-        if (!string.IsNullOrWhiteSpace(resolvedId))
-            FmodB8.Stop(resolvedId, false);
-    }
-
-    public void FadeOut()
+    public void FadeOutLast()
     {
         if (!CanExecute())
             return;
@@ -218,15 +149,158 @@ public class FmodAninEvent : MonoBehaviour
         if (lastHandle != null && lastHandle.IsValid)
             lastHandle.FadeOut(Mathf.Max(0f, defaultFadeTime));
         else
-            StopRelease(defaultEventId);
+            StopEvent(defaultEventId, true);
     }
 
-    public void Pause()
+    public void PauseDefault()
     {
-        Pause(defaultEventId);
+        PauseEvent(defaultEventId);
     }
 
-    public void Pause(string eventId)
+    public void PauseById(string eventId)
+    {
+        PauseEvent(eventId);
+    }
+
+    public void ResumeDefault()
+    {
+        ResumeEvent(defaultEventId);
+    }
+
+    public void ResumeById(string eventId)
+    {
+        ResumeEvent(eventId);
+    }
+
+    public void TogglePauseDefault()
+    {
+        TogglePauseEvent(defaultEventId);
+    }
+
+    public void TogglePauseById(string eventId)
+    {
+        TogglePauseEvent(eventId);
+    }
+
+    public void SetParameterLabelDefault()
+    {
+        if (!CanExecute())
+            return;
+
+        if (string.IsNullOrWhiteSpace(defaultParameter) || string.IsNullOrWhiteSpace(defaultLabel))
+            return;
+
+        if (lastHandle != null && lastHandle.IsValid)
+            lastHandle.SetParameterLabel(defaultParameter, defaultLabel);
+        else if (!string.IsNullOrWhiteSpace(defaultEventId))
+            FmodB8.SetParameterLabel(defaultEventId, defaultParameter, defaultLabel);
+    }
+
+    public void AddEmitterDefault()
+    {
+        SetEmitterEnabled(defaultEmitterKey, true);
+    }
+
+    public void AddEmitterByKey(string emitterKey)
+    {
+        SetEmitterEnabled(emitterKey, true);
+    }
+
+    public void RemoveEmitterDefault()
+    {
+        SetEmitterEnabled(defaultEmitterKey, false);
+    }
+
+    public void RemoveEmitterByKey(string emitterKey)
+    {
+        SetEmitterEnabled(emitterKey, false);
+    }
+
+    public void PlayEmitterDefault()
+    {
+        PlayEmitterByKey(defaultEmitterKey);
+    }
+
+    public void PlayEmitterByKey(string emitterKey)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
+        if (emitter != null)
+            emitter.Play();
+    }
+
+    public void StopEmitterDefault()
+    {
+        StopEmitterByKey(defaultEmitterKey);
+    }
+
+    public void StopEmitterByKey(string emitterKey)
+    {
+        if (!CanExecute())
+            return;
+
+        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
+        if (emitter != null)
+            emitter.Stop(defaultFadeTime > 0f);
+    }
+
+    private void PlayEvent(string eventId, bool loop, bool as3D, bool attach, bool useRadius = false)
+    {
+        if (!CanExecute())
+            return;
+
+        string resolvedId = ResolveEventId(eventId);
+        if (string.IsNullOrWhiteSpace(resolvedId))
+            return;
+
+        if (loop)
+        {
+            lastHandle = FmodB8.PlayLoop(resolvedId);
+            return;
+        }
+
+        if (!as3D)
+        {
+            lastHandle = FmodB8.Play(resolvedId);
+            return;
+        }
+
+        FmodEventBuilder builder = FmodB8.Event(resolvedId).As3D();
+
+        if (attach)
+            builder.FollowTransform(transform);
+        else
+            builder.Position(transform.position);
+
+        if (useRadius)
+            builder.Radius(Mathf.Max(0.01f, defaultRadius));
+
+        lastHandle = builder.Play();
+    }
+
+    private void StopEvent(string eventId, bool fade)
+    {
+        if (!CanExecute())
+            return;
+
+        if (lastHandle != null && lastHandle.IsValid && IsDefaultOrEmpty(eventId))
+        {
+            if (fade)
+                lastHandle.Stop(true, Mathf.Max(0f, defaultFadeTime));
+            else
+                lastHandle.Stop(false);
+
+            return;
+        }
+
+        string resolvedId = ResolveEventId(eventId);
+        if (!string.IsNullOrWhiteSpace(resolvedId))
+            FmodB8.Stop(resolvedId, fade, Mathf.Max(0f, defaultFadeTime));
+    }
+
+    private void PauseEvent(string eventId)
     {
         if (!CanExecute())
             return;
@@ -242,12 +316,7 @@ public class FmodAninEvent : MonoBehaviour
             FmodB8.Pause(resolvedId);
     }
 
-    public void Resume()
-    {
-        Resume(defaultEventId);
-    }
-
-    public void Resume(string eventId)
+    private void ResumeEvent(string eventId)
     {
         if (!CanExecute())
             return;
@@ -263,12 +332,7 @@ public class FmodAninEvent : MonoBehaviour
             FmodB8.Resume(resolvedId);
     }
 
-    public void TogglePause()
-    {
-        TogglePause(defaultEventId);
-    }
-
-    public void TogglePause(string eventId)
+    private void TogglePauseEvent(string eventId)
     {
         if (!CanExecute())
             return;
@@ -282,115 +346,6 @@ public class FmodAninEvent : MonoBehaviour
         string resolvedId = ResolveEventId(eventId);
         if (!string.IsNullOrWhiteSpace(resolvedId))
             FmodB8.TogglePause(resolvedId);
-    }
-
-    public void SetParameterLabel()
-    {
-        if (!CanExecute())
-            return;
-
-        if (string.IsNullOrWhiteSpace(defaultParameter) || string.IsNullOrWhiteSpace(defaultLabel))
-            return;
-
-        if (lastHandle != null && lastHandle.IsValid)
-            lastHandle.SetParameterLabel(defaultParameter, defaultLabel);
-        else if (!string.IsNullOrWhiteSpace(defaultEventId))
-            FmodB8.SetParameterLabel(defaultEventId, defaultParameter, defaultLabel);
-    }
-
-    public void GetState()
-    {
-        GetState(defaultEventId);
-    }
-
-    public void GetState(string eventId)
-    {
-        if (!CanExecute())
-            return;
-
-        string resolvedId = ResolveEventId(eventId);
-        if (!string.IsNullOrWhiteSpace(resolvedId))
-            FmodB8.GetState(resolvedId);
-    }
-
-    public void AddEmitter()
-    {
-        AddEmitter(defaultEmitterKey);
-    }
-
-    public void AddEmitter(string emitterKey)
-    {
-        SetEmitterEnabled(emitterKey, true);
-    }
-
-    public void RemoveEmitter()
-    {
-        RemoveEmitter(defaultEmitterKey);
-    }
-
-    public void RemoveEmitter(string emitterKey)
-    {
-        SetEmitterEnabled(emitterKey, false);
-    }
-
-    public void PlayEmitter()
-    {
-        PlayEmitter(defaultEmitterKey);
-    }
-
-    public void PlayEmitter(string emitterKey)
-    {
-        if (!CanExecute())
-            return;
-
-        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
-        if (emitter != null)
-            emitter.Play();
-    }
-
-    public void StopEmitter()
-    {
-        StopEmitter(defaultEmitterKey);
-    }
-
-    public void StopEmitter(string emitterKey)
-    {
-        if (!CanExecute())
-            return;
-
-        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
-        if (emitter != null)
-            emitter.Stop(defaultFadeTime > 0f);
-    }
-
-    public void PauseEmitter()
-    {
-        PauseEmitter(defaultEmitterKey);
-    }
-
-    public void PauseEmitter(string emitterKey)
-    {
-        if (!CanExecute())
-            return;
-
-        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
-        if (emitter != null)
-            emitter.Pause(true);
-    }
-
-    public void ResumeEmitter()
-    {
-        ResumeEmitter(defaultEmitterKey);
-    }
-
-    public void ResumeEmitter(string emitterKey)
-    {
-        if (!CanExecute())
-            return;
-
-        FmodEmitterCustom emitter = ResolveEmitter(emitterKey);
-        if (emitter != null)
-            emitter.Pause(false);
     }
 
     private void SetEmitterEnabled(string emitterKey, bool enabled)
