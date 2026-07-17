@@ -90,6 +90,7 @@ public class FmodEmitterCustom : MonoBehaviour
 
     private FmodHandle handle;
     private readonly List<FmodHandle> listenerHandles = new();
+    private Coroutine pendingPlay;
 
     private void OnEnable()
     {
@@ -111,12 +112,16 @@ public class FmodEmitterCustom : MonoBehaviour
 
     private void OnDisable()
     {
+        CancelPendingPlay();
+
         if (stopEvent == StopEvent.OnDisable)
             Stop();
     }
 
     private void OnDestroy()
     {
+        CancelPendingPlay();
+
         if (stopEvent == StopEvent.OnDestroy)
             Stop();
     }
@@ -131,6 +136,43 @@ public class FmodEmitterCustom : MonoBehaviour
     /// Toca o evento configurado.
     /// </summary>
     public void Play()
+    {
+        if (string.IsNullOrWhiteSpace(eventId))
+            return;
+
+        if (HasListenerModifiers() && StudioListener.ListenerCount <= 0)
+        {
+            if (pendingPlay == null && isActiveAndEnabled)
+                pendingPlay = StartCoroutine(PlayWhenListenerIsReady());
+
+            return;
+        }
+
+        CancelPendingPlay();
+        PlayNow();
+    }
+
+    private IEnumerator PlayWhenListenerIsReady()
+    {
+        const int maximumWaitFrames = 60;
+
+        for (int frame = 0; frame < maximumWaitFrames; frame++)
+        {
+            if (StudioListener.ListenerCount > 0)
+            {
+                pendingPlay = null;
+                PlayNow();
+                yield break;
+            }
+
+            yield return null;
+        }
+
+        pendingPlay = null;
+        PlayNow();
+    }
+
+    private void PlayNow()
     {
         if (string.IsNullOrWhiteSpace(eventId))
             return;
@@ -160,6 +202,8 @@ public class FmodEmitterCustom : MonoBehaviour
     /// </summary>
     public void Stop(bool fade = true)
     {
+        CancelPendingPlay();
+
         if (listenerHandles.Count > 0)
         {
             foreach (FmodHandle listenerHandle in listenerHandles)
@@ -220,6 +264,15 @@ public class FmodEmitterCustom : MonoBehaviour
     {
         FmodEventBuilder builder = FmodB8.Event(eventId);
         return oneShot ? builder : builder.Loop();
+    }
+
+    private void CancelPendingPlay()
+    {
+        if (pendingPlay == null)
+            return;
+
+        StopCoroutine(pendingPlay);
+        pendingPlay = null;
     }
 
     private void ApplyCascade(FmodHandle targetHandle, int listenerIndex)
