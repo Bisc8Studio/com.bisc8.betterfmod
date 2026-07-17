@@ -142,6 +142,15 @@ public sealed class FmodHandle
     }
 
     /// <summary>
+    /// Limita esta instancia aos listeners indicados pela mascara de bits.
+    /// </summary>
+    public FmodHandle ListenerMask(uint mask)
+    {
+        commands?.SetListenerMask(Id, mask);
+        return this;
+    }
+
+    /// <summary>
     /// Aplica fade in nesta instancia a partir do silencio.
     /// </summary>
     public FmodHandle FadeIn(float duration)

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using FMODUnity;
 using UnityEngine;
 
 /// <summary>
@@ -59,7 +60,9 @@ public class FmodEmitterCustom : MonoBehaviour
         Resume = 15,
         TogglePause = 16,
         Detach = 17,
-        Keep = 18
+        Keep = 18,
+        PositiveListener = 19,
+        NegativeListener = 20
     }
 
     [System.Serializable]
@@ -74,6 +77,7 @@ public class FmodEmitterCustom : MonoBehaviour
         public int intValue;
         public string parameter;
         public string label;
+        public StudioListener listener;
     }
 
     public EmitterMode mode;
@@ -85,6 +89,7 @@ public class FmodEmitterCustom : MonoBehaviour
     public Color gizmoColor = Color.cyan;
 
     private FmodHandle handle;
+    private readonly List<FmodHandle> listenerHandles = new();
 
     private void OnEnable()
     {
@@ -130,13 +135,24 @@ public class FmodEmitterCustom : MonoBehaviour
         if (string.IsNullOrWhiteSpace(eventId))
             return;
 
-        FmodEventBuilder builder = FmodB8.Event(eventId);
+        listenerHandles.Clear();
 
-        if (!oneShot)
-            builder.Loop();
+        if (HasListenerModifiers() && StudioListener.ListenerCount > 0)
+        {
+            for (int listenerIndex = 0; listenerIndex < StudioListener.ListenerCount; listenerIndex++)
+            {
+                FmodHandle listenerHandle = CreateBuilder().Play();
+                listenerHandle.ListenerMask(1u << listenerIndex);
+                ApplyCascade(listenerHandle, listenerIndex);
+                listenerHandles.Add(listenerHandle);
+            }
 
-        handle = builder.Play();
-        ApplyCascade(handle);
+            handle = listenerHandles.Count > 0 ? listenerHandles[0] : null;
+            return;
+        }
+
+        handle = CreateBuilder().Play();
+        ApplyCascade(handle, -1);
     }
 
     /// <summary>
@@ -144,6 +160,19 @@ public class FmodEmitterCustom : MonoBehaviour
     /// </summary>
     public void Stop(bool fade = true)
     {
+        if (listenerHandles.Count > 0)
+        {
+            foreach (FmodHandle listenerHandle in listenerHandles)
+            {
+                if (listenerHandle != null && listenerHandle.IsValid)
+                    listenerHandle.Stop(fade);
+            }
+
+            listenerHandles.Clear();
+            handle = null;
+            return;
+        }
+
         if (handle != null && handle.IsValid)
             handle.Stop(fade);
         else
@@ -155,6 +184,22 @@ public class FmodEmitterCustom : MonoBehaviour
     /// </summary>
     public void Pause(bool pause)
     {
+        if (listenerHandles.Count > 0)
+        {
+            foreach (FmodHandle listenerHandle in listenerHandles)
+            {
+                if (listenerHandle == null || !listenerHandle.IsValid)
+                    continue;
+
+                if (pause)
+                    listenerHandle.Pause();
+                else
+                    listenerHandle.Resume();
+            }
+
+            return;
+        }
+
         if (handle != null && handle.IsValid)
         {
             if (pause)
@@ -171,7 +216,13 @@ public class FmodEmitterCustom : MonoBehaviour
             FmodB8.Resume(eventId);
     }
 
-    private void ApplyCascade(FmodHandle targetHandle)
+    private FmodEventBuilder CreateBuilder()
+    {
+        FmodEventBuilder builder = FmodB8.Event(eventId);
+        return oneShot ? builder : builder.Loop();
+    }
+
+    private void ApplyCascade(FmodHandle targetHandle, int listenerIndex)
     {
         if (targetHandle == null || !targetHandle.IsValid || cascade == null)
             return;
@@ -244,6 +295,34 @@ public class FmodEmitterCustom : MonoBehaviour
                     break;
             }
         }
+
+        if (listenerIndex >= 0)
+            ApplyListenerVolume(targetHandle, listenerIndex);
+    }
+
+    private void ApplyListenerVolume(FmodHandle targetHandle, int listenerIndex)
+    {
+        float multiplier = 1f;
+
+        foreach (CascadeStep step in cascade)
+        {
+            if (step == null || step.listener == null || step.listener.ListenerNumber != listenerIndex)
+                continue;
+
+            float percentage = Mathf.Clamp(step.floatValue, 0f, 100f) / 100f;
+            if (step.function == CascadeFunction.PositiveListener)
+                multiplier += percentage;
+            else if (step.function == CascadeFunction.NegativeListener)
+                multiplier -= percentage;
+        }
+
+        targetHandle.Volume(Mathf.Max(0f, targetHandle.GetVolume() * multiplier));
+    }
+
+    private bool HasListenerModifiers()
+    {
+        return HasFunction(CascadeFunction.PositiveListener)
+            || HasFunction(CascadeFunction.NegativeListener);
     }
 
     private void OnDrawGizmos()
@@ -307,6 +386,9 @@ public class FmodEmitterCustom : MonoBehaviour
                 step.floatValue2 = Mathf.Max(0f, step.floatValue2);
             else if (step.function == CascadeFunction.TimelinePosition)
                 step.intValue = Mathf.Max(0, step.intValue);
+            else if (step.function == CascadeFunction.PositiveListener
+                  || step.function == CascadeFunction.NegativeListener)
+                step.floatValue = Mathf.Clamp(step.floatValue, 0f, 100f);
 
             if (step.function == CascadeFunction.Attach && step.transform == null)
                 step.transform = transform;

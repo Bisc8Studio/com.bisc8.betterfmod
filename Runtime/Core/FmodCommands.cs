@@ -582,6 +582,12 @@ public class FmodCommands : MonoBehaviour
         return volume;
     }
 
+    internal void SetListenerMask(int handleId, uint mask)
+    {
+        if (TryGetInstance(handleId, out FmodManagedInstance managed))
+            managed.Instance.setListenerMask(mask);
+    }
+
     internal void FadeIn(int handleId, float duration)
     {
         if (!TryGetInstance(handleId, out FmodManagedInstance managed))

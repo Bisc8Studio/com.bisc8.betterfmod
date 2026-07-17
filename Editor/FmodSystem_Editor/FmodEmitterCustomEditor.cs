@@ -94,6 +94,7 @@ public class FmodEmitterCustomEditor : Editor
         SerializedProperty intValue = step.FindPropertyRelative("intValue");
         SerializedProperty parameter = step.FindPropertyRelative("parameter");
         SerializedProperty label = step.FindPropertyRelative("label");
+        SerializedProperty listener = step.FindPropertyRelative("listener");
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         EditorGUILayout.BeginHorizontal();
@@ -161,6 +162,13 @@ public class FmodEmitterCustomEditor : Editor
             case FmodEmitterCustom.CascadeFunction.Keep:
                 EditorGUILayout.PropertyField(parameter, new GUIContent("Key (optional)"));
                 break;
+            case FmodEmitterCustom.CascadeFunction.PositiveListener:
+            case FmodEmitterCustom.CascadeFunction.NegativeListener:
+                EditorGUILayout.PropertyField(listener, new GUIContent("Listener"));
+                floatValue.floatValue = EditorGUILayout.Slider("Percentage", floatValue.floatValue, 0f, 100f);
+                if (listener.objectReferenceValue == null)
+                    EditorGUILayout.HelpBox("Select the StudioListener that will receive this volume adjustment.", MessageType.Warning);
+                break;
         }
 
         EditorGUILayout.EndVertical();
@@ -193,6 +201,13 @@ public class FmodEmitterCustomEditor : Editor
         step.FindPropertyRelative("intValue").intValue = 0;
         step.FindPropertyRelative("parameter").stringValue = string.Empty;
         step.FindPropertyRelative("label").stringValue = string.Empty;
+        step.FindPropertyRelative("listener").objectReferenceValue = null;
+
+        FmodEmitterCustom.CascadeFunction function = (FmodEmitterCustom.CascadeFunction)
+            System.Enum.Parse(typeof(FmodEmitterCustom.CascadeFunction), (string)functionName);
+        if (function == FmodEmitterCustom.CascadeFunction.PositiveListener
+         || function == FmodEmitterCustom.CascadeFunction.NegativeListener)
+            step.FindPropertyRelative("floatValue").floatValue = 0f;
 
         serializedObject.ApplyModifiedProperties();
         ValidateTarget();
